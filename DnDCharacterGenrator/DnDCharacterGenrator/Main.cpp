@@ -11,13 +11,17 @@ void displayCharacterSheet(const dndCharacter& character);
 
 int main()
 {
-	dndCharacter character;
-	dndCharacterGenerator generator;
+	while (1)
+	{
+		dndCharacter character;
+		dndCharacterGenerator generator;
 
-	generator.generateCharacter(character);
-	displayCharacterSheet(character);
-	
-	cout << "\n\n";
+		generator.generateCharacter(character);
+		displayCharacterSheet(character);
+
+		cout << "\n\n";
+		system("pause");
+	}
 }
 
 void displayCharacterSheet(const dndCharacter& character)

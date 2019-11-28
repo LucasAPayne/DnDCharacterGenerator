@@ -13,6 +13,13 @@ dndCharacterGenerator::dndCharacterGenerator()
 {
 }
 
+int dndCharacterGenerator::roll(int min, int max)
+{
+	default_random_engine engine(time(0));
+	uniform_int_distribution<unsigned> dist(min, max);
+
+	return dist(engine);
+}
 
 // ======================================================================================
 // Desriptors
@@ -23,33 +30,24 @@ void dndCharacterGenerator::generateClass(dndCharacter& character)
 	vector<string> classes = { "Barbarian", "Bard", "Cleric", "Druid", "Fighter", "Monk", "Paladin", "Ranger", "Rogue", 
 							"Sorcerer", "Warlock", "Wizard" };
 
-	static default_random_engine engine(time(0));
-	static uniform_int_distribution<unsigned> dist(0, classes.size() - 1);
-	
-	character.characterClass = classes[dist(engine)];
+	character.characterClass = classes[roll(0, classes.size() - 1)];
 }
 
 void dndCharacterGenerator::generateRace(dndCharacter& character)
 {
 	vector<string> races = { "Dwarf", "Elf", "Halfling", "Human" };
 
-	static default_random_engine engine(time(0));
-	static uniform_int_distribution<unsigned> dist(0, races.size() - 1);
-
-	character.race = races[dist(engine)];
+	character.race = races[roll(0, races.size() - 1)];
 }
 
 void dndCharacterGenerator::generateBackground(dndCharacter& character)
 {
 	// Variants: Spy (Criminal), Gladiator (Entertainer), Guild Merchant (Guild Artisan), Knight (Noble), Pirate (Sailor)
 	vector<string> backgrounds = { "Acolyte", "Charlatan", "Criminal", "Entertainer", "Folk Hero", "Gladiator", "Guild Artisan", 
-								"Guild Merchant","Hermit", "Knight", "Noble", "Outlander", "Pirate", "Sage", "Sailor", "Soldier", 
+								"Guild Merchant", "Hermit", "Knight", "Noble", "Outlander", "Pirate", "Sage", "Sailor", "Soldier", 
 								"Spy", "Urchin" };
 
-	static default_random_engine engine(time(0));
-	static uniform_int_distribution<unsigned> dist(0, backgrounds.size() - 1);
-
-	character.background = backgrounds[dist(engine)];
+	character.background = backgrounds[roll(0, backgrounds.size() - 1)];
 }
 
 void dndCharacterGenerator::generateAlignment(dndCharacter& character)
@@ -57,10 +55,7 @@ void dndCharacterGenerator::generateAlignment(dndCharacter& character)
 	vector<string> alignments = { "Lawful Good", "Neutral Good", "Chaotic Good", "Lawful Neutral", "Neutral", "Chaotic Neutral",
 								"Lawful Evil", "Neutral Evil", "Chaotic Evil" };
 
-	static default_random_engine engine(time(0));
-	static uniform_int_distribution<unsigned> dist(0, alignments.size() - 1);
-
-	character.alignment = alignments[dist(engine)];
+	character.alignment = alignments[roll(0, alignments.size() - 1)];
 }
 
 void dndCharacterGenerator::generateName(dndCharacter& character)
@@ -71,10 +66,8 @@ void dndCharacterGenerator::generateName(dndCharacter& character)
 		// Probably overkill, but for for the sake of consistency . . .
 
 		vector<string> genders = { "Male", "Female" };
-		static default_random_engine engine(time(0));
-		static uniform_int_distribution<unsigned> dist(0, 1);
 
-		character.gender = genders[dist(engine)];
+		character.gender = genders[roll(0, genders.size() - 1)];
 	}
 
 	// Generate Random Name
