@@ -9,9 +9,6 @@ private:
 
 public:
 	dndCharacterGenerator();
-
-	// Rolls for a random number between min and max
-	int roll(int min, int max);
 	
 	// Descriptors ==============================================================
 

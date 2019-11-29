@@ -1,24 +1,19 @@
 #include "dndCharacter.h"
 #include "dndCharacterGenerator.h"
 #include <ctime>
+#include <fstream>
 #include <random>
 #include <string>
 #include <vector>
 using std::default_random_engine;
+using std::getline;
+using std::ifstream;
 using std::string;
 using std::uniform_int_distribution;
 using std::vector;
 
 dndCharacterGenerator::dndCharacterGenerator()
 {
-}
-
-int dndCharacterGenerator::roll(int min, int max)
-{
-	default_random_engine engine(time(0));
-	uniform_int_distribution<unsigned> dist(min, max);
-
-	return dist(engine);
 }
 
 // ======================================================================================
@@ -30,14 +25,20 @@ void dndCharacterGenerator::generateClass(dndCharacter& character)
 	vector<string> classes = { "Barbarian", "Bard", "Cleric", "Druid", "Fighter", "Monk", "Paladin", "Ranger", "Rogue", 
 							"Sorcerer", "Warlock", "Wizard" };
 
-	character.characterClass = classes[roll(0, classes.size() - 1)];
+	static default_random_engine engine(time(0));
+	static uniform_int_distribution<unsigned> dist(0, classes.size() - 1);
+
+	character.characterClass = classes[dist(engine)];
 }
 
 void dndCharacterGenerator::generateRace(dndCharacter& character)
 {
 	vector<string> races = { "Dwarf", "Elf", "Halfling", "Human" };
 
-	character.race = races[roll(0, races.size() - 1)];
+	static default_random_engine engine(time(0));
+	static uniform_int_distribution<unsigned> dist(0, races.size() - 1);
+
+	character.race = races[dist(engine)];
 }
 
 void dndCharacterGenerator::generateBackground(dndCharacter& character)
@@ -47,7 +48,10 @@ void dndCharacterGenerator::generateBackground(dndCharacter& character)
 								"Guild Merchant", "Hermit", "Knight", "Noble", "Outlander", "Pirate", "Sage", "Sailor", "Soldier", 
 								"Spy", "Urchin" };
 
-	character.background = backgrounds[roll(0, backgrounds.size() - 1)];
+	static default_random_engine engine(time(0));
+	static uniform_int_distribution<unsigned> dist(0, backgrounds.size() - 1);
+
+	character.background = backgrounds[dist(engine)];
 }
 
 void dndCharacterGenerator::generateAlignment(dndCharacter& character)
@@ -55,7 +59,10 @@ void dndCharacterGenerator::generateAlignment(dndCharacter& character)
 	vector<string> alignments = { "Lawful Good", "Neutral Good", "Chaotic Good", "Lawful Neutral", "Neutral", "Chaotic Neutral",
 								"Lawful Evil", "Neutral Evil", "Chaotic Evil" };
 
-	character.alignment = alignments[roll(0, alignments.size() - 1)];
+	static default_random_engine engine(time(0));
+	static uniform_int_distribution<unsigned> dist(0, alignments.size() - 1);
+
+	character.alignment = alignments[dist(engine)];
 }
 
 void dndCharacterGenerator::generateName(dndCharacter& character)
@@ -67,7 +74,10 @@ void dndCharacterGenerator::generateName(dndCharacter& character)
 
 		vector<string> genders = { "Male", "Female" };
 
-		character.gender = genders[roll(0, genders.size() - 1)];
+		static default_random_engine engine(time(0));
+		static uniform_int_distribution<unsigned> dist(0, genders.size() - 1);
+
+		character.gender = genders[dist(engine)];
 	}
 
 	// Generate Random Name
@@ -75,6 +85,39 @@ void dndCharacterGenerator::generateName(dndCharacter& character)
 
 void dndCharacterGenerator::generatePersonalityTraits(dndCharacter & character)
 {
+	for (int i = 1; i <= 2; ++i) // Each character gets two personality traits
+	{
+		static default_random_engine engine(time(0));
+		static uniform_int_distribution<unsigned> dist(0, 7);
+
+		ifstream in("Personality Traits.txt");
+		string line;
+		if (in)
+		{
+			while (getline(in, line))
+			{
+				if (line.find(character.background, 0) != string::npos)
+				{
+					// Roll a d8 to choose a personality trait, as there are 8 pre-made choices for each background in the Player's Handbook
+					int target = dist(engine); 
+
+					// If a character has a background that has a variant, skip an extra line due to the format of the file
+					if (character.background == "Criminal" || character.background == "Entertainer" || character.background == "Guild Artisan" 
+						|| character.background == "Noble" || character.background == "Sailor")
+					{
+						++target;
+					}
+
+					for (int skip = 0; skip <= target; ++skip) // Skip the number of lines that were rolled
+					{
+						getline(in, line);
+					}
+					character.personalityTraits += line += " "; // The last line read is the trait
+				}
+			}
+
+		}
+	}
 }
 
 void dndCharacterGenerator::generateIdeals(dndCharacter & character)

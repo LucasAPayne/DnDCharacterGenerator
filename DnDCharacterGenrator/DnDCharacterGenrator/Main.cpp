@@ -21,6 +21,7 @@ int main()
 
 		cout << "\n\n";
 		system("pause");
+		cout << "\n";
 	}
 }
 
@@ -31,4 +32,5 @@ void displayCharacterSheet(const dndCharacter& character)
 	cout << "Class: " << character.characterClass << "\n";
 	cout << "Background: " << character.background << "\n";
 	cout << "Alignment: " << character.alignment << "\n";
+	cout << "Personality Traits: " << character.personalityTraits << "\n";
 }
