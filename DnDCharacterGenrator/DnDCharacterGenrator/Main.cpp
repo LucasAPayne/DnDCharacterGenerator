@@ -11,13 +11,18 @@ void displayCharacterSheet(const dndCharacter& character);
 
 int main()
 {
-	dndCharacter character;
-	dndCharacterGenerator generator;
+	while (1)
+	{
+		dndCharacter character;
+		dndCharacterGenerator generator;
 
-	generator.generateCharacter(character);
-	displayCharacterSheet(character);
-	
-	cout << "\n\n";
+		generator.generateCharacter(character);
+		displayCharacterSheet(character);
+
+		cout << "\n\n";
+		system("pause");
+		cout << "\n";
+	}
 }
 
 void displayCharacterSheet(const dndCharacter& character)
@@ -26,5 +31,9 @@ void displayCharacterSheet(const dndCharacter& character)
 	cout << "Race: " << character.race << "\n";
 	cout << "Class: " << character.characterClass << "\n";
 	cout << "Background: " << character.background << "\n";
-	cout << "Alignment: " << character.alignment << "\n";
+	cout << "Alignment: " << character.alignment << "\n\n";
+	cout << "Personality Traits: " << character.personalityTraits << "\n\n";
+	cout << "Ideals: " << character.ideals << "\n\n";
+	cout << "Bonds: " << character.bonds << "\n\n";
+	cout << "Flaws: " << character.flaws << "\n";
 }
