@@ -90,25 +90,27 @@ void dndCharacterGenerator::generatePersonalityTraits(dndCharacter & character)
 		static default_random_engine engine(time(0));
 		static uniform_int_distribution<unsigned> dist(0, 7);
 
-		ifstream in("Personality Traits.txt");
-		string line;
+		ifstream in("Lists/Personality Traits.txt");
 		if (in)
 		{
+			string line;
 			while (getline(in, line))
 			{
+				// If the current line in the file is the character's background
 				if (line.find(character.background, 0) != string::npos)
 				{
 					// Roll a d8 to choose a personality trait, as there are 8 pre-made choices for each background in the Player's Handbook
 					int target = dist(engine); 
 
 					// If a character has a background that has a variant, skip an extra line due to the format of the file
+					// Variants have the same traits as their base backgrounds
 					if (character.background == "Criminal" || character.background == "Entertainer" || character.background == "Guild Artisan" 
 						|| character.background == "Noble" || character.background == "Sailor")
 					{
 						++target;
 					}
 
-					for (int skip = 0; skip <= target; ++skip) // Skip the number of lines that were rolled
+					for (int skip = 0; skip <= target; ++skip) // Skip the number of lines that was rolled
 					{
 						getline(in, line);
 					}
@@ -122,14 +124,124 @@ void dndCharacterGenerator::generatePersonalityTraits(dndCharacter & character)
 
 void dndCharacterGenerator::generateIdeals(dndCharacter & character)
 {
+	static default_random_engine engine(time(0));
+	static uniform_int_distribution<unsigned> dist(0, 5);
+
+	ifstream in("Lists/Ideals.txt");
+	
+	if (in)
+	{
+		string line;
+		string axis1 = character.alignment.substr(0, character.alignment.find(' ')); // Lawful, Neutral, or Chaotic
+		string axis2 = character.alignment.substr(character.alignment.find(' ') + 1); // Good, Neutral, or Evil;
+		bool flag = false;
+
+		while (getline(in, line))
+		{
+			if (line.find(character.background, 0) != string::npos)
+			{
+				// Roll a d6 to choose an ideal, as there are 6 pre-made choices for each background in the Player's Handbook
+				int target = dist(engine);
+
+				if (character.background == "Criminal" || character.background == "Entertainer" || character.background == "Guild Artisan"
+					|| character.background == "Noble" || character.background == "Sailor")
+				{
+					++target;
+				}
+
+				for (int skip = 0; skip < target; ++skip) // Skip the number of lines that was rolled
+				{
+					getline(in, line);
+				}
+
+				getline(in, line, '|'); // Now line is the axis of alignment associated with an ideal
+				
+				// If the ideal matches alignment
+				if (line == axis1 || line == axis2 || line == "Any")
+				{
+					getline(in, line); // Read the rest of the line
+					character.ideals += line += " "; // The last line read is the trait
+					break;
+				}
+				else
+				{
+					in.seekg(0, in.beg); // Go back to the beginning of the file and pick a different ideal
+				}
+			}
+		}
+		
+
+	}
 }
 
 void dndCharacterGenerator::generateBonds(dndCharacter & character)
 {
+	static default_random_engine engine(time(0));
+	static uniform_int_distribution<unsigned> dist(0, 5);
+
+	ifstream in("Lists/Bonds.txt");
+	if (in)
+	{
+		string line;
+		while (getline(in, line))
+		{
+			// If the current line in the file is the character's background
+			if (line.find(character.background, 0) != string::npos)
+			{
+				// Roll a d6 to choose a personality trait, as there are 6 pre-made choices for each background in the Player's Handbook
+				int target = dist(engine);
+
+				// If a character has a background that has a variant, skip an extra line due to the format of the file
+				// Variants have the same traits as their base backgrounds
+				if (character.background == "Criminal" || character.background == "Entertainer" || character.background == "Guild Artisan"
+					|| character.background == "Noble" || character.background == "Sailor")
+				{
+					++target;
+				}
+
+				for (int skip = 0; skip <= target; ++skip) // Skip the number of lines that was rolled
+				{
+					getline(in, line);
+				}
+				character.bonds += line += " "; // The last line read is the trait
+			}
+		}
+	}
 }
 
 void dndCharacterGenerator::generateFlaws(dndCharacter & character)
 {
+	static default_random_engine engine(time(0));
+	static uniform_int_distribution<unsigned> dist(0, 5);
+
+	ifstream in("Lists/Flaws.txt");
+	if (in)
+	{
+		string line;
+		while (getline(in, line))
+		{
+			// If the current line in the file is the character's background
+			if (line.find(character.background, 0) != string::npos)
+			{
+				// Roll a d6 to choose a personality trait, as there are 6 pre-made choices for each background in the Player's Handbook
+				int target = dist(engine);
+
+				// If a character has a background that has a variant, skip an extra line due to the format of the file
+				// Variants have the same traits as their base backgrounds
+				if (character.background == "Criminal" || character.background == "Entertainer" || character.background == "Guild Artisan"
+					|| character.background == "Noble" || character.background == "Sailor")
+				{
+					++target;
+				}
+
+				for (int skip = 0; skip <= target; ++skip) // Skip the number of lines that was rolled
+				{
+					getline(in, line);
+				}
+				character.flaws += line += " "; // The last line read is the trait
+			}
+		}
+	}
 }
 
 

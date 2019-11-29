@@ -31,6 +31,9 @@ void displayCharacterSheet(const dndCharacter& character)
 	cout << "Race: " << character.race << "\n";
 	cout << "Class: " << character.characterClass << "\n";
 	cout << "Background: " << character.background << "\n";
-	cout << "Alignment: " << character.alignment << "\n";
-	cout << "Personality Traits: " << character.personalityTraits << "\n";
+	cout << "Alignment: " << character.alignment << "\n\n";
+	cout << "Personality Traits: " << character.personalityTraits << "\n\n";
+	cout << "Ideals: " << character.ideals << "\n\n";
+	cout << "Bonds: " << character.bonds << "\n\n";
+	cout << "Flaws: " << character.flaws << "\n";
 }

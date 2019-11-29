@@ -1,0 +1,108 @@
+Acolyte
+Lawful|Tradition. The ancient traditions of worship and sacrifice must be preserved and upheld.
+Good|Charity. I always try to help those in need, no matter what the personal cost.
+Chaotic|Change. We must help bring about the changes the gods are constantly working in the world.
+Lawful|Power. I hope to one day rise to the top of my faith's religious hierarchy.
+Lawful|Faith. I trust that my deity will guide my actions. I have faith that if I work hard, things will go well.
+Any|Aspiration. I seek to prove myself worthy of my god's favor by matching my actions against his or her teachings.
+
+Charlatan
+Chaotic|Independence. I am a free spirit--no one tells me what to do.
+Lawful|Fairness. I never target people who can't afford to lose a few coins.
+Good|Charity. I distribute the money I acquire to the people who really need it.
+Chaotic|Creativity. I never run the same con twice.
+Good|Friendship. Material goods come and go. Bonds of friendship last forever.
+Any|Aspiration. I'm determined to make something of myself.
+
+Criminal
+Spy
+Lawful|Honor. I don't steal from others in the trade.
+Chaotic|Freedom. Chains are meant to be broken, as are those who would forge them.
+Good|Charity. I steal from the wealthy so that I can help people in need.
+Evil|Greed. I will do whatever it takes to become wealthy.
+Neutral|People. I'm loyal to my friends, not to any ideals, and everyone else can take a trip down the Styx for all I care.
+Good|Redemption. There's a spark of good in everyone.
+
+Entertainer
+Gladiator
+Good|Beauty. When I perform, I make the world better than it was.
+Lawful|Tradition. The stories, legends, and songs of the past must never be forgotten, for they teach us who we are.
+Chaotic|Creativity. The world is in need of new ideas and bold action.
+Evil|Greed. I'm only in it for the money and fame.
+Neutral|People. I like seeing the smiles on people's faces when I perform. That's all that matters.
+Any|Honesty. Art should reflect the soul; it should come from within and reveal who we really are.
+
+Folk Hero
+Good|Respect. People deserve to be treated with dignity and respect.
+Lawful|Fairness. No one should get preferential treatment before the law, and no one is above the law.
+Chaotic|Freedom. Tyrans must not be allowed to oppress the people.
+Evil|Might. If I become strong, I can take what I want--what I deserve.
+Neutral|Sincerity. There's no good in pretending to be something I'm not.
+Any|Destiny. Nothing and no one can steer me away from my higher calling.
+
+Guild Artisan
+Guild Merchant
+Lawful|Community. It is the duty of all civilized people to strengthen the bonds of community and the security of civilization.
+Good|Generosity. My talents were given to me so that I could use them to benefit the world.
+Chaotic|Freedom. Everyone should be free to pursue his or her own livelihood.
+Evil|Greed. I'm only in it for the money.
+Neutral|People. I'm committed to the people I care about, not to ideals.
+Any|Aspiration. I work hard to be the best there is at my craft.
+
+Hermit
+Good|Greater Good. My gifts are meant to be shared with all, not used for my own benefit.
+Lawful|Logic. Emotions must not cloud our sense of what is right and true, or our logical thinking.
+Chaotic|Free Thinking. Inquiry and curiosity are the pillars of progress.
+Evil|Power. Solitude and contemplation are paths toward mystical or magical power.
+Neutral|Live and Let Live. Meddling in the affairs of others only causes trouble.
+Any|Self-Knowledge. If you know yourself, there's nothing left to know.
+
+Noble
+Knight
+Good|Respect. Respect is due to me because of my position, but all people regardless of station deserve to be treated with dignity.
+Lawful|Responsibility. It is my duty to respect the authority of those above me, just as those below me must respect mine.
+Chaotic|Independence. I must prove that I can handle myself without the coddling of my family.
+Evil|Power. If I can attain more power, no one will tell me what to do.
+Any|Family. Blood runs thicker than water.
+Good|Noble Obligation. It is my duty to protect and care for the people beneath me.
+
+Outlander
+Chaotic|Change. Life is like the seasons, in constant change, and we must change with it.
+Good|Greater Good. It is each person's repsonsibility to make the most happiness for the whole tribe.
+Lawful|Honor. If I dishonor myself, I dishonor my whole clan.
+Evil|Might. The strongest are meant to rule.
+Neutral|Nature. The natural world is more important than all the constructs of civilization.
+Any|Glory. I must earn glory in battle, for myself and my clan.
+
+Sage
+Neutral|Knowledge. The path to power and self-improvement is through knowledge.
+Good|Beauty. What is beautiful points us beyond itself toward what is true.
+Lawful|Logic. Emotions must not cloud our logical thinking.
+Chaotic|No Limits. Nothing should fetter the infinite possibility inherent in all existence.
+Evil|Power. Knowledge is the path to pwer and domination.
+Any|Self-Improvement. The goal of a life to study is the betterment of oneself.
+
+Sailor
+Pirate
+Good|Respect. The thing that keeps a ship together is mutual respect between captain and crew.
+Lawful|Fairness. We all do the work, so we all share in the rewards.
+Chaotic|Freedom. The sea is freedom--the freedom to go anywhere and do anything.
+Evil|Mastery. I'm a predator, and the other ships on the sea are my prey.
+Neutral|People. I'm committed to my crewmates, not to ideals.
+Any|Aspiration. Someday I'll owm my own ship and chart my own destiny.
+
+Soldier
+Good|Greater Good. Our lot is to lay down our lives in defense of others.
+Lawful|Responsibility. I do what I must and obey just authority.
+Chaotic|Independnce. When people follow order blindly, they embrace a kind of tyranny.
+Evil|Might. In life as in war, the stronger force wins.
+Neutral|Live and Let Live. Ideals aren't worth killing over or going to war for.
+Any|Nation. My city, nation, or people are all that matter.
+
+Urchin
+Good|Repsect. All people, rich or poor, deserve respect.
+Lawful|Community. We have to take care of each other, because no one else is going to do it.
+Chaotic|Change. The low are lifted up, and the high and mighty are brought down. Change is the nature of things.
+Evil|Retribution. The rich need to be shown what life and death are like in the gutters.
+Neutral|People. I help the people who help me--that's what keeps us alive.
+Any|Aspiration. I'm going to prove that I'm worthy of a better life.
