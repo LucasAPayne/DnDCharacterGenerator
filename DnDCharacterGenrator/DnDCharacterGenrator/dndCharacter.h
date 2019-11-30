@@ -6,7 +6,7 @@
 struct Ability
 {
 	int score;
-	int multiplier;
+	int modifier;
 };
 
 struct Skill
@@ -62,7 +62,7 @@ public:
 
 	std::string characterName;
 	std::string playerName;
-	std::string gender = "";
+	std::string sex = "";
 	std::string characterClass;
 	std::string background;
 	std::string race;

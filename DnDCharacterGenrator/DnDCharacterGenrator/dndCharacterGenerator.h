@@ -16,25 +16,24 @@ public:
 	void generateRace(dndCharacter& character);
 	void generateBackground(dndCharacter& character);
 	void generateAlignment(dndCharacter& character);
-	void generateName(dndCharacter& character); // Also determines gender if not done by the user
+	void generateName(dndCharacter& character); // Also determines sex if not done by the user
 	void generatePersonalityTraits(dndCharacter& character);
 	void generateIdeals(dndCharacter& character);
 	void generateBonds(dndCharacter& character);
 	void generateFlaws(dndCharacter& character);
 
-	// Values ===================================================================
+	// Skills, Abilities, and Level ==============================================
 
 	// Generates random level and sets experience to the starting amount for that level
-	void generateLevel(dndCharacter& character); 
+	void generateLevel(dndCharacter& character);
 
 	void generateProficiencyBonus(dndCharacter& character);
-	void generatePassiveWisdom(dndCharacter& character);
-
-	// Skills and Abilities =====================================================
-
-	void generateAbilities(dndCharacter& character);
+	void generateAbilityScores(dndCharacter& character);
+	void generateRacialAbilityBonuses(dndCharacter& character);
+	void generateAbilityModifiers(dndCharacter& character);
 	void generateSkills(dndCharacter& character);
 	void generateSavingThrows(dndCharacter& character);
+	void generatePassiveWisdom(dndCharacter& character);
 
 	// Feats, Traits, Proficiencies, Languages ===================================
 	void generateFeatsAndTraits(dndCharacter& character);

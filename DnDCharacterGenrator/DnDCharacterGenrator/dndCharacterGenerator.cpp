@@ -1,5 +1,6 @@
 #include "dndCharacter.h"
 #include "dndCharacterGenerator.h"
+#include <algorithm>
 #include <ctime>
 #include <fstream>
 #include <random>
@@ -33,7 +34,7 @@ void dndCharacterGenerator::generateClass(dndCharacter& character)
 
 void dndCharacterGenerator::generateRace(dndCharacter& character)
 {
-	vector<string> races = { "Dwarf", "Elf", "Halfling", "Human" };
+	vector<string> races = { "Dwarf", "Hill Dwarf", "Mountain Dwarf", "Elf", "High Elf", "Wood Elf", "Dark Elf (Drow)", "Halfling", "Lightfoot Halfling", "Stout Halfling", "Human" };
 
 	static default_random_engine engine(time(0));
 	static uniform_int_distribution<unsigned> dist(0, races.size() - 1);
@@ -67,17 +68,17 @@ void dndCharacterGenerator::generateAlignment(dndCharacter& character)
 
 void dndCharacterGenerator::generateName(dndCharacter& character)
 {
-	// Gender needed to generate random name
-	if (character.gender == "")
+	// Sex needed to generate random name
+	if (character.sex == "")
 	{
 		// Probably overkill, but for for the sake of consistency . . .
 
-		vector<string> genders = { "Male", "Female" };
+		vector<string> sexes = { "Male", "Female" };
 
 		static default_random_engine engine(time(0));
-		static uniform_int_distribution<unsigned> dist(0, genders.size() - 1);
+		static uniform_int_distribution<unsigned> dist(0, sexes.size() - 1);
 
-		character.gender = genders[dist(engine)];
+		character.sex = sexes[dist(engine)];
 	}
 
 	// Generate Random Name
@@ -244,31 +245,211 @@ void dndCharacterGenerator::generateFlaws(dndCharacter & character)
 	}
 }
 
-
 // ======================================================================================
-// Values
+// Skills, Abilities, and Level
 // ======================================================================================
 
 void dndCharacterGenerator::generateLevel(dndCharacter& character)
 {
+	// First entry null so that expForLevel[1] is how much exp is required for level one, etc.
+	vector<int> expForLevel = { NULL, 0, 300, 900, 2700, 6500, 14000, 23000, 34000, 48000, 64000, 85000, 100000, 120000, 140000, 165000, 195000, 225000, 265000, 305000, 355000 };
+
+	static default_random_engine engine(time(0));
+	static uniform_int_distribution<unsigned> dist(1, 20);
+
+	character.level = dist(engine);
+	character.experience = expForLevel[character.level]; // Character starts with 0 progress toward next level
 }
 
 void dndCharacterGenerator::generateProficiencyBonus(dndCharacter & character)
 {
+	if (character.level >= 1 && character.level <= 4)
+	{
+		character.proficiencyBonus = 2;
+	}
+	else if (character.level >= 5 && character.level <= 8)
+	{
+		character.proficiencyBonus = 3;
+	}
+	else if (character.level >= 9 && character.level <= 12)
+	{
+		character.proficiencyBonus = 4;
+	}
+	else if (character.level >= 13 && character.level <= 16)
+	{
+		character.proficiencyBonus = 5;
+	}
+	else if (character.level >= 17 && character.level <= 20)
+	{
+		character.proficiencyBonus = 6;
+	}
 }
 
-void dndCharacterGenerator::generatePassiveWisdom(dndCharacter & character)
+void dndCharacterGenerator::generateAbilityScores(dndCharacter & character)
 {
+	// Roll four d6 and record the sum of the highest three results
+	// Do this for each of the six abilities
+	static default_random_engine engine(time(0));
+	static uniform_int_distribution<unsigned> dist(0, 5);
+	vector<int> results;
+	vector<int> totals;
+
+	for (int i = 0; i < 6; ++i)
+	{
+		for (int j = 0; j < 4; ++j)
+		{
+			results.push_back(dist(engine));
+		}
+
+		
+		std::sort(results.begin(), results.end(), std::greater<int>()); // Put the results in order of greatest to least
+		totals.push_back(results[0] + results[1] + results[2]); // Add the greatest three results of this run and put the sum in totals
+	}
+
+	// Assign ability scores to the values in totals
+	character.strength.score     = totals[0];
+	character.dexterity.score    = totals[1];
+	character.constitution.score = totals[2];
+	character.intelligence.score = totals[3];
+	character.wisdom.score       = totals[4];
+	character.charisma.score     = totals[5];
 }
 
-
-// ======================================================================================
-// Skills and Abilities
-// ======================================================================================
-
-
-void dndCharacterGenerator::generateAbilities(dndCharacter & character)
+void dndCharacterGenerator::generateRacialAbilityBonuses(dndCharacter & character)
 {
+	// Subraces also get parent race benefits
+	if (character.race == "Dwarf" || character.race == "Hill Dwarf" || character.race == "Mountain Dwarf")
+	{
+		character.constitution.score += 2;
+	}
+	if (character.race == "Hill Dwarf")
+	{
+		character.wisdom.score++;
+	}
+	if (character.race == "Mountain Dwarf")
+	{
+		character.strength.score += 2;
+	}
+
+	if (character.race == "Elf" || character.race == "High Elf" || character.race == "Wood Elf" || character.race == "Dark Elf (Drow)")
+	{
+		character.dexterity.score += 2;
+	}
+	if (character.race == "High Elf")
+	{
+		character.intelligence.score++;
+	}
+	if (character.race == "Wood Elf")
+	{
+		character.wisdom.score++;
+	}
+	if (character.race == "Dark Elf (Drow)")
+	{
+		character.charisma.score++;
+	}
+
+	if (character.race == "Halfling" || character.race == "Lightfoot Halfling" || character.race == "Stout Halfling")
+	{
+		character.dexterity.score += 2;
+	}
+	if (character.race == "Lightfoot Halfling")
+	{
+		character.charisma.score++;
+	}
+	if (character.race == "Stout Halfling")
+	{
+		character.constitution.score++;
+	}
+
+	if (character.race == "Human")
+	{
+		character.strength.score++;
+		character.dexterity.score++;
+		character.constitution.score++;
+		character.intelligence.score++;
+		character.wisdom.score++;
+		character.charisma.score++;
+	}
+}
+
+void dndCharacterGenerator::generateAbilityModifiers(dndCharacter & character)
+{
+	vector<Ability> abilities = { character.strength, character.dexterity, character.constitution, character.intelligence, character.wisdom, character.charisma };
+
+	for (int i = 0; i < 6; ++i)
+	{
+		if (abilities[i].score == 1)
+		{
+			abilities[i].modifier = -5;
+		}
+		else if (abilities[i].score == 2 || abilities[i].score == 3)
+		{
+			abilities[i].modifier = -4;
+		}
+		else if (abilities[i].score == 4 || abilities[i].score == 5)
+		{
+			abilities[i].modifier = -3;
+		}
+		else if (abilities[i].score == 6 || abilities[i].score == 7)
+		{
+			abilities[i].modifier = -2;
+		}
+		else if (abilities[i].score == 8 || abilities[i].score == 9)
+		{
+			abilities[i].modifier = -1;
+		}
+		else if (abilities[i].score == 10 || abilities[i].score == 11)
+		{
+			abilities[i].modifier = 0;
+		}
+		else if (abilities[i].score == 12 || abilities[i].score == 13)
+		{
+			abilities[i].modifier = 1;
+		}
+		else if (abilities[i].score == 14 || abilities[i].score == 15)
+		{
+			abilities[i].modifier = 2;
+		}
+		else if (abilities[i].score == 16 || abilities[i].score == 17)
+		{
+			abilities[i].modifier = 3;
+		}
+		else if (abilities[i].score == 18 || abilities[i].score == 19)
+		{
+			abilities[i].modifier = 4;
+		}
+		else if (abilities[i].score == 20 || abilities[i].score == 21)
+		{
+			abilities[i].modifier = 5;
+		}
+		else if (abilities[i].score == 22 || abilities[i].score == 23)
+		{
+			abilities[i].modifier = 6;
+		}
+		else if (abilities[i].score == 24 || abilities[i].score == 25)
+		{
+			abilities[i].modifier = 7;
+		}
+		else if (abilities[i].score == 26 || abilities[i].score == 27)
+		{
+			abilities[i].modifier = 8;
+		}
+		else if (abilities[i].score == 28 || abilities[i].score == 29)
+		{
+			abilities[i].modifier = 9;
+		}
+		else if (abilities[i].score == 30)
+		{
+			abilities[i].modifier = 10;
+		}
+	}
+
+	character.strength.modifier     = abilities[0].modifier;
+	character.dexterity.modifier    = abilities[1].modifier;
+	character.constitution.modifier = abilities[2].modifier;
+	character.intelligence.modifier = abilities[3].modifier;
+	character.wisdom.modifier       = abilities[4].modifier;
+	character.charisma.modifier     = abilities[5].modifier;
 }
 
 void dndCharacterGenerator::generateSkills(dndCharacter & character)
@@ -278,6 +459,11 @@ void dndCharacterGenerator::generateSkills(dndCharacter & character)
 void dndCharacterGenerator::generateSavingThrows(dndCharacter & character)
 {
 }
+
+void dndCharacterGenerator::generatePassiveWisdom(dndCharacter & character)
+{
+}
+
 
 
 // ======================================================================================
@@ -338,7 +524,9 @@ void dndCharacterGenerator::generateCharacter(dndCharacter & character)
 	generatePassiveWisdom(character);
 
 	// Skills and Abilities
-	generateAbilities(character);
+	generateAbilityScores(character);
+	generateRacialAbilityBonuses(character);
+	generateAbilityModifiers(character);
 	generateSkills(character);
 	generateSavingThrows(character);
 
