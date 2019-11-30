@@ -7,6 +7,8 @@ class dndCharacterGenerator
 private:
 	bool random;
 
+	void chooseXRandomlyFrom(int x, std::vector<std::reference_wrapper<Skill> > list);
+
 public:
 	dndCharacterGenerator();
 	
@@ -31,8 +33,10 @@ public:
 	void generateAbilityScores(dndCharacter& character);
 	void generateRacialAbilityBonuses(dndCharacter& character);
 	void generateAbilityModifiers(dndCharacter& character);
-	void generateSkills(dndCharacter& character);
-	void generateSavingThrows(dndCharacter& character);
+	void generateSkillProficiencies(dndCharacter& character);
+	void generateSkillModifiers(dndCharacter& character);
+	void generateSavingThrowProficiencies(dndCharacter& character);
+	void generateSavingThrowModifiers(dndCharacter& character);
 	void generatePassiveWisdom(dndCharacter& character);
 
 	// Feats, Traits, Proficiencies, Languages ===================================
