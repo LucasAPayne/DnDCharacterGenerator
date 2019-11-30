@@ -290,7 +290,7 @@ void dndCharacterGenerator::generateAbilityScores(dndCharacter & character)
 	// Roll four d6 and record the sum of the highest three results
 	// Do this for each of the six abilities
 	static default_random_engine engine(time(0));
-	static uniform_int_distribution<unsigned> dist(0, 5);
+	static uniform_int_distribution<unsigned> dist(1, 6);
 	vector<int> results;
 	vector<int> totals;
 
@@ -378,70 +378,7 @@ void dndCharacterGenerator::generateAbilityModifiers(dndCharacter & character)
 
 	for (int i = 0; i < 6; ++i)
 	{
-		if (abilities[i].score == 1)
-		{
-			abilities[i].modifier = -5;
-		}
-		else if (abilities[i].score == 2 || abilities[i].score == 3)
-		{
-			abilities[i].modifier = -4;
-		}
-		else if (abilities[i].score == 4 || abilities[i].score == 5)
-		{
-			abilities[i].modifier = -3;
-		}
-		else if (abilities[i].score == 6 || abilities[i].score == 7)
-		{
-			abilities[i].modifier = -2;
-		}
-		else if (abilities[i].score == 8 || abilities[i].score == 9)
-		{
-			abilities[i].modifier = -1;
-		}
-		else if (abilities[i].score == 10 || abilities[i].score == 11)
-		{
-			abilities[i].modifier = 0;
-		}
-		else if (abilities[i].score == 12 || abilities[i].score == 13)
-		{
-			abilities[i].modifier = 1;
-		}
-		else if (abilities[i].score == 14 || abilities[i].score == 15)
-		{
-			abilities[i].modifier = 2;
-		}
-		else if (abilities[i].score == 16 || abilities[i].score == 17)
-		{
-			abilities[i].modifier = 3;
-		}
-		else if (abilities[i].score == 18 || abilities[i].score == 19)
-		{
-			abilities[i].modifier = 4;
-		}
-		else if (abilities[i].score == 20 || abilities[i].score == 21)
-		{
-			abilities[i].modifier = 5;
-		}
-		else if (abilities[i].score == 22 || abilities[i].score == 23)
-		{
-			abilities[i].modifier = 6;
-		}
-		else if (abilities[i].score == 24 || abilities[i].score == 25)
-		{
-			abilities[i].modifier = 7;
-		}
-		else if (abilities[i].score == 26 || abilities[i].score == 27)
-		{
-			abilities[i].modifier = 8;
-		}
-		else if (abilities[i].score == 28 || abilities[i].score == 29)
-		{
-			abilities[i].modifier = 9;
-		}
-		else if (abilities[i].score == 30)
-		{
-			abilities[i].modifier = 10;
-		}
+		abilities[i].modifier = floor((float)(abilities[i].score - 10) / 2);
 	}
 
 	character.strength.modifier     = abilities[0].modifier;
@@ -454,6 +391,7 @@ void dndCharacterGenerator::generateAbilityModifiers(dndCharacter & character)
 
 void dndCharacterGenerator::generateSkills(dndCharacter & character)
 {
+
 }
 
 void dndCharacterGenerator::generateSavingThrows(dndCharacter & character)
