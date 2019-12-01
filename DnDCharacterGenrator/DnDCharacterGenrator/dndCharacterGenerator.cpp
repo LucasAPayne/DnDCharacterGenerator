@@ -53,9 +53,7 @@ void dndCharacterGenerator::generateRace(dndCharacter& character)
 	static default_random_engine engine(time(0));
 	static uniform_int_distribution<unsigned> dist(0, races.size() - 1);
 
-	//character.race = races[dist(engine)];
-
-	character.race = "Human";
+	character.race = races[dist(engine)];
 
 	// Humans also have ethnicity (for name)
 	if (character.race == "Human")
@@ -66,7 +64,6 @@ void dndCharacterGenerator::generateRace(dndCharacter& character)
 		static uniform_int_distribution<unsigned> dist2(0, 8);
 
 		character.ethnicity = ethnicities[dist2(engine2)];
-		//character.ethnicity = ethnicities[8];
 	}
 }
 
@@ -105,7 +102,7 @@ void dndCharacterGenerator::generateSex(dndCharacter& character)
 		static uniform_int_distribution<unsigned> dist(0, sexes.size() - 1);
 
 		character.sex = sexes[dist(engine)];
-		//character.sex = "Male";
+
 	}
 }
 
@@ -115,7 +112,7 @@ void dndCharacterGenerator::generateFirstName(dndCharacter& character)
 	ifstream in;
 	string line;
 
-	if (character.race == "Dwarf" || character.race == "Hill Dwarf" || character.race == "Mountain Dwarf")
+	if ((character.race == "Dwarf") || (character.race == "Hill Dwarf") || (character.race == "Mountain Dwarf"))
 	{
 		if (character.sex == "Male")
 		{
@@ -823,12 +820,54 @@ void dndCharacterGenerator::generatePassiveWisdom(dndCharacter& character)
 // Feats, Traits, Proficiencies, Languages
 // ======================================================================================
 
-void dndCharacterGenerator::generateFeatsAndTraits(dndCharacter& character)
+
+void dndCharacterGenerator::generateRacialTraits(dndCharacter & character)
 {
 }
 
-void dndCharacterGenerator::generateProficienciesAndLanguages(dndCharacter& character)
+void dndCharacterGenerator::generateFeatsAndTraits(dndCharacter& character)
 {
+	 
+}
+
+void dndCharacterGenerator::generateProficiencies(dndCharacter & character)
+{
+}
+
+void dndCharacterGenerator::generateLanguages(dndCharacter & character)
+{
+	character.languages.push_back("Common"); // All characters can speak, read, and write in the Common tongue
+
+	// Common is not a possible language because every character already knows it
+	vector<string> possibleLanguages = { "Dwarvish", "Elvish", "Giant", "Gnomish", "Goblin", "Halfling", "Orc", // Common Languages
+		"Abyssal", "Celestial", "Draconic", "Deep Speech", "Infernal", "Primordial", "Sylvan", "Undercommon" };			  // Exotic Languages
+
+	static default_random_engine engine(time(0));
+	static uniform_int_distribution<unsigned> dist(0, possibleLanguages.size() - 1);
+
+	if (character.race == "Dwarf" || character.race == "Hill Dwarf" || character.race == "Mountain Dwarf")
+	{
+		character.languages.push_back("Dwarvish");
+	}
+	else if (character.race == "Elf" || character.race == "High Elf" || character.race == "Wood Elf" || character.race == "Dark Elf (Drow)")
+	{
+		character.languages.push_back("Elvish");
+
+		// High Elves have the Extra Language Trait
+		if (character.race == "High Elf")
+		{
+			character.languages.push_back(possibleLanguages[dist(engine)]);
+		}
+	}
+	else if (character.race == "Halfling" || character.race == "Lightfoot Halfling" || character.race == "Stout Halfling")
+	{
+		character.languages.push_back("Halfling");
+	}
+	else if (character.race == "Human")
+	{
+		// Humans can pick any language
+		character.languages.push_back(possibleLanguages[dist(engine)]);
+	}
 }
 
 
@@ -958,8 +997,8 @@ void dndCharacterGenerator::generateCharacter(dndCharacter& character)
 	generateBackground(character);
 	generateAlignment(character);
 	generateSex(character);
-	//generateFirstName(character);
-	//generateSurname(character);
+	generateFirstName(character);
+	generateSurname(character);
 	generatePersonalityTraits(character);
 	generateIdeals(character);
 	generateBonds(character);
@@ -980,7 +1019,7 @@ void dndCharacterGenerator::generateCharacter(dndCharacter& character)
 
 	// Feats, Traits, Proficiencies, Languages
 	generateFeatsAndTraits(character);
-	generateProficienciesAndLanguages(character);
+	generateLanguages(character);
 
 	// Equipment and Combat
 	generateHitDice(character);

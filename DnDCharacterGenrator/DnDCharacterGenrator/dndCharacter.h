@@ -124,7 +124,7 @@ public:
 	// Feats, Traits, Lanuguages, Proficiencies
 	std::vector<Trait> featsAndTraits;
 	std::vector<Trait> profiencies;
-	std::vector<Trait> languages;
+	std::vector<std::string> languages;
 
 	// Equipment
 	Wealth wealth;

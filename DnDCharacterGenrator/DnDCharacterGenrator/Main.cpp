@@ -32,10 +32,13 @@ void displayCharacterSheet(const dndCharacter& character)
 {
 	cout << std::boolalpha;
 	
-	//cout << "Name: "			   << character.characterName << "\n";
-	cout << "Ethnicity: "		   << character.ethnicity << "\n";
+	cout << "Name: "			   << character.characterName << "\n";
 	cout << "Sex: "				   << character.sex << "\n";
 	cout << "Race: "			   << character.race << "\n";
+	if (character.race == "Human")
+	{
+		cout << "Ethnicity: " << character.ethnicity << "\n";
+	}
 	cout << "Class: "			   << character.characterClass << "\n";
 	cout << "Level: "			   << character.level << "\n";
 	cout << "Experience Points: "  << character.experience << "\n";
@@ -49,6 +52,17 @@ void displayCharacterSheet(const dndCharacter& character)
 	cout << "Ideals: "			   << character.ideals << "\n\n";
 	cout << "Bonds: "			   << character.bonds << "\n\n";
 	cout << "Flaws: "			   << character.flaws << "\n\n";
+
+	cout << "Languages: ";
+	for (int i = 0; i < character.languages.size(); ++i)
+	{
+		cout << character.languages[i];
+		if (i != character.languages.size() - 1)
+		{
+			cout << ", ";
+		}
+	}
+	cout << "\n\n";
 
 	cout << "========\n";
 	cout << "Abilites\n";

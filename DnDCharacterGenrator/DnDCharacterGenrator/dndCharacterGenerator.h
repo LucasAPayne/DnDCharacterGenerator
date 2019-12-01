@@ -43,7 +43,9 @@ public:
 
 	// Feats, Traits, Proficiencies, Languages ===================================
 	void generateFeatsAndTraits(dndCharacter& character);
-	void generateProficienciesAndLanguages(dndCharacter& character);
+	void generateRacialTraits(dndCharacter& character);
+	void generateProficiencies(dndCharacter& character);
+	void generateLanguages(dndCharacter& character);
 
 	// Equipment and Combat ======================================================
 	
