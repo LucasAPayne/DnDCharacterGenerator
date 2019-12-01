@@ -6,13 +6,14 @@
 struct Ability
 {
 	int score;
-	int multiplier;
+	int modifier;
 };
 
 struct Skill
 {
-	int value;
-	bool proficient; // Fill in the bubble on character sheet
+	Ability parent; // The ability that governs the skill
+	int modifier;
+	bool proficient = false; // Fill in the bubble on character sheet and allows proficiency bonus to be applied to modifier
 };
 
 struct Trait
@@ -62,7 +63,7 @@ public:
 
 	std::string characterName;
 	std::string playerName;
-	std::string gender = "";
+	std::string sex = "";
 	std::string characterClass;
 	std::string background;
 	std::string race;
@@ -112,9 +113,9 @@ public:
 
 	// Saving Throws
 
-	Skill strenghSave;
+	Skill strengthSave;
 	Skill dexteritySave;
-	Skill constituionSave;
+	Skill constitutionSave;
 	Skill intelligenceSave;
 	Skill wisdomSave;
 	Skill charismaSave;
