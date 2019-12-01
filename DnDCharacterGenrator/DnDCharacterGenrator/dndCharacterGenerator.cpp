@@ -53,7 +53,21 @@ void dndCharacterGenerator::generateRace(dndCharacter& character)
 	static default_random_engine engine(time(0));
 	static uniform_int_distribution<unsigned> dist(0, races.size() - 1);
 
-	character.race = races[dist(engine)];
+	//character.race = races[dist(engine)];
+
+	character.race = "Human";
+
+	// Humans also have ethnicity (for name)
+	if (character.race == "Human")
+	{
+		vector<string> ethnicities = { "Calishite", "Chondathan", "Damaran", "Illuskan", "Mulan", "Rashemi", "Shou", "Tethyrian", "Turami" };
+		
+		static default_random_engine engine2(time(0));
+		static uniform_int_distribution<unsigned> dist2(0, 8);
+
+		character.ethnicity = ethnicities[dist2(engine2)];
+		//character.ethnicity = ethnicities[8];
+	}
 }
 
 void dndCharacterGenerator::generateBackground(dndCharacter& character)
@@ -80,22 +94,235 @@ void dndCharacterGenerator::generateAlignment(dndCharacter& character)
 	character.alignment = alignments[dist(engine)];
 }
 
-void dndCharacterGenerator::generateName(dndCharacter& character)
+void dndCharacterGenerator::generateSex(dndCharacter& character)
 {
 	// Sex needed to generate random name
 	if (character.sex == "")
 	{
-		// Probably overkill, but for for the sake of consistency . . .
-
 		vector<string> sexes = { "Male", "Female" };
 
 		static default_random_engine engine(time(0));
 		static uniform_int_distribution<unsigned> dist(0, sexes.size() - 1);
 
 		character.sex = sexes[dist(engine)];
+		//character.sex = "Male";
+	}
+}
+
+void dndCharacterGenerator::generateFirstName(dndCharacter& character)
+{
+	vector<string> possibleNames;
+	ifstream in;
+	string line;
+
+	if (character.race == "Dwarf" || character.race == "Hill Dwarf" || character.race == "Mountain Dwarf")
+	{
+		if (character.sex == "Male")
+		{
+			in.open("Lists/Names/Dwarf Names/Dwarf Male Names.txt");
+			if (in)
+			{
+				while (getline(in, line))
+				{
+					possibleNames.push_back(line);
+				}
+			}
+		}
+		else if (character.sex == "Female")
+		{
+			in.open("Lists/Names/Dwarf Names/Dwarf Female Names.txt");
+			if (in)
+			{
+				while (getline(in, line))
+				{
+					possibleNames.push_back(line);
+				}
+			}
+		}
+	}
+	else if (character.race == "Elf" || character.race == "High Elf" || character.race == "Wood Elf" || character.race == "Dark Elf (Drow)")
+	{
+		if (character.sex == "Male")
+		{
+			in.open("Lists/Names/Elf Names/Elf Male Names.txt");
+			if (in)
+			{
+				while (getline(in, line))
+				{
+					possibleNames.push_back(line);
+				}
+			}
+		}
+		else if (character.sex == "Female")
+		{
+			in.open("Lists/Names/Elf Names/Elf Female Names.txt");
+			if (in)
+			{
+				while (getline(in, line))
+				{
+					possibleNames.push_back(line);
+				}
+			}
+		}
+	}
+	else if (character.race == "Halfling" || character.race == "Lightfoot Halfling" || character.race == "Stout Halfling")
+	{
+		if (character.sex == "Male")
+		{
+			in.open("Lists/Names/Halfling Names/Halfling Male Names.txt");
+			if (in)
+			{
+				while (getline(in, line))
+				{
+					possibleNames.push_back(line);
+				}
+			}
+		}
+		else if (character.sex == "Female")
+		{
+			in.open("Lists/Names/Halfling Names/Halfling Female Names.txt");
+			if (in)
+			{
+				while (getline(in, line))
+				{
+					possibleNames.push_back(line);
+				}
+			}
+		}
+	}
+	else if (character.race == "Human")
+	{
+		if (character.sex == "Male")
+		{
+			in.open("Lists/Names/Human Names/Human Male Names.txt");
+			if (in)
+			{
+				while (getline(in, line))
+				{
+					if (line.find(character.ethnicity) != string::npos)
+					{
+						getline(in, line);
+
+						// If the character is a Condathan Human, skip an extra line due to how the file is formatted
+						if (character.ethnicity == "Chondathan")
+						{
+							getline(in, line);
+						}
+
+						while (line != "" && !in.eof())
+						{
+							possibleNames.push_back(line);
+							getline(in, line);
+						}
+						in.seekg(0, in.end);
+					}
+				}
+			}
+		}
+		else if (character.sex == "Female")
+		{
+			in.open("Lists/Names/Human Names/Human Female Names.txt");
+			if (in)
+			{
+				while (getline(in, line))
+				{
+					if (line.find(character.ethnicity) != string::npos)
+					{
+						getline(in, line);
+
+						// If the character is a Condathan Human, skip an extra line due to how the file is formatted
+						if (character.ethnicity == "Chondathan")
+						{
+							getline(in, line);
+						}
+
+						while (line != "" && !in.eof())
+						{
+							possibleNames.push_back(line);
+							getline(in, line);
+						}
+						in.seekg(0, in.end);
+					}
+				}
+			}
+		}
 	}
 
-	// Generate Random Name
+	static default_random_engine engine(time(0));
+	static uniform_int_distribution<unsigned> dist(0, possibleNames.size() - 1);
+	character.characterName = possibleNames[dist(engine)];
+}
+
+void dndCharacterGenerator::generateSurname(dndCharacter& character)
+{
+	vector<string> possibleNames;
+	ifstream in;
+	string line;
+
+	if (character.race == "Dwarf" || character.race == "Hill Dwarf" || character.race == "Mountain Dwarf")
+	{
+		in.open("Lists/Names/Dwarf Names/Dwarf Clan Names.txt");
+		if (in)
+		{
+			while (getline(in, line))
+			{
+				possibleNames.push_back(line);
+			}
+		}
+	}
+	else if (character.race == "Elf" || character.race == "High Elf" || character.race == "Wood Elf" || character.race == "Dark Elf (Drow)")
+	{
+		in.open("Lists/Names/Elf Names/Elf Family Names.txt");
+		if (in)
+		{
+			while (getline(in, line))
+			{
+				possibleNames.push_back(line);
+			}
+		}
+	}
+	else if (character.race == "Halfling" || character.race == "Lightfoot Halfling" || character.race == "Stout Halfling")
+	{
+		in.open("Lists/Names/Halfling Names/Halfling Family Names.txt");
+		if (in)
+		{
+			while (getline(in, line))
+			{
+				possibleNames.push_back(line);
+			}
+		}
+	}
+	else if (character.race == "Human")
+	{
+		in.open("Lists/Names/Human Names/Human Surnames.txt");
+		if (in)
+		{
+			while (getline(in, line))
+			{
+				if (line.find(character.ethnicity) != string::npos)
+				{
+					getline(in, line);
+
+					// If the character is a Condathan Human, skip an extra line due to how the file is formatted
+					if (character.ethnicity == "Chondathan")
+					{
+						getline(in, line);
+					}
+
+					while (line != "" && !in.eof())
+					{
+						possibleNames.push_back(line);
+						getline(in, line);
+					}
+					in.seekg(0, in.end);
+				}
+			}
+		}
+	}
+
+	static default_random_engine engine(time(0));
+	static uniform_int_distribution<unsigned> dist(0, possibleNames.size() - 1);
+	character.characterName += " " + possibleNames[dist(engine)]; // Add a space before surname
 }
 
 void dndCharacterGenerator::generatePersonalityTraits(dndCharacter& character)
@@ -112,7 +339,7 @@ void dndCharacterGenerator::generatePersonalityTraits(dndCharacter& character)
 			while (getline(in, line))
 			{
 				// If the current line in the file is the character's background
-				if (line.find(character.background, 0) != string::npos)
+				if (line.find(character.background) != string::npos)
 				{
 					// Roll a d8 to choose a personality trait, as there are 8 pre-made choices for each background in the Player's Handbook
 					// But here the d8 starts at 0 and goes to 7 because between 0 and 7 lines are skipped in the file when choosing traits
@@ -133,7 +360,6 @@ void dndCharacterGenerator::generatePersonalityTraits(dndCharacter& character)
 					character.personalityTraits += line += " "; // The last line read is the trait
 				}
 			}
-
 		}
 	}
 }
@@ -269,14 +495,10 @@ void dndCharacterGenerator::generateLevel(dndCharacter& character)
 	// First entry null so that expForLevel[1] is how much exp is required for level one, etc.
 	vector<int> expForLevel = { NULL, 0, 300, 900, 2700, 6500, 14000, 23000, 34000, 48000, 64000, 85000, 100000, 120000, 140000, 165000, 195000, 225000, 265000, 305000, 355000 };
 
-	/* For now, only concerned with 1st level characters
 	static default_random_engine engine(time(0));
 	static uniform_int_distribution<unsigned> dist(1, 20);
 
 	character.level = dist(engine);
-	*/
-
-	character.level = 1;
 
 	character.experience = expForLevel[character.level]; // Character starts with 0 progress toward next level
 }
@@ -614,11 +836,104 @@ void dndCharacterGenerator::generateProficienciesAndLanguages(dndCharacter& char
 // Equipment and Combat
 // ======================================================================================
 
-void dndCharacterGenerator::generateEquipment(dndCharacter& character)
+void dndCharacterGenerator::generateHitDice(dndCharacter & character)
 {
+	if (character.characterClass == "Barbarian")
+	{
+		character.hitDice.type = "d12";
+	}
+	else if (character.characterClass == "Fighter" || character.characterClass == "Paladin" || character.characterClass == "Ranger")
+	{
+		character.hitDice.type = "d10";
+	}
+	else if (character.characterClass == "Bard" || character.characterClass == "Cleric" || character.characterClass == "Druid" || character.characterClass == "Monk" 
+			|| character.characterClass == "Rogue" || character.characterClass == "Warlock")
+	{
+		character.hitDice.type = "d8";
+	}
+	else if (character.characterClass == "Sorceror" || character.characterClass == "Wizard")
+	{
+		character.hitDice.type = "d6";
+	}
+
+	character.hitDice.number = character.level;
 }
 
-void dndCharacterGenerator::generateCombatValues(dndCharacter& character)
+void dndCharacterGenerator::generateHitPoints(dndCharacter & character)
+{
+	// At level 1, characters start with the max roll of their hit die plus their constitution modifier
+	if (character.characterClass == "Barbarian")
+	{
+		character.maxHitPoints = 12 + character.constitution.modifier;
+	}
+	else if (character.characterClass == "Fighter" || character.characterClass == "Paladin" || character.characterClass == "Ranger")
+	{
+		character.maxHitPoints = 10 + character.constitution.modifier;
+	}
+	else if (character.characterClass == "Bard" || character.characterClass == "Cleric" || character.characterClass == "Druid" || character.characterClass == "Monk"
+		|| character.characterClass == "Rogue" || character.characterClass == "Warlock")
+	{
+		character.maxHitPoints = 8 + character.constitution.modifier;
+	}
+	else if (character.characterClass == "Sorcerer" || character.characterClass == "Wizard")
+	{
+		character.maxHitPoints = 6 + character.constitution.modifier;
+	}
+
+	static default_random_engine engine(time(0));
+
+	// Health increases with level based on a hit die roll and constitution modifier
+	if (character.level > 1)
+	{
+		if (character.characterClass == "Barbarian")
+		{
+			static uniform_int_distribution<unsigned> dist(1, 12);
+			character.maxHitPoints += dist(engine) + character.constitution.modifier;
+		}
+		else if (character.characterClass == "Fighter" || character.characterClass == "Paladin" || character.characterClass == "Ranger")
+		{
+			static uniform_int_distribution<unsigned> dist(1, 10);
+			character.maxHitPoints += dist(engine) + character.constitution.modifier;
+		}
+		else if (character.characterClass == "Bard" || character.characterClass == "Cleric" || character.characterClass == "Druid" || character.characterClass == "Monk"
+			|| character.characterClass == "Rogue" || character.characterClass == "Warlock")
+		{
+			static uniform_int_distribution<unsigned> dist(1, 8);
+			character.maxHitPoints += dist(engine) + character.constitution.modifier;
+		}
+		else if (character.characterClass == "Sorcerer" || character.characterClass == "Wizard")
+		{
+			static uniform_int_distribution<unsigned> dist(1, 6);
+			character.maxHitPoints += dist(engine) + character.constitution.modifier;
+		}
+		
+	}
+
+	// Add other modifiers
+}
+
+void dndCharacterGenerator::generateSpeed(dndCharacter & character)
+{
+	if (character.race == "Dwarf" || character.race == "Hill Dwarf" || character.race == "Mountain Dwarf"
+		|| character.race == "Halfling" || character.race == "Lightfoot Halfling" || character.race == "Stout Halfling")
+	{
+		character.speed = 25;
+	}
+	else if (character.race == "Elf" || character.race == "High Elf" || character.race == "Wood Elf" || character.race == "Dark Elf (Drow)"
+		|| character.race == "Human")
+	{
+		character.speed = 30;
+	}
+}
+
+void dndCharacterGenerator::generateInitiative(dndCharacter & character)
+{
+	character.initiative = character.dexterity.modifier;
+
+	// Add other modifiers
+}
+
+void dndCharacterGenerator::generateEquipment(dndCharacter& character)
 {
 }
 
@@ -642,7 +957,9 @@ void dndCharacterGenerator::generateCharacter(dndCharacter& character)
 	generateRace(character);
 	generateBackground(character);
 	generateAlignment(character);
-	generateName(character);
+	generateSex(character);
+	//generateFirstName(character);
+	//generateSurname(character);
 	generatePersonalityTraits(character);
 	generateIdeals(character);
 	generateBonds(character);
@@ -666,8 +983,11 @@ void dndCharacterGenerator::generateCharacter(dndCharacter& character)
 	generateProficienciesAndLanguages(character);
 
 	// Equipment and Combat
+	generateHitDice(character);
+	generateHitPoints(character);
+	generateSpeed(character);
+	generateInitiative(character);
 	generateEquipment(character);
-	generateCombatValues(character);
 	generateAttacks(character);
 	generateSpellcastingTraits(character);
 }

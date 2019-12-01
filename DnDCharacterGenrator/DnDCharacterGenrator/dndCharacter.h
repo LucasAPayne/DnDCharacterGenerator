@@ -67,6 +67,7 @@ public:
 	std::string characterClass;
 	std::string background;
 	std::string race;
+	std::string ethnicity = ""; // Only for humans
 	std::string alignment;
 	std::string personalityTraits;
 	std::string ideals;

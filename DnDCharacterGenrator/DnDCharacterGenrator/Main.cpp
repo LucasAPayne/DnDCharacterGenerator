@@ -4,6 +4,7 @@ that will eventually be replaced by a wxWidgets application */
 #include "dndCharacter.h"
 #include "dndCharacterGenerator.h"
 #include <iostream>
+#include <ctime>
 using std::cout;
 
 // Displays all character information
@@ -11,13 +12,15 @@ void displayCharacterSheet(const dndCharacter& character);
 
 int main()
 {
+	srand(time(0));
+
 	while (1)
 	{
-		dndCharacter character;
-		dndCharacterGenerator generator;
+			dndCharacter character;
+			dndCharacterGenerator generator;
 
-		generator.generateCharacter(character);
-		displayCharacterSheet(character);
+			generator.generateCharacter(character);
+			displayCharacterSheet(character);
 
 		cout << "\n\n";
 		system("pause");
@@ -28,13 +31,18 @@ int main()
 void displayCharacterSheet(const dndCharacter& character)
 {
 	cout << std::boolalpha;
-
+	
+	//cout << "Name: "			   << character.characterName << "\n";
+	cout << "Ethnicity: "		   << character.ethnicity << "\n";
 	cout << "Sex: "				   << character.sex << "\n";
 	cout << "Race: "			   << character.race << "\n";
 	cout << "Class: "			   << character.characterClass << "\n";
 	cout << "Level: "			   << character.level << "\n";
 	cout << "Experience Points: "  << character.experience << "\n";
-	cout << "Proficiency Bonus: " << character.proficiencyBonus << "\n";
+	cout << "Proficiency Bonus: "  << character.proficiencyBonus << "\n";
+	cout << "Hit Points: "		   << character.maxHitPoints << "\n";
+	cout << "Speed: "			   << character.speed << "\n";
+	cout << "Initiative: "		   << character.initiative << "\n";
 	cout << "Background: "		   << character.background << "\n";
 	cout << "Alignment: "		   << character.alignment << "\n\n";
 	cout << "Personality Traits: " << character.personalityTraits << "\n\n";
@@ -75,12 +83,12 @@ void displayCharacterSheet(const dndCharacter& character)
 	cout << "Wisdom: "		 << character.wisdomSave.proficient << "\n";
 	cout << "Charisma: "	 << character.charismaSave.proficient << "\n\n";
 	cout << "Modifiers\n";
-	cout << "Strength: " << character.strengthSave.modifier << "\n";
-	cout << "Dexterity: " << character.dexteritySave.modifier << "\n";
+	cout << "Strength: "	 << character.strengthSave.modifier << "\n";
+	cout << "Dexterity: "	 << character.dexteritySave.modifier << "\n";
 	cout << "Constitution: " << character.constitutionSave.modifier << "\n";
 	cout << "Intelligence: " << character.intelligenceSave.modifier << "\n";
-	cout << "Wisdom: " << character.wisdomSave.modifier << "\n";
-	cout << "Charisma: " << character.charismaSave.modifier << "\n\n";
+	cout << "Wisdom: "		 << character.wisdomSave.modifier << "\n";
+	cout << "Charisma: "	 << character.charismaSave.modifier << "\n\n";
 
 	cout << "======\n";
 	cout << "Skills\n";

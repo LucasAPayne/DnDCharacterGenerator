@@ -18,7 +18,9 @@ public:
 	void generateRace(dndCharacter& character);
 	void generateBackground(dndCharacter& character);
 	void generateAlignment(dndCharacter& character);
-	void generateName(dndCharacter& character); // Also determines sex if not done by the user
+	void generateSex(dndCharacter& character);
+	void generateFirstName(dndCharacter& character); 
+	void generateSurname(dndCharacter& character);
 	void generatePersonalityTraits(dndCharacter& character);
 	void generateIdeals(dndCharacter& character);
 	void generateBonds(dndCharacter& character);
@@ -44,9 +46,12 @@ public:
 	void generateProficienciesAndLanguages(dndCharacter& character);
 
 	// Equipment and Combat ======================================================
-
+	
+	void generateHitDice(dndCharacter& character);
+	void generateHitPoints(dndCharacter& character);
+	void generateSpeed(dndCharacter& character);
+	void generateInitiative(dndCharacter& character);
 	void generateEquipment(dndCharacter& character);
-	void generateCombatValues(dndCharacter& character);
 	void generateAttacks(dndCharacter& character);
 	void generateSpellcastingTraits(dndCharacter& character);
 
