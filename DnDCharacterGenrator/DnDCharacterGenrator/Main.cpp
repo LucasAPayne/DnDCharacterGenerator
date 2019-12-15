@@ -5,10 +5,11 @@ that will eventually be replaced by a wxWidgets application */
 #include "dndCharacterGenerator.h"
 #include <iostream>
 #include <ctime>
+using dnd::Character;
 using std::cout;
 
 // Displays all character information
-void displayCharacterSheet(const dndCharacter& character);
+void displayCharacterSheet(const Character& character);
 
 int main()
 {
@@ -16,11 +17,10 @@ int main()
 
 	while (1)
 	{
-			dndCharacter character;
-			dndCharacterGenerator generator;
+		Character character;
 
-			generator.generateCharacter(character);
-			displayCharacterSheet(character);
+		generateCharacter(character);
+		displayCharacterSheet(character);
 
 		cout << "\n\n";
 		system("pause");
@@ -28,7 +28,7 @@ int main()
 	}
 }
 
-void displayCharacterSheet(const dndCharacter& character)
+void displayCharacterSheet(const Character& character)
 {
 	cout << std::boolalpha;
 	
