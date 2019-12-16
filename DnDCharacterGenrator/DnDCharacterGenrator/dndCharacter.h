@@ -47,7 +47,7 @@ namespace dnd
 		std::string damage; // string b/c it's based on die roll, ex. "1d8 + 2"
 	};
 
-
+	// The dice a character's hit points are based on
 	struct HitDice
 	{
 		std::string type; // d6, d8, etc.
