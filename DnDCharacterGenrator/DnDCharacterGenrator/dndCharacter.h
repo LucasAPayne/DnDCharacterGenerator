@@ -65,8 +65,9 @@ namespace dnd
 	struct Character
 	{
 		// Descriptors
-		std::string characterName;
 		std::string playerName;
+		std::string firstName;
+		std::string surname;
 		std::string sex = "";
 		std::string characterClass;
 		std::string background;

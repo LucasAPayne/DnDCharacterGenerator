@@ -18,6 +18,7 @@ using std::vector;
 // ======================================================================================
 // Helper Functions
 // ======================================================================================
+
 void chooseXRandomlyFrom(int x, vector<reference_wrapper<dnd::Skill> > list)
 {
 	// Since this uses std::reference_value, when the values in list change, the values in character, in this case, change also 
@@ -28,6 +29,44 @@ void chooseXRandomlyFrom(int x, vector<reference_wrapper<dnd::Skill> > list)
 	for (int i = 0; i < x; ++i)
 	{
 		list[i].get().proficient = true;
+	}
+}
+
+void getNonhumanNames(ifstream& in, string line, vector<string>& possibleNames)
+{
+	if (in)
+	{
+		while (getline(in, line))
+		{
+			possibleNames.push_back(line);
+		}
+	}
+}
+
+void getHumanNames(ifstream& in, string line, vector<string>& possibleNames, dnd::Character character)
+{
+	if (in)
+	{
+		while (getline(in, line))
+		{
+			if (line.find(character.ethnicity) != string::npos)
+			{
+				getline(in, line);
+
+				// If the character is a Condathan Human, skip an extra line due to how the file is formatted
+				if (character.ethnicity == "Chondathan")
+				{
+					getline(in, line);
+				}
+
+				while (line != "" && !in.eof())
+				{
+					possibleNames.push_back(line);
+					getline(in, line);
+				}
+				in.seekg(0, in.end);
+			}
+		}
 	}
 }
 
@@ -119,24 +158,12 @@ namespace dnd
 			if (character.sex == "Male")
 			{
 				in.open("Lists/Names/Dwarf Names/Dwarf Male Names.txt");
-				if (in)
-				{
-					while (getline(in, line))
-					{
-						possibleNames.push_back(line);
-					}
-				}
+				getNonhumanNames(in, line, possibleNames);
 			}
 			else if (character.sex == "Female")
 			{
 				in.open("Lists/Names/Dwarf Names/Dwarf Female Names.txt");
-				if (in)
-				{
-					while (getline(in, line))
-					{
-						possibleNames.push_back(line);
-					}
-				}
+				getNonhumanNames(in, line, possibleNames);
 			}
 		}
 		else if (character.race == "Elf" || character.race == "High Elf" || character.race == "Wood Elf" || character.race == "Dark Elf (Drow)")
@@ -144,24 +171,12 @@ namespace dnd
 			if (character.sex == "Male")
 			{
 				in.open("Lists/Names/Elf Names/Elf Male Names.txt");
-				if (in)
-				{
-					while (getline(in, line))
-					{
-						possibleNames.push_back(line);
-					}
-				}
+				getNonhumanNames(in, line, possibleNames);
 			}
 			else if (character.sex == "Female")
 			{
 				in.open("Lists/Names/Elf Names/Elf Female Names.txt");
-				if (in)
-				{
-					while (getline(in, line))
-					{
-						possibleNames.push_back(line);
-					}
-				}
+				getNonhumanNames(in, line, possibleNames);
 			}
 		}
 		else if (character.race == "Halfling" || character.race == "Lightfoot Halfling" || character.race == "Stout Halfling")
@@ -169,24 +184,12 @@ namespace dnd
 			if (character.sex == "Male")
 			{
 				in.open("Lists/Names/Halfling Names/Halfling Male Names.txt");
-				if (in)
-				{
-					while (getline(in, line))
-					{
-						possibleNames.push_back(line);
-					}
-				}
+				getNonhumanNames(in, line, possibleNames);
 			}
 			else if (character.sex == "Female")
 			{
 				in.open("Lists/Names/Halfling Names/Halfling Female Names.txt");
-				if (in)
-				{
-					while (getline(in, line))
-					{
-						possibleNames.push_back(line);
-					}
-				}
+				getNonhumanNames(in, line, possibleNames);
 			}
 		}
 		else if (character.race == "Human")
@@ -194,62 +197,20 @@ namespace dnd
 			if (character.sex == "Male")
 			{
 				in.open("Lists/Names/Human Names/Human Male Names.txt");
-				if (in)
-				{
-					while (getline(in, line))
-					{
-						if (line.find(character.ethnicity) != string::npos)
-						{
-							getline(in, line);
-
-							// If the character is a Condathan Human, skip an extra line due to how the file is formatted
-							if (character.ethnicity == "Chondathan")
-							{
-								getline(in, line);
-							}
-
-							while (line != "" && !in.eof())
-							{
-								possibleNames.push_back(line);
-								getline(in, line);
-							}
-							in.seekg(0, in.end);
-						}
-					}
-				}
+				getHumanNames(in, line, possibleNames, character);
 			}
 			else if (character.sex == "Female")
 			{
 				in.open("Lists/Names/Human Names/Human Female Names.txt");
-				if (in)
-				{
-					while (getline(in, line))
-					{
-						if (line.find(character.ethnicity) != string::npos)
-						{
-							getline(in, line);
-
-							// If the character is a Condathan Human, skip an extra line due to how the file is formatted
-							if (character.ethnicity == "Chondathan")
-							{
-								getline(in, line);
-							}
-
-							while (line != "" && !in.eof())
-							{
-								possibleNames.push_back(line);
-								getline(in, line);
-							}
-							in.seekg(0, in.end);
-						}
-					}
-				}
+				getHumanNames(in, line, possibleNames, character);
 			}
 		}
 
-		static default_random_engine engine(time(0));
-		static uniform_int_distribution<unsigned> dist(0, possibleNames.size() - 1);
-		character.characterName = possibleNames[dist(engine)];
+		// Shuffle the list of possible names and pick the first one
+		// Note: Done this way because choosing a random element as in the other functions
+		// threw a "vector subscript out of range" exception
+		std::shuffle(possibleNames.begin(), possibleNames.end(), default_random_engine(time(0)));
+		character.firstName = possibleNames[0];
 	}
 
 	void generateSurname(Character& character)
@@ -261,67 +222,26 @@ namespace dnd
 		if (character.race == "Dwarf" || character.race == "Hill Dwarf" || character.race == "Mountain Dwarf")
 		{
 			in.open("Lists/Names/Dwarf Names/Dwarf Clan Names.txt");
-			if (in)
-			{
-				while (getline(in, line))
-				{
-					possibleNames.push_back(line);
-				}
-			}
+			getNonhumanNames(in, line, possibleNames);
 		}
 		else if (character.race == "Elf" || character.race == "High Elf" || character.race == "Wood Elf" || character.race == "Dark Elf (Drow)")
 		{
 			in.open("Lists/Names/Elf Names/Elf Family Names.txt");
-			if (in)
-			{
-				while (getline(in, line))
-				{
-					possibleNames.push_back(line);
-				}
-			}
+			getNonhumanNames(in, line, possibleNames);
 		}
 		else if (character.race == "Halfling" || character.race == "Lightfoot Halfling" || character.race == "Stout Halfling")
 		{
 			in.open("Lists/Names/Halfling Names/Halfling Family Names.txt");
-			if (in)
-			{
-				while (getline(in, line))
-				{
-					possibleNames.push_back(line);
-				}
-			}
+			getNonhumanNames(in, line, possibleNames);
 		}
 		else if (character.race == "Human")
 		{
 			in.open("Lists/Names/Human Names/Human Surnames.txt");
-			if (in)
-			{
-				while (getline(in, line))
-				{
-					if (line.find(character.ethnicity) != string::npos)
-					{
-						getline(in, line);
-
-						// If the character is a Condathan Human, skip an extra line due to how the file is formatted
-						if (character.ethnicity == "Chondathan")
-						{
-							getline(in, line);
-						}
-
-						while (line != "" && !in.eof())
-						{
-							possibleNames.push_back(line);
-							getline(in, line);
-						}
-						in.seekg(0, in.end);
-					}
-				}
-			}
+			getHumanNames(in, line, possibleNames, character);
 		}
 
-		static default_random_engine engine(time(0));
-		static uniform_int_distribution<unsigned> dist(0, possibleNames.size() - 1);
-		character.characterName += " " + possibleNames[dist(engine)]; // Add a space before surname
+		std::shuffle(possibleNames.begin(), possibleNames.end(), default_random_engine(time(0)));
+		character.surname = possibleNames[0];
 	}
 
 	void generatePersonalityTraits(Character& character)
@@ -410,8 +330,6 @@ namespace dnd
 					}
 				}
 			}
-
-
 		}
 	}
 
@@ -429,7 +347,7 @@ namespace dnd
 				// If the current line in the file is the character's background
 				if (line.find(character.background, 0) != string::npos)
 				{
-					// Roll a d6 to choose a personality trait, as there are 6 pre-made choices for each background in the Player's Handbook
+					// Roll a d6 to choose a bond, as there are 6 pre-made choices for each background in the Player's Handbook
 					int target = dist(engine);
 
 					// If a character has a background that has a variant, skip an extra line due to the format of the file

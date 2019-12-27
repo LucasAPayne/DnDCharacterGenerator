@@ -32,7 +32,7 @@ void displayCharacterSheet(const Character& character)
 {
 	cout << std::boolalpha;
 	
-	cout << "Name: "			   << character.characterName << "\n";
+	cout << "Name: "			   << character.firstName << " " << character.surname << "\n";
 	cout << "Sex: "				   << character.sex << "\n";
 	cout << "Race: "			   << character.race << "\n";
 	if (character.race == "Human")
