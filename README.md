@@ -1,5 +1,5 @@
 # DnDCharacterGenerator
-Generates the information necessary for an offical Dungeons & Dragons 5th edition character sheet, randomly or through user input.
+Randomly generates the information necessary for an offical Dungeons & Dragons 5th edition character sheet.
 
 Note: This project has not yet reached its final form! Currently only generates some of the information.
 
