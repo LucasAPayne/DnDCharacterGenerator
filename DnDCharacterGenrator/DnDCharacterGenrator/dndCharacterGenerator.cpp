@@ -1,17 +1,15 @@
 #include "dndCharacter.h"
 #include "dndCharacterGenerator.h"
+#include "Random.h"
 #include <algorithm>
-#include <ctime>
 #include <fstream>
 #include <random>
 #include <string>
 #include <vector>
-using std::default_random_engine;
 using std::getline;
 using std::ifstream;
 using std::reference_wrapper;
 using std::string;
-using std::uniform_int_distribution;
 using std::vector;
 
 
@@ -19,12 +17,13 @@ using std::vector;
 // Helper Functions
 // ======================================================================================
 
+// Choose a number (x) of skill proficiencies randomly from a given list
 void chooseXRandomlyFrom(int x, vector<reference_wrapper<dnd::Skill> > list)
 {
-	// Since this uses std::reference_value, when the values in list change, the values in character, in this case, change also 
+	// Since this uses std::reference_wrapper, when the values in list change, the values in character change also 
 
-	// Randomize the order of entries and pick the first x
-	std::shuffle(list.begin(), list.end(), default_random_engine(time(0)));
+	// Randomize the order of entries and pick the first x of them
+	std::shuffle(list.begin(), list.end(), Random::getEngine());
 
 	for (int i = 0; i < x; ++i)
 	{
@@ -38,6 +37,7 @@ void getNonhumanNames(ifstream& in, vector<string>& possibleNames)
 	{
 		string line;
 
+		// Nonhuman names are stored as a single list, with one name per line, so read the whole file
 		while (getline(in, line))
 		{
 			possibleNames.push_back(line);
@@ -93,30 +93,21 @@ namespace dnd
 		vector<string> classes = { "Barbarian", "Bard", "Cleric", "Druid", "Fighter", "Monk", "Paladin", "Ranger", "Rogue",
 								"Sorcerer", "Warlock", "Wizard" };
 
-		static default_random_engine engine(time(0));
-		static uniform_int_distribution<unsigned> dist(0, classes.size() - 1);
-
-		character.characterClass = classes[dist(engine)];
+		character.characterClass = classes[Random::drawNumber(0, classes.size() - 1)];
 	}
 
 	void generateRace(Character& character)
 	{
 		vector<string> races = { "Dwarf", "Hill Dwarf", "Mountain Dwarf", "Elf", "High Elf", "Wood Elf", "Dark Elf (Drow)", "Halfling", "Lightfoot Halfling", "Stout Halfling", "Human" };
 
-		static default_random_engine engine(time(0));
-		static uniform_int_distribution<unsigned> dist(0, races.size() - 1);
-
-		character.race = races[dist(engine)];
+		character.race = races[Random::drawNumber(0, races.size() - 1)];
 
 		// Humans also have ethnicity (for name)
 		if (character.race == "Human")
 		{
 			vector<string> ethnicities = { "Calishite", "Chondathan", "Damaran", "Illuskan", "Mulan", "Rashemi", "Shou", "Tethyrian", "Turami" };
 
-			static default_random_engine engine2(time(0));
-			static uniform_int_distribution<unsigned> dist2(0, 8);
-
-			character.ethnicity = ethnicities[dist2(engine2)];
+			character.ethnicity = ethnicities[Random::drawNumber(0, ethnicities.size() - 1)];
 		}
 	}
 
@@ -127,10 +118,7 @@ namespace dnd
 									"Guild Merchant", "Hermit", "Knight", "Noble", "Outlander", "Pirate", "Sage", "Sailor", "Soldier",
 									"Spy", "Urchin" };
 
-		static default_random_engine engine(time(0));
-		static uniform_int_distribution<unsigned> dist(0, backgrounds.size() - 1);
-
-		character.background = backgrounds[dist(engine)];
+		character.background = backgrounds[Random::drawNumber(0, backgrounds.size() - 1)];
 	}
 
 	void generateAlignment(Character& character)
@@ -138,10 +126,7 @@ namespace dnd
 		vector<string> alignments = { "Lawful Good", "Neutral Good", "Chaotic Good", "Lawful Neutral", "Neutral", "Chaotic Neutral",
 									"Lawful Evil", "Neutral Evil", "Chaotic Evil" };
 
-		static default_random_engine engine(time(0));
-		static uniform_int_distribution<unsigned> dist(0, alignments.size() - 1);
-
-		character.alignment = alignments[dist(engine)];
+		character.alignment = alignments[Random::drawNumber(0, alignments.size() - 1)];
 	}
 
 	void generateSex(Character& character)
@@ -151,10 +136,7 @@ namespace dnd
 		{
 			vector<string> sexes = { "Male", "Female" };
 
-			static default_random_engine engine(time(0));
-			static uniform_int_distribution<unsigned> dist(0, sexes.size() - 1);
-
-			character.sex = sexes[dist(engine)];
+			character.sex = sexes[Random::drawNumber(0, sexes.size() - 1)];
 		}
 	}
 
@@ -219,7 +201,7 @@ namespace dnd
 		// Shuffle the list of possible names and pick the first one
 		// Note: Done this way because choosing a random element as in the other functions
 		// threw a "vector subscript out of range" exception
-		std::shuffle(possibleNames.begin(), possibleNames.end(), default_random_engine(time(0)));
+		std::shuffle(possibleNames.begin(), possibleNames.end(), Random::getEngine());
 		character.firstName = possibleNames[0];
 	}
 
@@ -249,7 +231,7 @@ namespace dnd
 			getHumanNames(in, possibleNames, character);
 		}
 
-		std::shuffle(possibleNames.begin(), possibleNames.end(), default_random_engine(time(0)));
+		std::shuffle(possibleNames.begin(), possibleNames.end(), Random::getEngine());
 		character.surname = possibleNames[0];
 	}
 
@@ -283,7 +265,7 @@ namespace dnd
 					}
 					
 					// Each character gets two personality traits, so shuffle the list and pick the first two
-					std::shuffle(possibleTraits.begin(), possibleTraits.end(), default_random_engine(time(0)));
+					std::shuffle(possibleTraits.begin(), possibleTraits.end(), Random::getEngine());
 					character.personalityTraits += possibleTraits[0] + " " + possibleTraits[1];
 				}
 			}
@@ -292,9 +274,6 @@ namespace dnd
 
 	void generateIdeals(Character& character)
 	{
-		static default_random_engine engine(time(0));
-		static uniform_int_distribution<unsigned> dist(0, 5);
-
 		ifstream in("Lists/Ideals.txt");
 
 		if (in)
@@ -309,7 +288,7 @@ namespace dnd
 				if (line.find(character.background, 0) != string::npos)
 				{
 					// Roll a d6 to choose an ideal, as there are 6 pre-made choices for each background in the Player's Handbook
-					int target = dist(engine);
+					int target = Random::drawNumber(0, 5);
 
 					if (character.background == "Criminal" || character.background == "Entertainer" || character.background == "Guild Artisan"
 						|| character.background == "Noble" || character.background == "Sailor")
@@ -342,9 +321,6 @@ namespace dnd
 
 	void generateBonds(Character& character)
 	{
-		static default_random_engine engine(time(0));
-		static uniform_int_distribution<unsigned> dist(0, 5);
-
 		ifstream in("Lists/Bonds.txt");
 		if (in)
 		{
@@ -355,7 +331,7 @@ namespace dnd
 				if (line.find(character.background, 0) != string::npos)
 				{
 					// Roll a d6 to choose a bond, as there are 6 pre-made choices for each background in the Player's Handbook
-					int target = dist(engine);
+					int target = Random::drawNumber(0, 5);
 
 					// If a character has a background that has a variant, skip an extra line due to the format of the file
 					// Variants have the same traits as their base backgrounds
@@ -377,9 +353,6 @@ namespace dnd
 
 	void generateFlaws(Character& character)
 	{
-		static default_random_engine engine(time(0));
-		static uniform_int_distribution<unsigned> dist(0, 5);
-
 		ifstream in("Lists/Flaws.txt");
 		if (in)
 		{
@@ -389,8 +362,8 @@ namespace dnd
 				// If the current line in the file is the character's background
 				if (line.find(character.background, 0) != string::npos)
 				{
-					// Roll a d6 to choose a personality trait, as there are 6 pre-made choices for each background in the Player's Handbook
-					int target = dist(engine);
+					// Roll a d6 to choose a flaw, as there are 6 pre-made choices for each background in the Player's Handbook
+					int target = Random::drawNumber(0, 5);
 
 					// If a character has a background that has a variant, skip an extra line due to the format of the file
 					// Variants have the same traits as their base backgrounds
@@ -419,11 +392,7 @@ namespace dnd
 		// First entry null so that expForLevel[1] is how much exp is required for level one, etc.
 		vector<int> expForLevel = { NULL, 0, 300, 900, 2700, 6500, 14000, 23000, 34000, 48000, 64000, 85000, 100000, 120000, 140000, 165000, 195000, 225000, 265000, 305000, 355000 };
 
-		static default_random_engine engine(time(0));
-		static uniform_int_distribution<unsigned> dist(1, 20);
-
-		character.level = dist(engine);
-
+		character.level = Random::drawNumber(1, 20);
 		character.experience = expForLevel[character.level]; // Character starts with 0 progress toward next level
 	}
 
@@ -455,8 +424,6 @@ namespace dnd
 	{
 		// Roll four d6 and record the sum of the highest three results
 		// Do this for each of the six abilities
-		static default_random_engine engine(time(0));
-		static uniform_int_distribution<unsigned> dist(1, 6);
 		vector<int> results;
 		vector<int> totals;
 
@@ -464,7 +431,7 @@ namespace dnd
 		{
 			for (int j = 0; j < 4; ++j)
 			{
-				results.push_back(dist(engine));
+				results.push_back(Random::drawNumber(1, 6));
 			}
 
 			std::sort(results.begin(), results.end(), std::greater<int>()); // Put the results in order of greatest to least
@@ -614,6 +581,7 @@ namespace dnd
 
 	void generateSkillModifiers(Character& character)
 	{
+		// Skill modifiers are based on the abilities that govern them
 		character.athletics.parent = character.strength;
 		character.acrobatics.parent = character.sleightOfHand.parent = character.stealth.parent = character.dexterity;
 		character.arcana.parent = character.history.parent = character.investigation.parent = character.nature.parent = character.religion.parent = character.intelligence;
@@ -766,11 +734,8 @@ namespace dnd
 		character.languages.push_back("Common"); // All characters can speak, read, and write in the Common tongue
 
 		// Common is not a possible language because every character already knows it
-		vector<string> possibleLanguages = { "Dwarvish", "Elvish", "Giant", "Gnomish", "Goblin", "Halfling", "Orc", // Common Languages
-			"Abyssal", "Celestial", "Draconic", "Deep Speech", "Infernal", "Primordial", "Sylvan", "Undercommon" };			  // Exotic Languages
-
-		static default_random_engine engine(time(0));
-		static uniform_int_distribution<unsigned> dist(0, possibleLanguages.size() - 1);
+		vector<string> possibleLanguages = { "Elvish", "Dwarvish", "Giant", "Gnomish", "Goblin", "Halfling", "Orc", // Common Languages
+			"Abyssal", "Celestial", "Draconic", "Deep Speech", "Infernal", "Primordial", "Sylvan", "Undercommon" };	// Exotic Languages
 
 		if (character.race == "Dwarf" || character.race == "Hill Dwarf" || character.race == "Mountain Dwarf")
 		{
@@ -783,7 +748,8 @@ namespace dnd
 			// High Elves have the Extra Language Trait
 			if (character.race == "High Elf")
 			{
-				character.languages.push_back(possibleLanguages[dist(engine)]);
+				// 1 is the minimum number to avoid picking Elvish twice
+				character.languages.push_back(possibleLanguages[Random::drawNumber(1, possibleLanguages.size() - 1)]);
 			}
 		}
 		else if (character.race == "Halfling" || character.race == "Lightfoot Halfling" || character.race == "Stout Halfling")
@@ -793,7 +759,7 @@ namespace dnd
 		else if (character.race == "Human")
 		{
 			// Humans can pick any language
-			character.languages.push_back(possibleLanguages[dist(engine)]);
+			character.languages.push_back(possibleLanguages[Random::drawNumber(0, possibleLanguages.size() - 1)]);
 		}
 	}
 
@@ -846,33 +812,26 @@ namespace dnd
 			character.maxHitPoints = 6 + character.constitution.modifier;
 		}
 
-		static default_random_engine engine(time(0));
-
 		// Health increases with level based on a hit die roll and constitution modifier
 		if (character.level > 1)
 		{
 			if (character.characterClass == "Barbarian")
 			{
-				static uniform_int_distribution<unsigned> dist(1, 12);
-				character.maxHitPoints += dist(engine) + character.constitution.modifier;
+				character.maxHitPoints += Random::drawNumber(1, 12) + character.constitution.modifier;
 			}
 			else if (character.characterClass == "Fighter" || character.characterClass == "Paladin" || character.characterClass == "Ranger")
 			{
-				static uniform_int_distribution<unsigned> dist(1, 10);
-				character.maxHitPoints += dist(engine) + character.constitution.modifier;
+				character.maxHitPoints += Random::drawNumber(1, 10) + character.constitution.modifier;
 			}
 			else if (character.characterClass == "Bard" || character.characterClass == "Cleric" || character.characterClass == "Druid" || character.characterClass == "Monk"
 				|| character.characterClass == "Rogue" || character.characterClass == "Warlock")
 			{
-				static uniform_int_distribution<unsigned> dist(1, 8);
-				character.maxHitPoints += dist(engine) + character.constitution.modifier;
+				character.maxHitPoints += Random::drawNumber(1, 8) + character.constitution.modifier;
 			}
 			else if (character.characterClass == "Sorcerer" || character.characterClass == "Wizard")
 			{
-				static uniform_int_distribution<unsigned> dist(1, 6);
-				character.maxHitPoints += dist(engine) + character.constitution.modifier;
+				character.maxHitPoints += Random::drawNumber(1, 6) + character.constitution.modifier;
 			}
-
 		}
 
 		// Add other modifiers
@@ -918,6 +877,8 @@ namespace dnd
 
 	void generateCharacter(Character& character)
 	{
+		Random::init();
+
 		// Descriptors
 		generateClass(character);
 		generateRace(character);
