@@ -32,10 +32,12 @@ void chooseXRandomlyFrom(int x, vector<reference_wrapper<dnd::Skill> > list)
 	}
 }
 
-void getNonhumanNames(ifstream& in, string line, vector<string>& possibleNames)
+void getNonhumanNames(ifstream& in, vector<string>& possibleNames)
 {
 	if (in)
 	{
+		string line;
+
 		while (getline(in, line))
 		{
 			possibleNames.push_back(line);
@@ -43,32 +45,42 @@ void getNonhumanNames(ifstream& in, string line, vector<string>& possibleNames)
 	}
 }
 
-void getHumanNames(ifstream& in, string line, vector<string>& possibleNames, dnd::Character character)
+void getHumanNames(ifstream& in, vector<string>& possibleNames, dnd::Character character)
 {
 	if (in)
 	{
+		string line;
+
 		while (getline(in, line))
 		{
 			if (line.find(character.ethnicity) != string::npos)
 			{
+				// line is now the character's ethnicity, so skip a line to find the possible names
 				getline(in, line);
 
-				// If the character is a Condathan Human, skip an extra line due to how the file is formatted
+				// If the character is a Condathan Human, skip an extra line since they share names with Tethyrian Humans,
+				// making two labels to be skipped
 				if (character.ethnicity == "Chondathan")
 				{
 					getline(in, line);
 				}
 
+				// Read names until a blank line or the end of file is reached
+				// since names are grouped this way by ethnicity
 				while (line != "" && !in.eof())
 				{
 					possibleNames.push_back(line);
 					getline(in, line);
 				}
-				in.seekg(0, in.end);
 			}
 		}
 	}
 }
+
+
+// ======================================================================================
+// Character Generation
+// ======================================================================================
 
 namespace dnd 
 {
@@ -143,7 +155,6 @@ namespace dnd
 			static uniform_int_distribution<unsigned> dist(0, sexes.size() - 1);
 
 			character.sex = sexes[dist(engine)];
-
 		}
 	}
 
@@ -151,19 +162,18 @@ namespace dnd
 	{
 		vector<string> possibleNames;
 		ifstream in;
-		string line;
 
 		if ((character.race == "Dwarf") || (character.race == "Hill Dwarf") || (character.race == "Mountain Dwarf"))
 		{
 			if (character.sex == "Male")
 			{
 				in.open("Lists/Names/Dwarf Names/Dwarf Male Names.txt");
-				getNonhumanNames(in, line, possibleNames);
+				getNonhumanNames(in, possibleNames);
 			}
 			else if (character.sex == "Female")
 			{
 				in.open("Lists/Names/Dwarf Names/Dwarf Female Names.txt");
-				getNonhumanNames(in, line, possibleNames);
+				getNonhumanNames(in, possibleNames);
 			}
 		}
 		else if (character.race == "Elf" || character.race == "High Elf" || character.race == "Wood Elf" || character.race == "Dark Elf (Drow)")
@@ -171,12 +181,12 @@ namespace dnd
 			if (character.sex == "Male")
 			{
 				in.open("Lists/Names/Elf Names/Elf Male Names.txt");
-				getNonhumanNames(in, line, possibleNames);
+				getNonhumanNames(in, possibleNames);
 			}
 			else if (character.sex == "Female")
 			{
 				in.open("Lists/Names/Elf Names/Elf Female Names.txt");
-				getNonhumanNames(in, line, possibleNames);
+				getNonhumanNames(in, possibleNames);
 			}
 		}
 		else if (character.race == "Halfling" || character.race == "Lightfoot Halfling" || character.race == "Stout Halfling")
@@ -184,12 +194,12 @@ namespace dnd
 			if (character.sex == "Male")
 			{
 				in.open("Lists/Names/Halfling Names/Halfling Male Names.txt");
-				getNonhumanNames(in, line, possibleNames);
+				getNonhumanNames(in, possibleNames);
 			}
 			else if (character.sex == "Female")
 			{
 				in.open("Lists/Names/Halfling Names/Halfling Female Names.txt");
-				getNonhumanNames(in, line, possibleNames);
+				getNonhumanNames(in, possibleNames);
 			}
 		}
 		else if (character.race == "Human")
@@ -197,12 +207,12 @@ namespace dnd
 			if (character.sex == "Male")
 			{
 				in.open("Lists/Names/Human Names/Human Male Names.txt");
-				getHumanNames(in, line, possibleNames, character);
+				getHumanNames(in, possibleNames, character);
 			}
 			else if (character.sex == "Female")
 			{
 				in.open("Lists/Names/Human Names/Human Female Names.txt");
-				getHumanNames(in, line, possibleNames, character);
+				getHumanNames(in, possibleNames, character);
 			}
 		}
 
@@ -217,27 +227,26 @@ namespace dnd
 	{
 		vector<string> possibleNames;
 		ifstream in;
-		string line;
 
 		if (character.race == "Dwarf" || character.race == "Hill Dwarf" || character.race == "Mountain Dwarf")
 		{
 			in.open("Lists/Names/Dwarf Names/Dwarf Clan Names.txt");
-			getNonhumanNames(in, line, possibleNames);
+			getNonhumanNames(in, possibleNames);
 		}
 		else if (character.race == "Elf" || character.race == "High Elf" || character.race == "Wood Elf" || character.race == "Dark Elf (Drow)")
 		{
 			in.open("Lists/Names/Elf Names/Elf Family Names.txt");
-			getNonhumanNames(in, line, possibleNames);
+			getNonhumanNames(in, possibleNames);
 		}
 		else if (character.race == "Halfling" || character.race == "Lightfoot Halfling" || character.race == "Stout Halfling")
 		{
 			in.open("Lists/Names/Halfling Names/Halfling Family Names.txt");
-			getNonhumanNames(in, line, possibleNames);
+			getNonhumanNames(in, possibleNames);
 		}
 		else if (character.race == "Human")
 		{
 			in.open("Lists/Names/Human Names/Human Surnames.txt");
-			getHumanNames(in, line, possibleNames, character);
+			getHumanNames(in, possibleNames, character);
 		}
 
 		std::shuffle(possibleNames.begin(), possibleNames.end(), default_random_engine(time(0)));
@@ -246,38 +255,36 @@ namespace dnd
 
 	void generatePersonalityTraits(Character& character)
 	{
-		for (int i = 1; i <= 2; ++i) // Each character gets two personality traits
+		vector<string> possibleTraits;
+		ifstream in("Lists/Personality Traits.txt");
+
+		if (in)
 		{
-			static default_random_engine engine(time(0));
-			static uniform_int_distribution<unsigned> dist(0, 7);
-
-			ifstream in("Lists/Personality Traits.txt");
-			if (in)
+			string line;
+			while (getline(in, line))
 			{
-				string line;
-				while (getline(in, line))
+				// If the current line in the file is the character's background
+				if (line.find(character.background) != string::npos)
 				{
-					// If the current line in the file is the character's background
-					if (line.find(character.background) != string::npos)
+					getline(in, line);
+
+					// If a character has a background that has a variant, skip an extra line due to the format of the file
+					// Variants have the same traits as their base backgrounds
+					if (character.background == "Criminal" || character.background == "Entertainer" || character.background == "Guild Artisan"
+						|| character.background == "Noble" || character.background == "Sailor")
 					{
-						// Roll a d8 to choose a personality trait, as there are 8 pre-made choices for each background in the Player's Handbook
-						// But here the d8 starts at 0 and goes to 7 because between 0 and 7 lines are skipped in the file when choosing traits
-						int target = dist(engine);
-
-						// If a character has a background that has a variant, skip an extra line due to the format of the file
-						// Variants have the same traits as their base backgrounds
-						if (character.background == "Criminal" || character.background == "Entertainer" || character.background == "Guild Artisan"
-							|| character.background == "Noble" || character.background == "Sailor")
-						{
-							++target;
-						}
-
-						for (int skip = 0; skip <= target; ++skip) // Skip the number of lines that was rolled
-						{
-							getline(in, line);
-						}
-						character.personalityTraits += line += " "; // The last line read is the trait
+						getline(in, line);
 					}
+
+					while (line != "" && !in.eof())
+					{
+						possibleTraits.push_back(line);
+						getline(in, line);
+					}
+					
+					// Each character gets two personality traits, so shuffle the list and pick the first two
+					std::shuffle(possibleTraits.begin(), possibleTraits.end(), default_random_engine(time(0)));
+					character.personalityTraits += possibleTraits[0] + " " + possibleTraits[1];
 				}
 			}
 		}
