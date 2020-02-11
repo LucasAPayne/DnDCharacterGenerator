@@ -3,6 +3,7 @@ that will eventually be replaced by a wxWidgets application */
 
 #include "dndCharacter.h"
 #include "dndCharacterGenerator.h"
+#include "Random.h"
 #include <iostream>
 #include <ctime>
 using dnd::Character;
@@ -13,7 +14,7 @@ void displayCharacterSheet(const Character& character);
 
 int main()
 {
-	srand(time(0));
+	Random::init();
 
 	while (1)
 	{

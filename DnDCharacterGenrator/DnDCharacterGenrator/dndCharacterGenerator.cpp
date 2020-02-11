@@ -877,8 +877,6 @@ namespace dnd
 
 	void generateCharacter(Character& character)
 	{
-		Random::init();
-
 		// Descriptors
 		generateClass(character);
 		generateRace(character);
