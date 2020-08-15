@@ -1,24 +1,19 @@
 #include "dndCharacter.h"
 #include "dndCharacterGenerator.h"
 #include "Random.h"
+
 #include <algorithm>
 #include <fstream>
 #include <random>
 #include <string>
 #include <vector>
-using std::getline;
-using std::ifstream;
-using std::reference_wrapper;
-using std::string;
-using std::vector;
-
 
 // ======================================================================================
 // Helper Functions
 // ======================================================================================
 
 // Choose a number (x) of skill proficiencies randomly from a given list
-void chooseXRandomlyFrom(int x, vector<reference_wrapper<dnd::Skill> > list)
+void chooseXRandomlyFrom(int x, std::vector<std::reference_wrapper<dnd::Skill> > list)
 {
 	// Since this uses std::reference_wrapper, when the values in list change, the values in character change also 
 
@@ -31,29 +26,29 @@ void chooseXRandomlyFrom(int x, vector<reference_wrapper<dnd::Skill> > list)
 	}
 }
 
-void getNonhumanNames(ifstream& in, vector<string>& possibleNames)
+void getNonhumanNames(std::ifstream& in, std::vector<std::string>& possibleNames)
 {
 	if (in)
 	{
-		string line;
+		std::string line;
 
 		// Nonhuman names are stored as a single list, with one name per line, so read the whole file
-		while (getline(in, line))
+		while (std::getline(in, line))
 		{
 			possibleNames.push_back(line);
 		}
 	}
 }
 
-void getHumanNames(ifstream& in, vector<string>& possibleNames, dnd::Character character)
+void getHumanNames(std::ifstream& in, std::vector<std::string>& possibleNames, dnd::Character character)
 {
 	if (in)
 	{
-		string line;
+		std::string line;
 
-		while (getline(in, line))
+		while (std::getline(in, line))
 		{
-			if (line.find(character.ethnicity) != string::npos)
+			if (line.find(character.ethnicity) != std::string::npos)
 			{
 				// line is now the character's ethnicity, so skip a line to find the possible names
 				getline(in, line);
@@ -90,7 +85,7 @@ namespace dnd
 
 	void generateClass(Character& character)
 	{
-		vector<string> classes = { "Barbarian", "Bard", "Cleric", "Druid", "Fighter", "Monk", "Paladin", "Ranger", "Rogue",
+		std::vector<std::string> classes = { "Barbarian", "Bard", "Cleric", "Druid", "Fighter", "Monk", "Paladin", "Ranger", "Rogue",
 								"Sorcerer", "Warlock", "Wizard" };
 
 		character.characterClass = classes[Random::drawNumber(0, classes.size() - 1)];
@@ -98,14 +93,14 @@ namespace dnd
 
 	void generateRace(Character& character)
 	{
-		vector<string> races = { "Dwarf", "Hill Dwarf", "Mountain Dwarf", "Elf", "High Elf", "Wood Elf", "Dark Elf (Drow)", "Halfling", "Lightfoot Halfling", "Stout Halfling", "Human" };
+		std::vector<std::string> races = { "Dwarf", "Hill Dwarf", "Mountain Dwarf", "Elf", "High Elf", "Wood Elf", "Dark Elf (Drow)", "Halfling", "Lightfoot Halfling", "Stout Halfling", "Human" };
 
 		character.race = races[Random::drawNumber(0, races.size() - 1)];
 
 		// Humans also have ethnicity (for name)
 		if (character.race == "Human")
 		{
-			vector<string> ethnicities = { "Calishite", "Chondathan", "Damaran", "Illuskan", "Mulan", "Rashemi", "Shou", "Tethyrian", "Turami" };
+			std::vector<std::string> ethnicities = { "Calishite", "Chondathan", "Damaran", "Illuskan", "Mulan", "Rashemi", "Shou", "Tethyrian", "Turami" };
 
 			character.ethnicity = ethnicities[Random::drawNumber(0, ethnicities.size() - 1)];
 		}
@@ -114,7 +109,7 @@ namespace dnd
 	void generateBackground(Character& character)
 	{
 		// Variants: Spy (Criminal), Gladiator (Entertainer), Guild Merchant (Guild Artisan), Knight (Noble), Pirate (Sailor)
-		vector<string> backgrounds = { "Acolyte", "Charlatan", "Criminal", "Entertainer", "Folk Hero", "Gladiator", "Guild Artisan",
+		std::vector<std::string> backgrounds = { "Acolyte", "Charlatan", "Criminal", "Entertainer", "Folk Hero", "Gladiator", "Guild Artisan",
 									"Guild Merchant", "Hermit", "Knight", "Noble", "Outlander", "Pirate", "Sage", "Sailor", "Soldier",
 									"Spy", "Urchin" };
 
@@ -123,7 +118,7 @@ namespace dnd
 
 	void generateAlignment(Character& character)
 	{
-		vector<string> alignments = { "Lawful Good", "Neutral Good", "Chaotic Good", "Lawful Neutral", "Neutral", "Chaotic Neutral",
+		std::vector<std::string> alignments = { "Lawful Good", "Neutral Good", "Chaotic Good", "Lawful Neutral", "Neutral", "Chaotic Neutral",
 									"Lawful Evil", "Neutral Evil", "Chaotic Evil" };
 
 		character.alignment = alignments[Random::drawNumber(0, alignments.size() - 1)];
@@ -134,7 +129,7 @@ namespace dnd
 		// Sex needed to generate random name
 		if (character.sex == "")
 		{
-			vector<string> sexes = { "Male", "Female" };
+			std::vector<std::string> sexes = { "Male", "Female" };
 
 			character.sex = sexes[Random::drawNumber(0, sexes.size() - 1)];
 		}
@@ -142,8 +137,8 @@ namespace dnd
 
 	void generateFirstName(Character& character)
 	{
-		vector<string> possibleNames;
-		ifstream in;
+		std::vector<std::string> possibleNames;
+		std::ifstream in;
 
 		if ((character.race == "Dwarf") || (character.race == "Hill Dwarf") || (character.race == "Mountain Dwarf"))
 		{
@@ -207,8 +202,8 @@ namespace dnd
 
 	void generateSurname(Character& character)
 	{
-		vector<string> possibleNames;
-		ifstream in;
+		std::vector<std::string> possibleNames;
+		std::ifstream in;
 
 		if (character.race == "Dwarf" || character.race == "Hill Dwarf" || character.race == "Mountain Dwarf")
 		{
@@ -237,16 +232,16 @@ namespace dnd
 
 	void generatePersonalityTraits(Character& character)
 	{
-		vector<string> possibleTraits;
-		ifstream in("Lists/PersonalityTraits.txt");
+		std::vector<std::string> possibleTraits;
+		std::ifstream in("Lists/PersonalityTraits.txt");
 
 		if (in)
 		{
-			string line;
-			while (getline(in, line))
+			std::string line;
+			while (std::getline(in, line))
 			{
 				// If the current line in the file is the character's background
-				if (line.find(character.background) != string::npos)
+				if (line.find(character.background) != std::string::npos)
 				{
 					getline(in, line);
 
@@ -274,18 +269,18 @@ namespace dnd
 
 	void generateIdeals(Character& character)
 	{
-		ifstream in("Lists/Ideals.txt");
+		std::ifstream in("Lists/Ideals.txt");
 
 		if (in)
 		{
-			string line;
-			string axis1 = character.alignment.substr(0, character.alignment.find(' ')); // Lawful, Neutral, or Chaotic
-			string axis2 = character.alignment.substr(character.alignment.find(' ') + 1); // Good, Neutral, or Evil;
+			std::string line;
+			std::string axis1 = character.alignment.substr(0, character.alignment.find(' ')); // Lawful, Neutral, or Chaotic
+			std::string axis2 = character.alignment.substr(character.alignment.find(' ') + 1); // Good, Neutral, or Evil;
 			bool flag = false;
 
 			while (getline(in, line))
 			{
-				if (line.find(character.background, 0) != string::npos)
+				if (line.find(character.background, 0) != std::string::npos)
 				{
 					// Roll a d6 to choose an ideal, as there are 6 pre-made choices for each background in the Player's Handbook
 					int target = Random::drawNumber(0, 5);
@@ -321,14 +316,14 @@ namespace dnd
 
 	void generateBonds(Character& character)
 	{
-		ifstream in("Lists/Bonds.txt");
+		std::ifstream in("Lists/Bonds.txt");
 		if (in)
 		{
-			string line;
-			while (getline(in, line))
+			std::string line;
+			while (std::getline(in, line))
 			{
 				// If the current line in the file is the character's background
-				if (line.find(character.background, 0) != string::npos)
+				if (line.find(character.background, 0) != std::string::npos)
 				{
 					// Roll a d6 to choose a bond, as there are 6 pre-made choices for each background in the Player's Handbook
 					int target = Random::drawNumber(0, 5);
@@ -353,14 +348,14 @@ namespace dnd
 
 	void generateFlaws(Character& character)
 	{
-		ifstream in("Lists/Flaws.txt");
+		std::ifstream in("Lists/Flaws.txt");
 		if (in)
 		{
-			string line;
+			std::string line;
 			while (getline(in, line))
 			{
 				// If the current line in the file is the character's background
-				if (line.find(character.background, 0) != string::npos)
+				if (line.find(character.background, 0) != std::string::npos)
 				{
 					// Roll a d6 to choose a flaw, as there are 6 pre-made choices for each background in the Player's Handbook
 					int target = Random::drawNumber(0, 5);
@@ -390,7 +385,7 @@ namespace dnd
 	void generateLevel(Character& character)
 	{
 		// First entry null so that expForLevel[1] is how much exp is required for level one, etc.
-		vector<int> expForLevel = { NULL, 0, 300, 900, 2700, 6500, 14000, 23000, 34000, 48000, 64000, 85000, 100000, 120000, 140000, 165000, 195000, 225000, 265000, 305000, 355000 };
+		std::vector<int> expForLevel = { NULL, 0, 300, 900, 2700, 6500, 14000, 23000, 34000, 48000, 64000, 85000, 100000, 120000, 140000, 165000, 195000, 225000, 265000, 305000, 355000 };
 
 		character.level = Random::drawNumber(1, 20);
 		character.experience = expForLevel[character.level]; // Character starts with 0 progress toward next level
@@ -424,8 +419,8 @@ namespace dnd
 	{
 		// Roll four d6 and record the sum of the highest three results
 		// Do this for each of the six abilities
-		vector<int> results;
-		vector<int> totals;
+		std::vector<int> results;
+		std::vector<int> totals;
 
 		for (int i = 0; i < 6; ++i)
 		{
@@ -506,7 +501,7 @@ namespace dnd
 
 	void generateAbilityModifiers(Character& character)
 	{
-		vector<Ability> abilities = { character.strength, character.dexterity, character.constitution, character.intelligence, character.wisdom, character.charisma };
+		std::vector<Ability> abilities = { character.strength, character.dexterity, character.constitution, character.intelligence, character.wisdom, character.charisma };
 
 		for (int i = 0; i < abilities.size(); ++i)
 		{
@@ -588,7 +583,7 @@ namespace dnd
 		character.animalHandling.parent = character.insight.parent = character.medicine.parent = character.perception.parent = character.survival.parent = character.wisdom;
 		character.deception.parent = character.intimidation.parent = character.performance.parent = character.persuasion.parent = character.charisma;
 
-		vector<reference_wrapper<Skill> > skills = { character.acrobatics, character.animalHandling, character.arcana, character.athletics, character.deception, character.history, character.insight,
+		std::vector<std::reference_wrapper<Skill> > skills = { character.acrobatics, character.animalHandling, character.arcana, character.athletics, character.deception, character.history, character.insight,
 			character.intimidation,character.investigation, character.medicine, character.nature, character.perception, character.performance, character.persuasion, character.religion,
 			character.sleightOfHand, character.stealth, character.survival };
 
@@ -680,7 +675,7 @@ namespace dnd
 		character.wisdomSave.parent = character.wisdom;
 		character.charismaSave.parent = character.charisma;
 
-		vector<reference_wrapper<Skill> > saves = { character.strengthSave, character.dexteritySave, character.constitutionSave, character.intelligenceSave,
+		std::vector<std::reference_wrapper<Skill> > saves = { character.strengthSave, character.dexteritySave, character.constitutionSave, character.intelligenceSave,
 			character.wisdomSave, character.charismaSave };
 
 		// Start at parent ability's modifier
@@ -734,7 +729,7 @@ namespace dnd
 		character.languages.push_back("Common"); // All characters can speak, read, and write in the Common tongue
 
 		// Common is not a possible language because every character already knows it
-		vector<string> possibleLanguages = { "Elvish", "Dwarvish", "Giant", "Gnomish", "Goblin", "Halfling", "Orc", // Common Languages
+		std::vector<std::string> possibleLanguages = { "Elvish", "Dwarvish", "Giant", "Gnomish", "Goblin", "Halfling", "Orc", // Common Languages
 			"Abyssal", "Celestial", "Draconic", "Deep Speech", "Infernal", "Primordial", "Sylvan", "Undercommon" };	// Exotic Languages
 
 		if (character.race == "Dwarf" || character.race == "Hill Dwarf" || character.race == "Mountain Dwarf")
