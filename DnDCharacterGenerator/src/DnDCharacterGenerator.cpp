@@ -503,9 +503,14 @@ namespace dnd
 	{
 		std::vector<Ability> abilities = { character.strength, character.dexterity, character.constitution, character.intelligence, character.wisdom, character.charisma };
 
-		for (int i = 0; i < abilities.size(); ++i)
+		for (size_t i = 0; i < abilities.size(); ++i)
 		{
-			abilities[i].modifier = floor((float)(abilities[i].score - 10) / 2);
+			int temp = abilities[i].score - 10;
+
+			if (temp >= 0)
+				abilities[i].modifier = temp / 2;
+			else
+				abilities[i].modifier = (temp - 1) / 2;
 		}
 
 		character.strength.modifier = abilities[0].modifier;
@@ -587,7 +592,7 @@ namespace dnd
 			character.intimidation,character.investigation, character.medicine, character.nature, character.perception, character.performance, character.persuasion, character.religion,
 			character.sleightOfHand, character.stealth, character.survival };
 
-		for (int i = 0; i < skills.size(); ++i)
+		for (size_t i = 0; i < skills.size(); ++i)
 		{
 			// Start at parent ability's modifier
 			skills[i].get().modifier = skills[i].get().parent.modifier;
@@ -679,13 +684,13 @@ namespace dnd
 			character.wisdomSave, character.charismaSave };
 
 		// Start at parent ability's modifier
-		for (int i = 0; i < saves.size(); ++i)
+		for (size_t i = 0; i < saves.size(); ++i)
 		{
 			saves[i].get().modifier = saves[i].get().parent.modifier;
 		}
 
 		// Add profiency bonus if proficient in saving throw
-		for (int i = 0; i < saves.size(); ++i)
+		for (size_t i = 0; i < saves.size(); ++i)
 		{
 			if (saves[i].get().proficient)
 			{

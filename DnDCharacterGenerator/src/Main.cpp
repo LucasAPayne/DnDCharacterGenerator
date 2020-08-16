@@ -54,7 +54,7 @@ void displayCharacterSheet(const dnd::Character& character)
 	std::cout << "Flaws: "			   << character.flaws << "\n\n";
 
 	std::cout << "Languages: ";
-	for (int i = 0; i < character.languages.size(); ++i)
+	for (size_t i = 0; i < character.languages.size(); ++i)
 	{
 		std::cout << character.languages[i];
 		if (i != character.languages.size() - 1)

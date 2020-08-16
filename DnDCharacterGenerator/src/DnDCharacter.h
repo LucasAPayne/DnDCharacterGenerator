@@ -8,8 +8,8 @@ namespace dnd
 	// The six main abilities: Str, Dex, Con, Int, Wis, Cha
 	struct Ability
 	{
-		int score;
-		int modifier;
+		int score = 0;
+		int modifier = 0;
 	};
 
 
@@ -17,7 +17,7 @@ namespace dnd
 	struct Skill
 	{
 		Ability parent; // The ability that governs the skill
-		int modifier;
+		int modifier = 0;
 		bool proficient = false; // Fill in the bubble on character sheet and allows proficiency bonus to be applied to modifier
 	};
 
@@ -51,14 +51,14 @@ namespace dnd
 	struct HitDice
 	{
 		std::string type; // d6, d8, etc.
-		int number;       // How many dice
+		int number = 0;       // How many dice
 	};
 
 
 	struct DeathSaves
 	{
-		int successes;
-		int failures;
+		int successes = 0;
+		int failures = 0;
 	};
 
 
@@ -68,11 +68,11 @@ namespace dnd
 		std::string playerName;
 		std::string firstName;
 		std::string surname;
-		std::string sex = "";
+		std::string sex;
 		std::string characterClass;
 		std::string background;
 		std::string race;
-		std::string ethnicity = ""; // Only for humans
+		std::string ethnicity; // Only for humans
 		std::string alignment;
 		std::string personalityTraits;
 		std::string ideals;
@@ -81,11 +81,11 @@ namespace dnd
 
 
 		// Values
-		int level;
-		int experience;
-		int inspiration;
-		int proficiencyBonus;
-		int passiveWisdom;
+		int level = 0;
+		int experience = 0;
+		int inspiration = 0;
+		int proficiencyBonus = 0;
+		int passiveWisdom = 0;
 
 
 		// Abilities
@@ -139,12 +139,12 @@ namespace dnd
 
 
 		// Combat
-		int currentHitPoints;
-		int maxHitPoints;
-		int tempHitPoints;
-		int armorClass;
-		int initiative;
-		int speed;
+		int currentHitPoints = 0;
+		int maxHitPoints = 0;
+		int tempHitPoints = 0;
+		int armorClass = 0;
+		int initiative = 0;
+		int speed = 0;
 		HitDice hitDice;
 		DeathSaves deathSaves;
 		std::vector<Attack> attacks;
