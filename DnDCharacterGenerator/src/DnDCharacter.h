@@ -8,146 +8,193 @@ namespace dnd
 	// The six main abilities: Str, Dex, Con, Int, Wis, Cha
 	struct Ability
 	{
-		int score = 0;
-		int modifier = 0;
+		int Score = 0;
+		int Modifier = 0;
 	};
 
 
 	// Specific aspects of abilities
 	struct Skill
 	{
-		Ability parent; // The ability that governs the skill
-		int modifier = 0;
-		bool proficient = false; // Fill in the bubble on character sheet and allows proficiency bonus to be applied to modifier
+		Ability Parent; // The ability that governs the skill
+		int Modifier = 0;
+		bool Proficient = false; // Fill in the bubble on character sheet and allows proficiency bonus to be applied to modifier
 	};
 
 
 	struct Trait
 	{
-		std::string name;
-		std::string description;
+		std::string Name;
+		std::string Description;
 	};
 
 	// A collection of the different types of coins a character owns
 	struct Wealth
 	{
-		int cp = 0; // copper pieces
-		int sp = 0; // silver pieces
-		int ep = 0; // electrum pieces
-		int gp = 0; // gold pieces
-		int pp = 0; // platinum pieces
+		int CopperPieces = 0;
+		int SilverPieces = 0;
+		int ElectrumPieces = 0;
+		int GoldPieces = 0;
+		int PlatinumPieces = 0;
 	};
 
 
 	struct Attack
 	{
-		std::string name;
-		int atkBonus;
-		std::string type;
-		std::string damage; // string b/c it's based on die roll, ex. "1d8 + 2"
+		std::string Name;
+		int AtkBonus;
+		std::string Type;
+		std::string Damage; // string b/c it's based on die roll, ex. "1d8 + 2"
 	};
 
 	// The dice a character's hit points are based on
 	struct HitDice
 	{
-		std::string type; // d6, d8, etc.
-		int number = 0;       // How many dice
+		std::string Type; // d6, d8, etc.
+		int Number = 0;   // How many dice
 	};
 
 
 	struct DeathSaves
 	{
-		int successes = 0;
-		int failures = 0;
+		int Successes = 0;
+		int Failures = 0;
 	};
 
 
-	struct Character
+	class Character
 	{
-		// Descriptors
-		std::string playerName;
-		std::string firstName;
-		std::string surname;
-		std::string sex;
-		std::string characterClass;
-		std::string background;
-		std::string race;
-		std::string ethnicity; // Only for humans
-		std::string alignment;
-		std::string personalityTraits;
-		std::string ideals;
-		std::string bonds;
-		std::string flaws;
+	public:
+		Character();
 
+		// Temporary
+		const std::string& GetEthnicity() const { return m_Ethnicity; }
+		void DisplayCharacterSheet();
+
+	private:
+		// Descriptors ==============================================================
+		void GenerateClass();
+		void GenerateRace();
+		void GenerateBackground();
+		void GenerateAlignment();
+		void GenerateGender();
+		void GenerateFirstName();
+		void GenerateSurname();
+		void GeneratePersonalityTraits();
+		void GenerateIdeals();
+		void GenerateBonds();
+		void GenerateFlaws();
+
+
+		// Skills, Abilities, and Level ==============================================
+
+		// Generates random level and sets experience to the starting amount for that level
+		void GenerateLevel();
+
+		void GenerateProficiencyBonus();
+		void GenerateAbilityScores();
+		void GenerateRacialAbilityBonuses();
+		void GenerateAbilityModifiers();
+		void GenerateSkillProficiencies();
+		void GenerateSkillModifiers();
+		void GenerateSavingThrowProficiencies();
+		void GenerateSavingThrowModifiers();
+		void GeneratePassiveWisdom();
+
+
+		// Feats, Traits, Proficiencies, Languages ===================================
+		void GenerateFeatsAndTraits();
+		void GenerateRacialTraits();
+		void GenerateProficiencies();
+		void GenerateLanguages();
+
+		// Equipment and Combat ======================================================
+		void GenerateHitDice();
+		void GenerateHitPoints();
+		void GenerateSpeed();
+		void GenerateInitiative();
+		void GenerateEquipment();
+		void GenerateAttacks();
+		void GenerateSpellcastingTraits();
+
+	private:
+		// Descriptors
+		std::string m_PlayerName;
+		std::string m_FirstName;
+		std::string m_Surname;
+		std::string m_Gender;
+		std::string m_Class;
+		std::string m_Background;
+		std::string m_Race;
+		std::string m_Ethnicity; // Only for humans
+		std::string m_Alignment;
+		std::string m_PersonalityTraits;
+		std::string m_Ideals;
+		std::string m_Bonds;
+		std::string m_Flaws;
 
 		// Values
-		int level = 0;
-		int experience = 0;
-		int inspiration = 0;
-		int proficiencyBonus = 0;
-		int passiveWisdom = 0;
-
+		int m_Level = 0;
+		int m_Experience = 0;
+		int m_Inspiration = 0;
+		int m_ProficiencyBonus = 0;
+		int m_PassiveWisdom = 0;
 
 		// Abilities
-		Ability strength;
-		Ability dexterity;
-		Ability constitution;
-		Ability intelligence;
-		Ability wisdom;
-		Ability charisma;
-
+		Ability m_Strength;
+		Ability m_Dexterity;
+		Ability m_Constitution;
+		Ability m_Intelligence;
+		Ability m_Wisdom;
+		Ability m_Charisma;
 
 		// Skills
-		Skill acrobatics;
-		Skill animalHandling;
-		Skill arcana;
-		Skill athletics;
-		Skill deception;
-		Skill history;
-		Skill insight;
-		Skill intimidation;
-		Skill investigation;
-		Skill medicine;
-		Skill nature;
-		Skill perception;
-		Skill performance;
-		Skill persuasion;
-		Skill religion;
-		Skill sleightOfHand;
-		Skill stealth;
-		Skill survival;
-
+		Skill m_Acrobatics;
+		Skill m_AnimalHandling;
+		Skill m_Arcana;
+		Skill m_Athletics;
+		Skill m_Deception;
+		Skill m_History;
+		Skill m_Insight;
+		Skill m_Intimidation;
+		Skill m_Investigation;
+		Skill m_Medicine;
+		Skill m_Nature;
+		Skill m_Perception;
+		Skill m_Performance;
+		Skill m_Persuasion;
+		Skill m_Religion;
+		Skill m_SleightOfHand;
+		Skill m_Stealth;
+		Skill m_Survival;
 
 		// Saving Throws
-		Skill strengthSave;
-		Skill dexteritySave;
-		Skill constitutionSave;
-		Skill intelligenceSave;
-		Skill wisdomSave;
-		Skill charismaSave;
-
+		Skill m_StrengthSave;
+		Skill m_DexteritySave;
+		Skill m_ConstitutionSave;
+		Skill m_IntelligenceSave;
+		Skill m_WisdomSave;
+		Skill m_CharismaSave;
 
 		// Feats, Traits, Lanuguages, Proficiencies
-		std::vector<Trait> featsAndTraits;
-		std::vector<Trait> profiencies;
-		std::vector<std::string> languages;
-
+		std::vector<Trait> m_FeatsAndTraits;
+		std::vector<Trait> m_Profiencies;
+		std::vector<std::string> m_Languages;
 
 		// Equipment
-		Wealth wealth;
-		std::string equipmentList;
-
+		Wealth m_Wealth;
+		std::string m_EquipmentList;
 
 		// Combat
-		int currentHitPoints = 0;
-		int maxHitPoints = 0;
-		int tempHitPoints = 0;
-		int armorClass = 0;
-		int initiative = 0;
-		int speed = 0;
-		HitDice hitDice;
-		DeathSaves deathSaves;
-		std::vector<Attack> attacks;
-		std::vector<Trait> spellcastingTraits;
+		int m_CurrentHitPoints = 0;
+		int m_MaxHitPoints = 0;
+		int m_TempHitPoints = 0;
+		int m_ArmorClass = 0;
+		int m_Initiative = 0;
+		int m_Speed = 0;
+		HitDice m_HitDice;
+		DeathSaves m_DeathSaves;
+		std::vector<Attack> m_Attacks;
+		std::vector<Trait> m_SpellcastingTraits;
 	};
 }

@@ -20,11 +20,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\DnDCharacter.h" />
-    <ClInclude Include="src\DnDCharacterGenerator.h" />
     <ClInclude Include="src\Random.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\DnDCharacterGenerator.cpp" />
+    <ClCompile Include="src\DnDCharacter.cpp" />
     <ClCompile Include="src\Main.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
