@@ -8,7 +8,7 @@ that will eventually be replaced by a wxWidgets application */
 
 int main()
 {
-	Random::init();
+	Random::Init();
 
 	while (1)
 	{

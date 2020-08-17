@@ -22,7 +22,7 @@ namespace dnd {
 		// Since this uses std::reference_wrapper, when the values in list change, the values in character change also 
 
 		// Randomize the order of entries and pick the first x of them
-		std::shuffle(list.begin(), list.end(), Random::getEngine());
+		std::shuffle(list.begin(), list.end(), Random::GetEngine());
 
 		for (int i = 0; i < x; ++i)
 		{
@@ -129,21 +129,21 @@ namespace dnd {
 		std::vector<std::string> classes = { "Barbarian", "Bard", "Cleric", "Druid", "Fighter", "Monk", "Paladin", "Ranger", "Rogue",
 								"Sorcerer", "Warlock", "Wizard" };
 
-		m_Class = classes[Random::drawNumber(0, classes.size() - 1)];
+		m_Class = classes[Random::Int(0, classes.size() - 1)];
 	}
 
 	void Character::GenerateRace()
 	{
 		std::vector<std::string> races = { "Dwarf", "Hill Dwarf", "Mountain Dwarf", "Elf", "High Elf", "Wood Elf", "Dark Elf (Drow)", "Halfling", "Lightfoot Halfling", "Stout Halfling", "Human" };
 
-		m_Race = races[Random::drawNumber(0, races.size() - 1)];
+		m_Race = races[Random::Int(0, races.size() - 1)];
 
 		// Humans also have ethnicity (for name)
 		if (m_Race == "Human")
 		{
 			std::vector<std::string> ethnicities = { "Calishite", "Chondathan", "Damaran", "Illuskan", "Mulan", "Rashemi", "Shou", "Tethyrian", "Turami" };
 
-			m_Ethnicity = ethnicities[Random::drawNumber(0, ethnicities.size() - 1)];
+			m_Ethnicity = ethnicities[Random::Int(0, ethnicities.size() - 1)];
 		}
 	}
 
@@ -154,7 +154,7 @@ namespace dnd {
 									"Guild Merchant", "Hermit", "Knight", "Noble", "Outlander", "Pirate", "Sage", "Sailor", "Soldier",
 									"Spy", "Urchin" };
 
-		m_Background = backgrounds[Random::drawNumber(0, backgrounds.size() - 1)];
+		m_Background = backgrounds[Random::Int(0, backgrounds.size() - 1)];
 	}
 
 	void Character::GenerateAlignment()
@@ -162,7 +162,7 @@ namespace dnd {
 		std::vector<std::string> alignments = { "Lawful Good", "Neutral Good", "Chaotic Good", "Lawful Neutral", "Neutral", "Chaotic Neutral",
 									"Lawful Evil", "Neutral Evil", "Chaotic Evil" };
 
-		m_Alignment = alignments[Random::drawNumber(0, alignments.size() - 1)];
+		m_Alignment = alignments[Random::Int(0, alignments.size() - 1)];
 	}
 
 	void Character::GenerateGender()
@@ -172,7 +172,7 @@ namespace dnd {
 		{
 			std::vector<std::string> genders = { "Male", "Female" };
 
-			m_Gender = genders[Random::drawNumber(0, genders.size() - 1)];
+			m_Gender = genders[Random::Int(0, genders.size() - 1)];
 		}
 	}
 
@@ -237,7 +237,7 @@ namespace dnd {
 		// Shuffle the list of possible names and pick the first one
 		// Note: Done this way because choosing a random element as in the other functions
 		// threw a "vector subscript out of range" exception
-		std::shuffle(possibleNames.begin(), possibleNames.end(), Random::getEngine());
+		std::shuffle(possibleNames.begin(), possibleNames.end(), Random::GetEngine());
 		m_FirstName = possibleNames[0];
 	}
 
@@ -267,7 +267,7 @@ namespace dnd {
 			getHumanNames(in, possibleNames, *this);
 		}
 
-		std::shuffle(possibleNames.begin(), possibleNames.end(), Random::getEngine());
+		std::shuffle(possibleNames.begin(), possibleNames.end(), Random::GetEngine());
 		m_Surname = possibleNames[0];
 	}
 
@@ -301,7 +301,7 @@ namespace dnd {
 					}
 					
 					// Each character gets two personality traits, so shuffle the list and pick the first two
-					std::shuffle(possibleTraits.begin(), possibleTraits.end(), Random::getEngine());
+					std::shuffle(possibleTraits.begin(), possibleTraits.end(), Random::GetEngine());
 					m_PersonalityTraits += possibleTraits[0] + " " + possibleTraits[1];
 				}
 			}
@@ -324,7 +324,7 @@ namespace dnd {
 				if (line.find(m_Background, 0) != std::string::npos)
 				{
 					// Roll a d6 to choose an ideal, as there are 6 pre-made choices for each background in the Player's Handbook
-					int target = Random::drawNumber(0, 5);
+					int target = Random::Int(0, 5);
 
 					if (m_Background == "Criminal" || m_Background == "Entertainer" || m_Background == "Guild Artisan"
 						|| m_Background == "Noble" || m_Background == "Sailor")
@@ -367,7 +367,7 @@ namespace dnd {
 				if (line.find(m_Background, 0) != std::string::npos)
 				{
 					// Roll a d6 to choose a bond, as there are 6 pre-made choices for each background in the Player's Handbook
-					int target = Random::drawNumber(0, 5);
+					int target = Random::Int(0, 5);
 
 					// If a character has a background that has a variant, skip an extra line due to the format of the file
 					// Variants have the same traits as their base backgrounds
@@ -399,7 +399,7 @@ namespace dnd {
 				if (line.find(m_Background, 0) != std::string::npos)
 				{
 					// Roll a d6 to choose a flaw, as there are 6 pre-made choices for each background in the Player's Handbook
-					int target = Random::drawNumber(0, 5);
+					int target = Random::Int(0, 5);
 
 					// If a character has a background that has a variant, skip an extra line due to the format of the file
 					// Variants have the same traits as their base backgrounds
@@ -428,7 +428,7 @@ namespace dnd {
 		// First entry null so that expForLevel[1] is how much exp is required for level one, etc.
 		std::vector<int> expForLevel = { NULL, 0, 300, 900, 2700, 6500, 14000, 23000, 34000, 48000, 64000, 85000, 100000, 120000, 140000, 165000, 195000, 225000, 265000, 305000, 355000 };
 
-		m_Level = Random::drawNumber(1, 20);
+		m_Level = Random::Int(1, 20);
 		m_Experience = expForLevel[m_Level]; // Character starts with 0 progress toward next level
 	}
 
@@ -467,7 +467,7 @@ namespace dnd {
 		{
 			for (int j = 0; j < 4; ++j)
 			{
-				results.push_back(Random::drawNumber(1, 6));
+				results.push_back(Random::Int(1, 6));
 			}
 
 			std::sort(results.begin(), results.end(), std::greater<int>()); // Put the results in order of greatest to least
@@ -791,7 +791,7 @@ namespace dnd {
 			if (m_Race == "High Elf")
 			{
 				// 1 is the minimum number to avoid picking Elvish twice
-				m_Languages.push_back(possibleLanguages[Random::drawNumber(1, possibleLanguages.size() - 1)]);
+				m_Languages.push_back(possibleLanguages[Random::Int(1, possibleLanguages.size() - 1)]);
 			}
 		}
 		else if (m_Race == "Halfling" || m_Race == "Lightfoot Halfling" || m_Race == "Stout Halfling")
@@ -801,7 +801,7 @@ namespace dnd {
 		else if (m_Race == "Human")
 		{
 			// Humans can pick any language
-			m_Languages.push_back(possibleLanguages[Random::drawNumber(0, possibleLanguages.size() - 1)]);
+			m_Languages.push_back(possibleLanguages[Random::Int(0, possibleLanguages.size() - 1)]);
 		}
 	}
 
@@ -859,20 +859,20 @@ namespace dnd {
 		{
 			if (m_Class == "Barbarian")
 			{
-				m_MaxHitPoints += Random::drawNumber(1, 12) + m_Constitution.Modifier;
+				m_MaxHitPoints += Random::Int(1, 12) + m_Constitution.Modifier;
 			}
 			else if (m_Class == "Fighter" || m_Class == "Paladin" || m_Class == "Ranger")
 			{
-				m_MaxHitPoints += Random::drawNumber(1, 10) + m_Constitution.Modifier;
+				m_MaxHitPoints += Random::Int(1, 10) + m_Constitution.Modifier;
 			}
 			else if (m_Class == "Bard" || m_Class == "Cleric" || m_Class == "Druid" || m_Class == "Monk"
 				|| m_Class == "Rogue" || m_Class == "Warlock")
 			{
-				m_MaxHitPoints += Random::drawNumber(1, 8) + m_Constitution.Modifier;
+				m_MaxHitPoints += Random::Int(1, 8) + m_Constitution.Modifier;
 			}
 			else if (m_Class == "Sorcerer" || m_Class == "Wizard")
 			{
-				m_MaxHitPoints += Random::drawNumber(1, 6) + m_Constitution.Modifier;
+				m_MaxHitPoints += Random::Int(1, 6) + m_Constitution.Modifier;
 			}
 		}
 
