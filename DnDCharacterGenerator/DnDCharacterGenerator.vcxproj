@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\DnDCharacter.h" />
+    <ClInclude Include="src\Lists.h" />
     <ClInclude Include="src\Random.h" />
   </ItemGroup>
   <ItemGroup>
