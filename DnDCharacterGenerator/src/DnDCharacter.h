@@ -126,6 +126,7 @@ namespace dnd
 		std::string m_Class;
 		std::string m_Background;
 		std::string m_Race;
+		std::string m_MajorRace;
 		std::string m_Ethnicity; // Only for humans
 		std::string m_Alignment;
 		std::string m_PersonalityTraits;

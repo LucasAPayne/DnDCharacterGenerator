@@ -16,6 +16,14 @@ namespace dnd {
 // Helper Functions
 // ======================================================================================
 
+	// Choose a list from a dictionary given a certain attribute of the character, and set one of their traits to a random value from the list
+	template<typename S, typename T>
+	void SetTraitFromDict(std::string& trait, const std::unordered_map<T, S>& dict, const std::string& criteria)
+	{
+		auto list = dict.at(criteria);
+		trait = list[Random::Int(0, list.size() - 1)];
+	}
+
 // Choose a number (x) of skill proficiencies randomly from a given list
 	void chooseXRandomlyFrom(int x, std::vector<std::reference_wrapper<dnd::Skill> > list)
 	{
@@ -79,26 +87,36 @@ namespace dnd {
 
 	void Character::GenerateClass()
 	{
-		m_Class = classes[Random::Int(0, NumClasses - 1)];
+		m_Class = Classes[Random::Int(0, NumClasses - 1)];
 	}
 
 	void Character::GenerateRace()
 	{
-		m_Race = races[Random::Int(0, NumRaces - 1)];
+		m_Race = Races[Random::Int(0, NumRaces - 1)];
 
 		// Humans also have ethnicity (for name)
 		if (m_Race == "Human")
-			m_Ethnicity = ethnicities[Random::Int(0, NumEthnicities - 1)];
+			m_Ethnicity = Ethnicities[Random::Int(0, NumEthnicities - 1)];
+		
+		// Find the character's major race
+		if (m_Race == "Dwarf" || m_Race == "Elf" || m_Race == "Halfling" || m_Race == "Human")
+			m_MajorRace = m_Race;
+		else if (m_Race == "Mountain Dwarf" || m_Race == "Hill Dwarf")
+			m_MajorRace = "Dwarf";
+		else if (m_Race == "High Elf" || m_Race == "Wood Elf" || m_Race == "Dark Elf (Drow)")
+			m_MajorRace = "Elf";
+		else if (m_Race == "Lightfoot Halfling" || m_Race == "Stout Halfling")
+			m_MajorRace = "Halfling";
 	}
 
 	void Character::GenerateBackground()
 	{
-		m_Background = backgrounds[Random::Int(0, NumBackgrounds - 1)];
+		m_Background = Backgrounds[Random::Int(0, NumBackgrounds - 1)];
 	}
 
 	void Character::GenerateAlignment()
 	{
-		m_Alignment = alignments[Random::Int(0, NumAlignments - 1)];
+		m_Alignment = Alignments[Random::Int(0, NumAlignments - 1)];
 	}
 
 	void Character::GenerateGender()
@@ -106,252 +124,73 @@ namespace dnd {
 		// Gender needed to generate random name
 		if (m_Gender == "")
 		{
-			m_Gender = genders[Random::Int(0, NumGenders - 1)];
+			m_Gender = Genders[Random::Int(0, NumGenders - 1)];
 		}
 	}
 
 	void Character::GenerateFirstName()
 	{
-		if (m_Race.find("Dwarf") != std::string::npos)
+		if (m_Race == "Human")
 		{
 			if (m_Gender == "Male")
-				m_FirstName = DwarfMaleNames[Random::Int(0, NumDwarfMaleNames - 1)];
+				SetTraitFromDict(m_FirstName, HumanMaleNames, m_Ethnicity);
 			else if (m_Gender == "Female")
-				m_FirstName = DwarfFemaleNames[Random::Int(0, NumDwarfFemaleNames - 1)];
+				SetTraitFromDict(m_FirstName, HumanFemaleNames, m_Ethnicity);
 		}
-		else if (m_Race.find("Elf") != std::string::npos)
+		else
 		{
 			if (m_Gender == "Male")
-				m_FirstName = ElfMaleNames[Random::Int(0, NumElfMaleNames - 1)];
+				SetTraitFromDict(m_FirstName, NonHumanMaleNames, m_MajorRace);
 			else if (m_Gender == "Female")
-				m_FirstName = ElfFemaleNames[Random::Int(0, NumElfFemaleNames - 1)];
-		}
-		else if (m_Race.find("Halfling") != std::string::npos)
-		{
-			if (m_Gender == "Male")
-				m_FirstName = HalflingMaleNames[Random::Int(0, NumHalflingMaleNames - 1)];
-			else if (m_Gender == "Female")
-				m_FirstName = HalflingFemaleNames[Random::Int(0, NumHalflingFemaleNames - 1)];
-		}
-		else if (m_Race == "Human")
-		{
-			if (m_Gender == "Male")
-			{
-				if (m_Ethnicity == "Calishite")
-					m_FirstName = CalishiteMaleNames[Random::Int(0, NumCalishiteMaleNames - 1)];
-				else if (m_Ethnicity == "Chondathan" || m_Ethnicity == "Tethyrian")
-					m_FirstName = ChondathanTethyrianMaleNames[Random::Int(0, NumChondathanTethyrianMaleNames - 1)];
-				else if (m_Ethnicity == "Damaran")
-					m_FirstName = DamaranMaleNames[Random::Int(0, NumDamaranMaleNames - 1)];
-				else if (m_Ethnicity == "Illuskan")
-					m_FirstName = IlluskanMaleNames[Random::Int(0, NumIlluskanMaleNames - 1)];
-				else if (m_Ethnicity == "Mulan")
-					m_FirstName = MulanMaleNames[Random::Int(0, NumMulanMaleNames - 1)];
-				else if (m_Ethnicity == "Rashemi")
-					m_FirstName = RashemiMaleNames[Random::Int(0, NumRashemiMaleNames - 1)];
-				else if (m_Ethnicity == "Shou")
-					m_FirstName = ShouMaleNames[Random::Int(0, NumShouMaleNames - 1)];
-				else if (m_Ethnicity == "Turami")
-					m_FirstName = TuramiMaleNames[Random::Int(0, NumTuramiMaleNames - 1)];
-			}
-			else if (m_Gender == "Female")
-			{
-				if (m_Ethnicity == "Calishite")
-					m_FirstName = CalishiteFemaleNames[Random::Int(0, NumCalishiteFemaleNames - 1)];
-				else if (m_Ethnicity == "Chondathan" || m_Ethnicity == "Tethyrian")
-					m_FirstName = ChondathanTethyrianFemaleNames[Random::Int(0, NumChondathanTethyrianFemaleNames - 1)];
-				else if (m_Ethnicity == "Damaran")
-					m_FirstName = DamaranFemaleNames[Random::Int(0, NumDamaranFemaleNames - 1)];
-				else if (m_Ethnicity == "Illuskan")
-					m_FirstName = IlluskanFemaleNames[Random::Int(0, NumIlluskanFemaleNames - 1)];
-				else if (m_Ethnicity == "Mulan")
-					m_FirstName = MulanFemaleNames[Random::Int(0, NumMulanFemaleNames - 1)];
-				else if (m_Ethnicity == "Rashemi")
-					m_FirstName = RashemiFemaleNames[Random::Int(0, NumRashemiFemaleNames - 1)];
-				else if (m_Ethnicity == "Shou")
-					m_FirstName = ShouFemaleNames[Random::Int(0, NumShouFemaleNames - 1)];
-				else if (m_Ethnicity == "Turami")
-					m_FirstName = TuramiFemaleNames[Random::Int(0, NumTuramiFemaleNames - 1)];
-			}
+				SetTraitFromDict(m_FirstName, NonHumanFemaleNames, m_MajorRace);
 		}
 	}
 
 	void Character::GenerateSurname()
 	{
-		// There are different types of non-humans but the major race is all that matters for picking a name
-		if (m_Race.find("Dwarf") != std::string::npos)
-			m_Surname = DwarfClanNames[Random::Int(0, NumDwarfClanNames - 1)];
-		else if (m_Race.find("Elf") != std::string::npos)
-			m_Surname = ElfFamilyNames[Random::Int(0, NumElfFamilyNames - 1)];
-		else if (m_Race.find("Halfling") != std::string::npos)
-			m_Surname = HalflingFamilyNames[Random::Int(0, NumHalflingFamilyNames - 1)];
-		else if (m_Race == "Human")
-		{
-			if (m_Ethnicity == "Calishite")
-				m_Surname = CalishiteSurnames[Random::Int(0, NumCalishiteSurnames - 1)];
-			else if (m_Ethnicity == "Chondathan" || m_Ethnicity == "Tethyrian")
-				m_Surname = ChondathanTethyrianSurnames[Random::Int(0, NumChondathanTethyrianSurnames - 1)];
-			else if (m_Ethnicity == "Damaran")
-				m_Surname = DamaranSurnames[Random::Int(0, NumDamaranSurnames - 1)];
-			else if (m_Ethnicity == "Illuskan")
-				m_Surname = IlluskanSurnames[Random::Int(0, NumIlluskanSurnames - 1)];
-			else if (m_Ethnicity == "Mulan")
-				m_Surname = MulanSurnames[Random::Int(0, NumMulanSurnames - 1)];
-			else if (m_Ethnicity == "Rashemi")
-				m_Surname = RashemiSurnames[Random::Int(0, NumRashemiSurnames - 1)];
-			else if (m_Ethnicity == "Shou")
-				m_Surname = ShouSurnames[Random::Int(0, NumShouSurnames - 1)];
-			else if (m_Ethnicity == "Turami")
-				m_Surname = TuramiSurnames[Random::Int(0, NumTuramiSurnames - 1)];
-		}
+		if (m_Race == "Human")
+			SetTraitFromDict(m_Surname, HumanSurnames, m_Ethnicity);
+		else
+			SetTraitFromDict(m_Surname, NonHumanSurnames, m_MajorRace);
 	}
 
 	void Character::GeneratePersonalityTraits()
 	{
 		// Generate two unique random numbers to ensure personality traits are different
-		int first = Random::Int(0, NumPersonalityTraits - 1);
-		int second = Random::Int(0, NumPersonalityTraits - 1);
-		while (second == first)
-			second = Random::Int(0, NumPersonalityTraits - 1);
+		auto list = PersonalityTraits.at(m_Background);
+		int first = Random::Int(0, list.size() - 1);
+		int second = Random::Int(0, list.size() - 1);
 
-		if (m_Background == "Acolyte")
-			m_PersonalityTraits = AcolytePersonalityTraits[first] + " " + AcolytePersonalityTraits[second];
-		else if (m_Background == "Charlatan")
-			m_PersonalityTraits = CharlatanPersonalityTraits[first] + " " + CharlatanPersonalityTraits[second];
-		else if (m_Background == "Criminal" || m_Background == "Spy")
-			m_PersonalityTraits = CriminalSpyPersonalityTraits[first] + " " + CriminalSpyPersonalityTraits[second];
-		else if (m_Background == "Entertainer" || m_Background == "Gladiator")
-			m_PersonalityTraits = EntertainerGladiatorPersonalityTraits[first] + " " + EntertainerGladiatorPersonalityTraits[second];
-		else if (m_Background == "Folk Hero")
-			m_PersonalityTraits = FolkHeroPersonalityTraits[first] + " " + FolkHeroPersonalityTraits[second];
-		else if (m_Background == "Guild Artisan" || m_Background == "Guild Merchant")
-			m_PersonalityTraits = GuildArtisanMerchantPersonalityTraits[first] + " " + GuildArtisanMerchantPersonalityTraits[second];
-		else if (m_Background == "Hermit")
-			m_PersonalityTraits = HermitPersonalityTraits[first] + " " + HermitPersonalityTraits[second];
-		else if (m_Background == "Noble" || m_Background == "Knight")
-			m_PersonalityTraits = NobleKnightPersonalityTraits[first] + " " + NobleKnightPersonalityTraits[second];
-		else if (m_Background == "Outlander")
-			m_PersonalityTraits = OutlanderPersonalityTraits[first] + " " + OutlanderPersonalityTraits[second];
-		else if (m_Background == "Sage")
-			m_PersonalityTraits = SagePersonalityTraits[first] + " " + SagePersonalityTraits[second];
-		else if (m_Background == "Sailor" || m_Background == "Pirate")
-			m_PersonalityTraits = SailorPiratePersonalityTraits[first] + " " + SailorPiratePersonalityTraits[second];
-		else if (m_Background == "Soldier")
-			m_PersonalityTraits = SoldierPersonalityTraits[first] + " " + SoldierPersonalityTraits[second];
-		else if (m_Background == "Urchin")
-			m_PersonalityTraits = UrchinPersonalityTraits[first] + " " + UrchinPersonalityTraits[second];
+		// Ensure two unique traits are chosen
+		while (second == first)
+			second = Random::Int(0, list.size() - 1);
+
+		m_PersonalityTraits = list[first] + " " + list[second];
 	}
 
 	void Character::GenerateIdeals()
 	{
 		std::string axis1 = m_Alignment.substr(0, m_Alignment.find(' ')); // Lawful, Neutral, or Chaotic
 		std::string axis2 = m_Alignment.substr(m_Alignment.find(' ') + 1); // Good, Neutral, or Evil;
+		auto list = Ideals.at(m_Background);
 
-		std::array<std::pair<std::string, std::string>, NumIdeals> list;
-		int index = Random::Int(0, NumIdeals - 1);
-
-		bool success = false;
-		while (!success)
+		while (m_Ideals == "")
 		{
-			if (m_Ideals != "")
-				success = true;
-
-			if (m_Background == "Acolyte")
-				list = AcolyteIdeals;
-			else if (m_Background == "Charlatan")
-				list = CharlatanIdeals;
-			else if (m_Background == "Criminal" || m_Background == "Spy")
-				list = CriminalSpyIdeals;
-			else if (m_Background == "Entertainer" || m_Background == "Gladiator")
-				list = EntertainerGladiatorIdeals;
-			else if (m_Background == "Folk Hero")
-				list = FolkHeroIdeals;
-			else if (m_Background == "Guild Artisan" || m_Background == "Guild Merchant")
-				list = GuildArtisanMerchantIdeals;
-			else if (m_Background == "Hermit")
-				list = HermitIdeals;
-			else if (m_Background == "Noble" || m_Background == "Knight")
-				list = NobleKnightIdeals;
-			else if (m_Background == "Outlander")
-				list = OutlanderIdeals;
-			else if (m_Background == "Sage")
-				list = SageIdeals;
-			else if (m_Background == "Sailor" || m_Background == "Pirate")
-				list = SailorPirateIdeals;
-			else if (m_Background == "Soldier")
-				list = SoldierIdeals;
-			else if (m_Background == "Urchin")
-				list = UrchinIdeals;
+			int index = Random::Int(0, list.size() - 1);
 
 			if (list[index].first == axis1 || list[index].first == axis2 || list[index].first == "Any")
 				m_Ideals = list[index].second;
-			else
-				index = Random::Int(0, NumIdeals - 1);
 		}
 	}
 
 	void Character::GenerateBonds()
 	{
-		int index = Random::Int(0, NumBonds - 1);
-
-		if (m_Background == "Acolyte")
-			m_Bonds = AcolyteBonds[index];
-		else if (m_Background == "Charlatan")
-			m_Bonds = CharlatanBonds[index];
-		else if (m_Background == "Criminal" || m_Background == "Spy")
-			m_Bonds = CriminalSpyBonds[index];
-		else if (m_Background == "Entertainer" || m_Background == "Gladiator")
-			m_Bonds = EntertainerGladiatorBonds[index];
-		else if (m_Background == "Folk Hero")
-			m_Bonds = FolkHeroBonds[index];
-		else if (m_Background == "Guild Artisan" || m_Background == "Guild Merchant")
-			m_Bonds = GuildArtisanMerchantBonds[index];
-		else if (m_Background == "Hermit")
-			m_Bonds = HermitBonds[index];
-		else if (m_Background == "Noble" || m_Background == "Knight")
-			m_Bonds = NobleKnightBonds[index];
-		else if (m_Background == "Outlander")
-			m_Bonds = OutlanderBonds[index];
-		else if (m_Background == "Sage")
-			m_Bonds = SageBonds[index];
-		else if (m_Background == "Sailor" || m_Background == "Pirate")
-			m_Bonds = SailorPirateBonds[index];
-		else if (m_Background == "Soldier")
-			m_Bonds = SoldierBonds[index];
-		else if (m_Background == "Urchin")
-			m_Bonds = UrchinBonds[index];
+		SetTraitFromDict(m_Bonds, Bonds, m_Background);
 	}
 
 	void Character::GenerateFlaws()
 	{
-		int index = Random::Int(0, NumFlaws - 1);
-
-		if (m_Background == "Acolyte")
-			m_Flaws = AcolyteFlaws[index];
-		else if (m_Background == "Charlatan")
-			m_Flaws = CharlatanFlaws[index];
-		else if (m_Background == "Criminal" || m_Background == "Spy")
-			m_Flaws = CriminalSpyFlaws[index];
-		else if (m_Background == "Entertainer" || m_Background == "Gladiator")
-			m_Flaws = EntertainerGladiatorFlaws[index];
-		else if (m_Background == "Folk Hero")
-			m_Flaws = FolkHeroFlaws[index];
-		else if (m_Background == "Guild Artisan" || m_Background == "Guild Merchant")
-			m_Flaws = GuildArtisanMerchantFlaws[index];
-		else if (m_Background == "Hermit")
-			m_Flaws = HermitFlaws[index];
-		else if (m_Background == "Noble" || m_Background == "Knight")
-			m_Flaws = NobleKnightFlaws[index];
-		else if (m_Background == "Outlander")
-			m_Flaws = OutlanderFlaws[index];
-		else if (m_Background == "Sage")
-			m_Flaws = SageFlaws[index];
-		else if (m_Background == "Sailor" || m_Background == "Pirate")
-			m_Flaws = SailorPirateFlaws[index];
-		else if (m_Background == "Soldier")
-			m_Flaws = SoldierFlaws[index];
-		else if (m_Background == "Urchin")
-			m_Flaws = UrchinFlaws[index];
+		SetTraitFromDict(m_Flaws, Flaws, m_Background);
 	}
 
 	// ======================================================================================
@@ -361,7 +200,7 @@ namespace dnd {
 	void Character::GenerateLevel()
 	{
 		m_Level = Random::Int(1, NumLevels - 1);
-		m_Experience = expForLevel[m_Level]; // Character starts with 0 progress toward next level
+		m_Experience = ExpForLevel[m_Level]; // Character starts with 0 progress toward next level
 	}
 
 	void Character::GenerateProficiencyBonus()
@@ -719,7 +558,7 @@ namespace dnd {
 			if (m_Race == "High Elf")
 			{
 				// 1 is the minimum number to avoid picking Elvish twice
-				m_Languages.push_back(languages[Random::Int(1, NumLanguages - 1)]);
+				m_Languages.push_back(Languages[Random::Int(1, NumLanguages - 1)]);
 			}
 		}
 		else if (m_Race == "Halfling" || m_Race == "Lightfoot Halfling" || m_Race == "Stout Halfling")
@@ -729,7 +568,7 @@ namespace dnd {
 		else if (m_Race == "Human")
 		{
 			// Humans can pick any language
-			m_Languages.push_back(languages[Random::Int(0, NumLanguages - 1)]);
+			m_Languages.push_back(Languages[Random::Int(0, NumLanguages - 1)]);
 		}
 	}
 
