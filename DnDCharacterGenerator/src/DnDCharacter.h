@@ -78,12 +78,8 @@ namespace dnd
 		void GenerateBackground();
 		void GenerateAlignment();
 		void GenerateGender();
-		void GenerateFirstName();
-		void GenerateSurname();
-		void GeneratePersonalityTraits();
-		void GenerateIdeals();
-		void GenerateBonds();
-		void GenerateFlaws();
+		void GenerateName();
+		void GeneratePersonality();
 
 
 		// Skills, Abilities, and Level ==============================================

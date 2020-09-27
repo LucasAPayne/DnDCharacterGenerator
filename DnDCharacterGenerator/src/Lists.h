@@ -408,7 +408,7 @@ namespace dnd {
 			{"Chaotic", "Creativity. The world is in need of new ideas and bold action."},
 			{"Evil",    "Greed. I'm only in it for the money and fame."},
 			{"Neutral", "People. I like seeing the smiles on people's faces when I perform. That's all that matters."},
-			{"Any",     "Honesty. Art should reflect the soul; it should come from withinand reveal who we really are."}
+			{"Any",     "Honesty. Art should reflect the soul; it should come from within and reveal who we really are."}
 		}},
 
 		{"Gladiator", {
@@ -417,7 +417,7 @@ namespace dnd {
 			{"Chaotic", "Creativity. The world is in need of new ideas and bold action."},
 			{"Evil",    "Greed. I'm only in it for the money and fame."},
 			{"Neutral", "People. I like seeing the smiles on people's faces when I perform. That's all that matters."},
-			{"Any",     "Honesty. Art should reflect the soul; it should come from withinand reveal who we really are."}
+			{"Any",     "Honesty. Art should reflect the soul; it should come from within and reveal who we really are."}
 		}},
 
 		{"Folk Hero", {

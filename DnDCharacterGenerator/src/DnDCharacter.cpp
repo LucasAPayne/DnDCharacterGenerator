@@ -46,12 +46,8 @@ namespace dnd {
 		GenerateBackground();
 		GenerateAlignment();
 		GenerateGender();
-		GenerateFirstName();
-		GenerateSurname();
-		GeneratePersonalityTraits();
-		GenerateIdeals();
-		GenerateBonds();
-		GenerateFlaws();
+		GenerateName();
+		GeneratePersonality();
 
 		// Skills, Abilities, and Level
 		GenerateLevel();
@@ -128,7 +124,7 @@ namespace dnd {
 		}
 	}
 
-	void Character::GenerateFirstName()
+	void Character::GenerateName()
 	{
 		if (m_Race == "Human")
 		{
@@ -136,6 +132,8 @@ namespace dnd {
 				SetTraitFromDict(m_FirstName, HumanMaleNames, m_Ethnicity);
 			else if (m_Gender == "Female")
 				SetTraitFromDict(m_FirstName, HumanFemaleNames, m_Ethnicity);
+
+			SetTraitFromDict(m_Surname, HumanSurnames, m_Ethnicity);
 		}
 		else
 		{
@@ -143,53 +141,42 @@ namespace dnd {
 				SetTraitFromDict(m_FirstName, NonHumanMaleNames, m_MajorRace);
 			else if (m_Gender == "Female")
 				SetTraitFromDict(m_FirstName, NonHumanFemaleNames, m_MajorRace);
+
+			SetTraitFromDict(m_Surname, NonHumanSurnames, m_MajorRace);
 		}
 	}
 
-	void Character::GenerateSurname()
+	void Character::GeneratePersonality()
 	{
-		if (m_Race == "Human")
-			SetTraitFromDict(m_Surname, HumanSurnames, m_Ethnicity);
-		else
-			SetTraitFromDict(m_Surname, NonHumanSurnames, m_MajorRace);
-	}
-
-	void Character::GeneratePersonalityTraits()
-	{
+		// Personality Traits
 		// Generate two unique random numbers to ensure personality traits are different
-		auto list = PersonalityTraits.at(m_Background);
-		int first = Random::Int(0, list.size() - 1);
-		int second = Random::Int(0, list.size() - 1);
+		auto personalityList = PersonalityTraits.at(m_Background);
+		int first = Random::Int(0, personalityList.size() - 1);
+		int second = Random::Int(0, personalityList.size() - 1);
 
 		// Ensure two unique traits are chosen
 		while (second == first)
-			second = Random::Int(0, list.size() - 1);
+			second = Random::Int(0, personalityList.size() - 1);
 
-		m_PersonalityTraits = list[first] + " " + list[second];
-	}
+		m_PersonalityTraits = personalityList[first] + " " + personalityList[second];
 
-	void Character::GenerateIdeals()
-	{
+		// Ideals
 		std::string axis1 = m_Alignment.substr(0, m_Alignment.find(' ')); // Lawful, Neutral, or Chaotic
 		std::string axis2 = m_Alignment.substr(m_Alignment.find(' ') + 1); // Good, Neutral, or Evil;
-		auto list = Ideals.at(m_Background);
+		auto idealsList = Ideals.at(m_Background);
 
 		while (m_Ideals == "")
 		{
-			int index = Random::Int(0, list.size() - 1);
+			int index = Random::Int(0, idealsList.size() - 1);
 
-			if (list[index].first == axis1 || list[index].first == axis2 || list[index].first == "Any")
-				m_Ideals = list[index].second;
+			if (idealsList[index].first == axis1 || idealsList[index].first == axis2 || idealsList[index].first == "Any")
+				m_Ideals = idealsList[index].second;
 		}
-	}
 
-	void Character::GenerateBonds()
-	{
+		// Bonds
 		SetTraitFromDict(m_Bonds, Bonds, m_Background);
-	}
 
-	void Character::GenerateFlaws()
-	{
+		// Flaws
 		SetTraitFromDict(m_Flaws, Flaws, m_Background);
 	}
 
