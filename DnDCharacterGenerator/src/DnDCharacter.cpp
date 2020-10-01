@@ -272,7 +272,7 @@ namespace dnd {
 		for (size_t i = 0; i < abilities.size(); ++i)
 		{
 			// Always round down (toward -inf)
-			int temp = abilities[i].Score- 10;
+			int temp = abilities[i].Score - 10;
 
 			if (temp >= 0)
 				abilities[i].Modifier = temp / 2;
@@ -327,12 +327,6 @@ namespace dnd {
 	void Character::GenerateSkillModifiers()
 	{
 		// Skill modifiers are based on the abilities that govern them
-		m_Athletics.Parent      = m_Strength;
-		m_Acrobatics.Parent     = m_SleightOfHand.Parent = m_Stealth.Parent       = m_Dexterity;
-		m_Arcana.Parent         = m_History.Parent       = m_Investigation.Parent = m_Nature.Parent     = m_Religion.Parent = m_Intelligence;
-		m_AnimalHandling.Parent = m_Insight.Parent       = m_Medicine.Parent      = m_Perception.Parent = m_Survival.Parent = m_Wisdom;
-		m_Deception.Parent      = m_Intimidation.Parent  = m_Performance.Parent   = m_Persuasion.Parent = m_Charisma;
-
 		std::vector<std::reference_wrapper<Skill> > skills = { m_Acrobatics, m_AnimalHandling, m_Arcana, m_Athletics, m_Deception, m_History, m_Insight,
 			m_Intimidation, m_Investigation, m_Medicine, m_Nature, m_Perception, m_Performance, m_Persuasion, m_Religion,
 			m_SleightOfHand, m_Stealth, m_Survival };
@@ -352,78 +346,28 @@ namespace dnd {
 
 	void Character::GenerateSavingThrowProficiencies()
 	{
-		if (m_Class == "Barbarian")
-		{
+		if (m_Class == "Barbarian" || m_Class == "Fighter" || m_Class == "Monk" || m_Class == "Ranger")
 			m_StrengthSave.Proficient = true;
+
+		if (m_Class == "Bard" || m_Class == "Monk" || m_Class == "Ranger" || m_Class == "Rogue")
+			m_DexteritySave.Proficient = true;
+
+		if (m_Class == "Barbarian" || m_Class == "Fighter" || m_Class == "Sorceror")
 			m_ConstitutionSave.Proficient = true;
-		}
-		if (m_Class == "Bard")
-		{
-			m_DexteritySave.Proficient = true;
-			m_CharismaSave.Proficient = true;
-		}
-		if (m_Class == "Cleric")
-		{
-			m_WisdomSave.Proficient = true;
-			m_CharismaSave.Proficient = true;
-		}
-		if (m_Class == "Druid")
-		{
+
+		if (m_Class == "Druid" || m_Class == "Rogue" || m_Class == "Wizard")
 			m_IntelligenceSave.Proficient = true;
+
+		if (m_Class == "Cleric" || m_Class == "Druid" || m_Class == "Paladin" || m_Class == "Warlock" || m_Class == "Wizard")
 			m_WisdomSave.Proficient = true;
-		}
-		if (m_Class == "Fighter")
-		{
-			m_StrengthSave.Proficient = true;
-			m_ConstitutionSave.Proficient = true;
-		}
-		if (m_Class == "Monk")
-		{
-			m_StrengthSave.Proficient = true;
-			m_DexteritySave.Proficient = true;
-		}
-		if (m_Class == "Paladin")
-		{
-			m_WisdomSave.Proficient = true;
+
+		if (m_Class == "Bard" || m_Class == "Cleric" || m_Class == "Paladin" || m_Class == "Sorceror" || m_Class == "Warlock")
 			m_CharismaSave.Proficient = true;
-		}
-		if (m_Class == "Ranger")
-		{
-			m_StrengthSave.Proficient = true;
-			m_DexteritySave.Proficient = true;
-		}
-		if (m_Class == "Rogue")
-		{
-			m_DexteritySave.Proficient = true;
-			m_IntelligenceSave.Proficient = true;
-		}
-		if (m_Class == "Sorceror")
-		{
-			m_ConstitutionSave.Proficient = true;
-			m_CharismaSave.Proficient = true;
-		}
-		if (m_Class == "Warlock")
-		{
-			m_WisdomSave.Proficient = true;
-			m_CharismaSave.Proficient = true;
-		}
-		if (m_Class == "Wizard")
-		{
-			m_IntelligenceSave.Proficient = true;
-			m_WisdomSave.Proficient = true;
-		}
 	}
 
 	void Character::GenerateSavingThrowModifiers()
 	{
-		m_StrengthSave.Parent     = m_Strength;
-		m_DexteritySave.Parent    = m_Dexterity;
-		m_ConstitutionSave.Parent = m_Constitution;
-		m_IntelligenceSave.Parent = m_Intelligence;
-		m_WisdomSave.Parent       = m_Wisdom;
-		m_CharismaSave.Parent     = m_Charisma;
-
-		std::vector<std::reference_wrapper<Skill> > saves = { m_StrengthSave, m_DexteritySave, m_ConstitutionSave, m_IntelligenceSave,
+		std::vector<std::reference_wrapper<Skill>> saves = { m_StrengthSave, m_DexteritySave, m_ConstitutionSave, m_IntelligenceSave,
 			m_WisdomSave, m_CharismaSave };
 
 		// Start at parent ability's modifier
@@ -499,10 +443,13 @@ namespace dnd {
 	{
 		if (m_Class == "Barbarian")
 			m_HitDice.Type = "d12";
+
 		else if (m_Class == "Fighter" || m_Class == "Paladin" || m_Class == "Ranger")
 			m_HitDice.Type = "d10";
+
 		else if (m_Class == "Bard" || m_Class == "Cleric" || m_Class == "Druid" || m_Class == "Monk" || m_Class == "Rogue" || m_Class == "Warlock")
 			m_HitDice.Type = "d8";
+
 		else if (m_Class == "Sorceror" || m_Class == "Wizard")
 			m_HitDice.Type = "d6";
 
@@ -514,10 +461,13 @@ namespace dnd {
 		// At level 1, characters start with the max roll of their hit die plus their constitution modifier
 		if (m_Class == "Barbarian")
 			m_MaxHitPoints = 12 + m_Constitution.Modifier;
+
 		else if (m_Class == "Fighter" || m_Class == "Paladin" || m_Class == "Ranger")
 			m_MaxHitPoints = 10 + m_Constitution.Modifier;
+
 		else if (m_Class == "Bard" || m_Class == "Cleric" || m_Class == "Druid" || m_Class == "Monk" || m_Class == "Rogue" || m_Class == "Warlock")
 			m_MaxHitPoints = 8 + m_Constitution.Modifier;
+
 		else if (m_Class == "Sorcerer" || m_Class == "Wizard")
 			m_MaxHitPoints = 6 + m_Constitution.Modifier;
 
@@ -526,10 +476,13 @@ namespace dnd {
 		{
 			if (m_Class == "Barbarian")
 				m_MaxHitPoints += Random::Int(1, 12) + m_Constitution.Modifier;
+
 			else if (m_Class == "Fighter" || m_Class == "Paladin" || m_Class == "Ranger")
 				m_MaxHitPoints += Random::Int(1, 10) + m_Constitution.Modifier;
+
 			else if (m_Class == "Bard" || m_Class == "Cleric" || m_Class == "Druid" || m_Class == "Monk" || m_Class == "Rogue" || m_Class == "Warlock")
 				m_MaxHitPoints += Random::Int(1, 8) + m_Constitution.Modifier;
+
 			else if (m_Class == "Sorcerer" || m_Class == "Wizard")
 				m_MaxHitPoints += Random::Int(1, 6) + m_Constitution.Modifier;
 		}
