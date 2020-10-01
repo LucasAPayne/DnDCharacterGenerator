@@ -226,30 +226,35 @@ namespace dnd {
 	void Character::GenerateRacialAbilityBonuses()
 	{
 		// Subraces also get parent race benefits
-		if (m_Race == "Dwarf" || m_Race == "Hill Dwarf" || m_Race == "Mountain Dwarf")
-			m_Constitution.Score+= 2;
-		if (m_Race == "Hill Dwarf")
-			m_Wisdom.Score++;
-		if (m_Race == "Mountain Dwarf")
-			m_Strength.Score+= 2;
+		if (m_MajorRace == "Dwarf")
+		{
+			m_Constitution.Score += 2;
 
-		if (m_Race == "Elf" || m_Race == "High Elf" || m_Race == "Wood Elf" || m_Race == "Dark Elf (Drow)")
-			m_Dexterity.Score+= 2;
-		if (m_Race == "High Elf")
-			m_Intelligence.Score++;
-		if (m_Race == "Wood Elf")
-			m_Wisdom.Score++;
-		if (m_Race == "Dark Elf (Drow)")
-			m_Charisma.Score++;
-
-		if (m_Race == "Halfling" || m_Race == "Lightfoot Halfling" || m_Race == "Stout Halfling")
-			m_Dexterity.Score+= 2;
-		if (m_Race == "Lightfoot Halfling")
-			m_Charisma.Score++;
-		if (m_Race == "Stout Halfling")
-			m_Constitution.Score++;
-
-		if (m_Race == "Human")
+			if (m_Race == "Hill Dwarf")
+				m_Wisdom.Score++;
+			if (m_Race == "Mountain Dwarf")
+				m_Strength.Score += 2;
+		}
+		else if (m_MajorRace == "Elf")
+		{
+			m_Dexterity.Score += 2;
+			
+			if (m_Race == "High Elf")
+				m_Intelligence.Score++;
+			if (m_Race == "Wood Elf")
+				m_Wisdom.Score++;
+			if (m_Race == "Dark Elf (Drow)")
+				m_Charisma.Score++;
+		}
+		else if (m_MajorRace == "Halfling")
+		{
+			m_Dexterity.Score += 2;
+			if (m_Race == "Lightfoot Halfling")
+				m_Charisma.Score++;
+			if (m_Race == "Stout Halfling")
+				m_Constitution.Score++;
+		}
+		else if (m_Race == "Human")
 		{
 			m_Strength.Score++;
 			m_Dexterity.Score++;
@@ -465,10 +470,10 @@ namespace dnd {
 	{
 		m_Languages.push_back("Common"); // All characters can speak, read, and write in the Common tongue
 
-		if (m_Race == "Dwarf" || m_Race == "Hill Dwarf" || m_Race == "Mountain Dwarf")
+		if (m_MajorRace == "Dwarf")
 			m_Languages.push_back("Dwarvish");
 
-		else if (m_Race == "Elf" || m_Race == "High Elf" || m_Race == "Wood Elf" || m_Race == "Dark Elf (Drow)")
+		else if (m_MajorRace == "Elf")
 		{
 			m_Languages.push_back("Elvish");
 
@@ -477,7 +482,7 @@ namespace dnd {
 				m_Languages.push_back(Languages[Random::Int(1, NumLanguages - 1)]); // 1 is the minimum number to avoid picking Elvish twice
 		}
 
-		else if (m_Race == "Halfling" || m_Race == "Lightfoot Halfling" || m_Race == "Stout Halfling")
+		else if (m_MajorRace == "Halfling")
 			m_Languages.push_back("Halfling");
 
 		// Humans can pick any language
@@ -534,9 +539,9 @@ namespace dnd {
 
 	void Character::GenerateSpeed()
 	{
-		if (m_Race == "Dwarf" || m_Race == "Hill Dwarf" || m_Race == "Mountain Dwarf" || m_Race == "Halfling" || m_Race == "Lightfoot Halfling" || m_Race == "Stout Halfling")
+		if (m_MajorRace == "Dwarf" || m_MajorRace == "Halfling")
 			m_Speed = 25;
-		else if (m_Race == "Elf" || m_Race == "High Elf" || m_Race == "Wood Elf" || m_Race == "Dark Elf (Drow)" || m_Race == "Human")
+		else if (m_MajorRace == "Elf" || m_Race == "Human")
 			m_Speed = 30;
 	}
 
