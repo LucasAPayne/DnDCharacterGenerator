@@ -19,9 +19,6 @@ namespace dnd
 		Ability Parent; // The ability that governs the skill
 		int Modifier = 0;
 		bool Proficient = false; // Fill in the bubble on character sheet and allows proficiency bonus to be applied to modifier
-
-		Skill(Ability parent)
-			: Parent(parent) {}
 	};
 
 
@@ -146,32 +143,32 @@ namespace dnd
 		Ability m_Charisma;
 
 		// Skills
-		Skill m_Acrobatics     = Skill(m_Dexterity);
-		Skill m_AnimalHandling = Skill(m_Wisdom);
-		Skill m_Arcana         = Skill(m_Intelligence);
-		Skill m_Athletics      = Skill(m_Strength);
-		Skill m_Deception      = Skill(m_Charisma);
-		Skill m_History        = Skill(m_Intelligence);
-		Skill m_Insight        = Skill(m_Wisdom);
-		Skill m_Intimidation   = Skill(m_Charisma);
-		Skill m_Investigation  = Skill(m_Intelligence);
-		Skill m_Medicine       = Skill(m_Wisdom);
-		Skill m_Nature         = Skill(m_Intelligence);
-		Skill m_Perception     = Skill(m_Wisdom);
-		Skill m_Performance    = Skill(m_Charisma);
-		Skill m_Persuasion     = Skill(m_Charisma);
-		Skill m_Religion       = Skill(m_Intelligence);
-		Skill m_SleightOfHand  = Skill(m_Dexterity);
-		Skill m_Stealth        = Skill(m_Dexterity);
-		Skill m_Survival       = Skill(m_Wisdom);
+		Skill m_Acrobatics;
+		Skill m_AnimalHandling;
+		Skill m_Arcana;
+		Skill m_Athletics;
+		Skill m_Deception;
+		Skill m_History;
+		Skill m_Insight;
+		Skill m_Intimidation;
+		Skill m_Investigation;
+		Skill m_Medicine;
+		Skill m_Nature;
+		Skill m_Perception;
+		Skill m_Performance;
+		Skill m_Persuasion;
+		Skill m_Religion;
+		Skill m_SleightOfHand;
+		Skill m_Stealth;
+		Skill m_Survival;
 
 		// Saving Throws
-		Skill m_StrengthSave     = Skill(m_Strength);
-		Skill m_DexteritySave    = Skill(m_Dexterity);
-		Skill m_ConstitutionSave = Skill(m_Constitution);
-		Skill m_IntelligenceSave = Skill(m_Intelligence);
-		Skill m_WisdomSave       = Skill(m_Wisdom);
-		Skill m_CharismaSave     = Skill(m_Charisma);
+		Skill m_StrengthSave;
+		Skill m_DexteritySave;
+		Skill m_ConstitutionSave;
+		Skill m_IntelligenceSave;
+		Skill m_WisdomSave;
+		Skill m_CharismaSave;
 
 		// Feats, Traits, Lanuguages, Proficiencies
 		std::vector<Trait> m_FeatsAndTraits;

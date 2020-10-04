@@ -327,6 +327,12 @@ namespace dnd {
 	void Character::GenerateSkillModifiers()
 	{
 		// Skill modifiers are based on the abilities that govern them
+		m_Athletics.Parent = m_Strength;
+		m_Acrobatics.Parent = m_SleightOfHand.Parent = m_Stealth.Parent = m_Dexterity;
+		m_Arcana.Parent = m_History.Parent = m_Investigation.Parent = m_Nature.Parent = m_Religion.Parent = m_Intelligence;
+		m_AnimalHandling.Parent = m_Insight.Parent = m_Medicine.Parent = m_Perception.Parent = m_Survival.Parent = m_Wisdom;
+		m_Deception.Parent = m_Intimidation.Parent = m_Performance.Parent = m_Persuasion.Parent = m_Charisma;
+
 		std::vector<std::reference_wrapper<Skill> > skills = { m_Acrobatics, m_AnimalHandling, m_Arcana, m_Athletics, m_Deception, m_History, m_Insight,
 			m_Intimidation, m_Investigation, m_Medicine, m_Nature, m_Perception, m_Performance, m_Persuasion, m_Religion,
 			m_SleightOfHand, m_Stealth, m_Survival };
@@ -367,6 +373,13 @@ namespace dnd {
 
 	void Character::GenerateSavingThrowModifiers()
 	{
+		m_StrengthSave.Parent = m_Strength;
+		m_DexteritySave.Parent = m_Dexterity;
+		m_ConstitutionSave.Parent = m_Constitution;
+		m_IntelligenceSave.Parent = m_Intelligence;
+		m_WisdomSave.Parent = m_Wisdom;
+		m_CharismaSave.Parent = m_Charisma;
+
 		std::vector<std::reference_wrapper<Skill>> saves = { m_StrengthSave, m_DexteritySave, m_ConstitutionSave, m_IntelligenceSave,
 			m_WisdomSave, m_CharismaSave };
 
