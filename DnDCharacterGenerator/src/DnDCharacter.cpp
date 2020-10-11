@@ -24,15 +24,15 @@ namespace dnd {
 		trait = list[Random::Int(0, list.size() - 1)];
 	}
 
-// Choose a number (x) of skill proficiencies randomly from a given list
-	void chooseXRandomlyFrom(int x, std::vector<std::reference_wrapper<dnd::Skill> > list)
+// Choose a number of skill proficiencies randomly from a given list
+	void chooseSkillProficiencies(int skillsToChoose, std::vector<std::reference_wrapper<dnd::Skill>> list)
 	{
 		// Since this uses std::reference_wrapper, when the values in list change, the values in character change also 
 
 		// Randomize the order of entries and pick the first x of them
 		std::shuffle(list.begin(), list.end(), Random::GetEngine());
 
-		for (int i = 0; i < x; ++i)
+		for (int i = 0; i < skillsToChoose; ++i)
 			list[i].get().Proficient = true;
 	}
 
@@ -232,7 +232,7 @@ namespace dnd {
 
 			if (m_Race == "Hill Dwarf")
 				m_Wisdom.Score++;
-			if (m_Race == "Mountain Dwarf")
+			else if (m_Race == "Mountain Dwarf")
 				m_Strength.Score += 2;
 		}
 		else if (m_MajorRace == "Elf")
@@ -241,17 +241,18 @@ namespace dnd {
 			
 			if (m_Race == "High Elf")
 				m_Intelligence.Score++;
-			if (m_Race == "Wood Elf")
+			else if (m_Race == "Wood Elf")
 				m_Wisdom.Score++;
-			if (m_Race == "Dark Elf (Drow)")
+			else if (m_Race == "Dark Elf (Drow)")
 				m_Charisma.Score++;
 		}
 		else if (m_MajorRace == "Halfling")
 		{
 			m_Dexterity.Score += 2;
+
 			if (m_Race == "Lightfoot Halfling")
 				m_Charisma.Score++;
-			if (m_Race == "Stout Halfling")
+			else if (m_Race == "Stout Halfling")
 				m_Constitution.Score++;
 		}
 		else if (m_Race == "Human")
@@ -291,37 +292,45 @@ namespace dnd {
 	void Character::GenerateSkillProficiencies()
 	{
 		if (m_Class == "Barbarian")
-			chooseXRandomlyFrom(2, { m_AnimalHandling, m_Athletics, m_Intimidation, m_Nature, m_Perception, m_Survival });
-		if (m_Class == "Bard")
+			chooseSkillProficiencies(2, { m_AnimalHandling, m_Athletics, m_Intimidation, m_Nature, m_Perception, m_Survival });
+
+		else if (m_Class == "Bard")
 		{
 			// Pick any three skills
-			chooseXRandomlyFrom(3, { m_Acrobatics, m_AnimalHandling, m_Arcana, m_Athletics, m_Deception, m_History, m_Insight,
+			chooseSkillProficiencies(3, { m_Acrobatics, m_AnimalHandling, m_Arcana, m_Athletics, m_Deception, m_History, m_Insight,
 				m_Intimidation, m_Investigation, m_Medicine, m_Nature, m_Perception, m_Performance, m_Persuasion, m_Religion,
 				m_SleightOfHand, m_Stealth, m_Survival });
 		}
-		if (m_Class == "Cleric")
-			chooseXRandomlyFrom(2, { m_History, m_Insight, m_Medicine, m_Persuasion, m_Religion });
-		if (m_Class == "Druid")
-			chooseXRandomlyFrom(2, { m_Arcana, m_AnimalHandling, m_Insight, m_Medicine, m_Nature, m_Perception, m_Religion, m_Survival });
-		if (m_Class == "Fighter")
-			chooseXRandomlyFrom(2, { m_Acrobatics, m_AnimalHandling, m_Athletics, m_History, m_Insight, m_Intimidation, m_Perception, m_Survival });
-		if (m_Class == "Monk")
-			chooseXRandomlyFrom(2, { m_Acrobatics, m_Athletics, m_History, m_Insight, m_Religion, m_Stealth });
-		if (m_Class == "Paladin")
-			chooseXRandomlyFrom(2, { m_Athletics, m_Insight, m_Intimidation, m_Medicine, m_Persuasion, m_Religion });
-		if (m_Class == "Ranger")
-			chooseXRandomlyFrom(3, { m_AnimalHandling, m_Athletics, m_Insight, m_Investigation, m_Nature, m_Perception, m_Stealth, m_Survival });
-		if (m_Class == "Rogue")
-		{
-			chooseXRandomlyFrom(4, { m_Acrobatics, m_Athletics, m_Deception, m_Insight, m_Intimidation,
-				m_Investigation, m_Perception, m_Performance, m_Persuasion, m_SleightOfHand, m_Stealth });
-		}
-		if (m_Class == "Sorceror")
-			chooseXRandomlyFrom(2, { m_Arcana, m_Deception, m_Insight, m_Intimidation, m_Persuasion, m_Religion });
-		if (m_Class == "Warlock")
-			chooseXRandomlyFrom(2, { m_Arcana, m_Deception, m_History, m_Intimidation, m_Investigation, m_Nature, m_Religion });
-		if (m_Class == "Wizard")
-			chooseXRandomlyFrom(2, { m_Arcana, m_History, m_Insight, m_Investigation, m_Medicine, m_Religion });
+
+		else if (m_Class == "Cleric")
+			chooseSkillProficiencies(2, { m_History, m_Insight, m_Medicine, m_Persuasion, m_Religion });
+
+		else if (m_Class == "Druid")
+			chooseSkillProficiencies(2, { m_Arcana, m_AnimalHandling, m_Insight, m_Medicine, m_Nature, m_Perception, m_Religion, m_Survival });
+
+		else if (m_Class == "Fighter")
+			chooseSkillProficiencies(2, { m_Acrobatics, m_AnimalHandling, m_Athletics, m_History, m_Insight, m_Intimidation, m_Perception, m_Survival });
+
+		else if (m_Class == "Monk")
+			chooseSkillProficiencies(2, { m_Acrobatics, m_Athletics, m_History, m_Insight, m_Religion, m_Stealth });
+
+		else if (m_Class == "Paladin")
+			chooseSkillProficiencies(2, { m_Athletics, m_Insight, m_Intimidation, m_Medicine, m_Persuasion, m_Religion });
+
+		else if (m_Class == "Ranger")
+			chooseSkillProficiencies(3, { m_AnimalHandling, m_Athletics, m_Insight, m_Investigation, m_Nature, m_Perception, m_Stealth, m_Survival });
+
+		else if (m_Class == "Rogue")
+			chooseSkillProficiencies(4, { m_Acrobatics, m_Athletics, m_Deception, m_Insight, m_Intimidation, m_Investigation, m_Perception, m_Performance, m_Persuasion, m_SleightOfHand, m_Stealth });
+
+		else if (m_Class == "Sorceror")
+			chooseSkillProficiencies(2, { m_Arcana, m_Deception, m_Insight, m_Intimidation, m_Persuasion, m_Religion });
+
+		else if (m_Class == "Warlock")
+			chooseSkillProficiencies(2, { m_Arcana, m_Deception, m_History, m_Intimidation, m_Investigation, m_Nature, m_Religion });
+
+		else if (m_Class == "Wizard")
+			chooseSkillProficiencies(2, { m_Arcana, m_History, m_Insight, m_Investigation, m_Medicine, m_Religion });
 	}
 
 	void Character::GenerateSkillModifiers()
@@ -380,8 +389,7 @@ namespace dnd {
 		m_WisdomSave.Parent = m_Wisdom;
 		m_CharismaSave.Parent = m_Charisma;
 
-		std::vector<std::reference_wrapper<Skill>> saves = { m_StrengthSave, m_DexteritySave, m_ConstitutionSave, m_IntelligenceSave,
-			m_WisdomSave, m_CharismaSave };
+		std::vector<std::reference_wrapper<Skill>> saves = { m_StrengthSave, m_DexteritySave, m_ConstitutionSave, m_IntelligenceSave,m_WisdomSave, m_CharismaSave };
 
 		// Start at parent ability's modifier
 		for (size_t i = 0; i < saves.size(); ++i)
@@ -416,7 +424,6 @@ namespace dnd {
 
 	void Character::GenerateFeatsAndTraits()
 	{
-
 	}
 
 	void Character::GenerateProficiencies()
