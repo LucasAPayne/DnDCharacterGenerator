@@ -1,7 +1,7 @@
 # DnDCharacterGenerator
 Randomly generates the information necessary for an offical Dungeons & Dragons 5th edition character sheet.
 
-Note: This project has not yet reached its final form! Currently only generates some of the information. The most up-to-date version of this project can be found in the dev branch until the next release.
+Note: This project has not yet reached its final form! Currently only generates some of the information.
 
 ## Future Features
 * First and foremost, this application will be able to generate all the information for the first page of a 5th edition character sheet.
