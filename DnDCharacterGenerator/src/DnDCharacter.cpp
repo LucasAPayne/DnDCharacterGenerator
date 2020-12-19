@@ -64,6 +64,7 @@ namespace dnd {
 		// Feats, Traits, Proficiencies, Languages
 		GenerateRacialFeats();
 		GenerateBackgroundFeats();
+		GenerateClassFeats();
 		GenerateLanguages();
 
 		// Equipment and Combat
@@ -184,8 +185,8 @@ namespace dnd {
 
 	void Character::GenerateLevel()
 	{
-		m_Level = Random::Int(1, NumLevels - 1);
-		m_Experience = ExpForLevel[m_Level]; // Character starts with 0 progress toward next level
+		// For now, characters should be locked to level 1 since any effects of leveling up are currently not considered
+		m_Level = 1;
 	}
 
 	void Character::GenerateProficiencyBonus()
@@ -438,6 +439,26 @@ namespace dnd {
 		// Some backgrounds offer variant feats, but a character may only choose one feat from a background.
 		int index = Random::Int(0, BackgroundFeats.at(m_Background).size() - 1);
 		m_FeatsAndTraits.push_back(BackgroundFeats.at(m_Background)[index]);
+	}
+
+	void Character::GenerateClassFeats()
+	{
+		if (m_Class == "Cleric" || m_Class == "Fighter")
+		{
+			// Clerics and fighters have a set trait at index 0
+			m_FeatsAndTraits.push_back(ClassFeats.at(m_Class)[0]);
+
+			// Pick a cleric domain for clerics or fighting style for fighters, one of the 1st level traits after index 0
+			int index = Random::Int(1, ClassFeats.at(m_Class).size() - 1);
+			m_FeatsAndTraits.push_back(ClassFeats.at(m_Class)[index]);
+		}
+		else
+		{
+			// Other classes only have set traits
+			m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at(m_Class).begin(), ClassFeats.at(m_Class).end());
+
+			// TODO: Some classes have choices within the set traits, such as Favored Enemy for Rangers
+		}
 	}
 
 	void Character::GenerateProficiencies()
