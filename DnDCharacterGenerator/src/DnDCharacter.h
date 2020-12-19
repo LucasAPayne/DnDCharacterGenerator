@@ -42,6 +42,7 @@ namespace dnd
 
 		// Feats, Traits, Proficiencies, Languages ===================================
 		void GenerateRacialFeats();
+		void GenerateBackgroundFeats();
 		void GenerateProficiencies();
 		void GenerateLanguages();
 

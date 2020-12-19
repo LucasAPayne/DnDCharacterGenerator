@@ -63,6 +63,7 @@ namespace dnd {
 
 		// Feats, Traits, Proficiencies, Languages
 		GenerateRacialFeats();
+		GenerateBackgroundFeats();
 		GenerateLanguages();
 
 		// Equipment and Combat
@@ -430,6 +431,13 @@ namespace dnd {
 			m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at(m_Race).begin(), RacialFeats.at(m_Race).end());
 
 		// TODO: Add optional variant human trait
+	}
+
+	void Character::GenerateBackgroundFeats()
+	{
+		// Some backgrounds offer variant feats, but a character may only choose one feat from a background.
+		int index = Random::Int(0, BackgroundFeats.at(m_Background).size() - 1);
+		m_FeatsAndTraits.push_back(BackgroundFeats.at(m_Background)[index]);
 	}
 
 	void Character::GenerateProficiencies()
