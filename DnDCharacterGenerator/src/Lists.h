@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Types.h"
+
 #include <array>
 #include <string>
 #include <unordered_map>
@@ -701,7 +703,7 @@ namespace dnd {
 	// Flaws
 	// ======================================================================================
 
-	const std::unordered_map <std::string, const std::vector<std::string>> Flaws = {
+	const std::unordered_map<std::string, const std::vector<std::string>> Flaws = {
 		{"Acolyte", {
 			"I judge others harshly, and myself even more severely.",
 			"I put too much trust in those who wield power within my temple's hierarchy.",
@@ -862,6 +864,60 @@ namespace dnd {
 			"I'd rather kill someone in their sleep than fight fair.",
 			"It's not stealing if I need it more than someone else.",
 			"People who can't take care of themselves get what they deserve."
+		}}
+	};
+
+	// ======================================================================================
+	// Features, Traits, and Proficiencies
+	// ======================================================================================
+
+	// Note: Starting a newline in the Trait constructor signifies a new paragraph.
+
+	const std::unordered_map<std::string, const std::vector<Trait>> RacialFeats = {
+		{"Dwarf", {
+			Trait("Size.", "Dwarves stand between 4 and 5 feet tall and average about 150 pounds. Your size is Medium."),
+			Trait("Darkvision.", "Accustomed to life underground, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can't discern color in darkness, only shades of gray."),
+			Trait("Dwarven Resilience.", "You have advantage on saving throws against poison, and you have resistance against poison damage."),
+			Trait("Stonecutting.", "Whenever you make an Intelligence (History) check related to the origin of stonework, you are considered proficient in the History skill and add double your proficiency bonus to the check, instead of your normal proficiency bonus.")
+		}},
+
+		{"Hill Dwarf", {
+			Trait("Dwarven Toughness.", "Your hit point maximum increases by 1, and it increases by 1 every time you gain a level.")
+		}},
+
+		{"Elf", {
+			Trait("Size.", "Elves range from under 5 to over 6 feet tall and have slender builds. Your size is Medium."),
+			Trait("Darkvision.", "Accustomed to twilit forests and the night sky, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can't discern color in darkness, only shades of gray."),
+			Trait("Fey Ancestry.", "You have advantage on saving throws against being charmed, and magic can't put you to sleep."),
+			Trait("Trance.", "Elves don't need to sleep. Instead, they meditate deeply, remaining semiconscious, for 4 hours a day. (The Common word for such meditation is \"Trance.\") While meditating, you can dream after a fashion; such dreams are actually mental excercises that have become reflexive through years of practice. After resting in this way, you gain the same benefit that a human does from 8 hours of sleep.")
+		}},
+
+		{"Wood Elf", {
+			Trait("Mask of the Wild.", "You can attempt to hide even when you are only lightly obscured by foliage, heavy rain, falling snow, mist, and ohter natural phenomena.")
+		}},
+
+		{"Dark Elf (Drow)", {
+			Trait("Superior Darkvision.", "Your darkvision has a radius of 120 feet."),
+			Trait("Sunlight Sensitivity.", "You have disadvantage on attack rolls and on Wisdom (Perception) checks that rely on sight when you, the target of your attack, or whatever you are trying to perceive is in direct sunlight.")
+		}},
+
+		{"Halfling", {
+			Trait("Size.", "Halflings average about 3 feet tall and weigh about 40 pounds. Your size is Small."),
+			Trait("Lucky.", "When you roll a 1 on an attack roll, ability check, or saving throw, you can reroll the die and must use the new roll."),
+			Trait("Brave.", "You have advantage on saving throws against being frightened."),
+			Trait("Halfling Nimbleness.", "You can move through the space of any creature that is of a size larger than you.")
+		}},
+
+		{"Lightfoot Halfling", {
+			Trait("Naturally Stealthy.", "You can attempt to hide even when you are obscured only by a creature that is at least one size larger than you.")
+		}},
+
+		{"Stout Halfling", {
+			Trait("Stout Resilience.", "You have advantage on saving throws against poison, and you have resistance against poison damage.")
+		}},
+
+		{"Human", {
+			Trait("Size.", "Humans vary widely in height and build, from barely 5 feet to well over 6 feet tall. Your size is Medium.")
 		}}
 	};
 
