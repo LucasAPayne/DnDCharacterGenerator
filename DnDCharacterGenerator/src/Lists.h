@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Types.h"
+
 #include <array>
 #include <string>
 #include <unordered_map>
@@ -701,7 +703,7 @@ namespace dnd {
 	// Flaws
 	// ======================================================================================
 
-	const std::unordered_map <std::string, const std::vector<std::string>> Flaws = {
+	const std::unordered_map<std::string, const std::vector<std::string>> Flaws = {
 		{"Acolyte", {
 			"I judge others harshly, and myself even more severely.",
 			"I put too much trust in those who wield power within my temple's hierarchy.",
@@ -863,6 +865,197 @@ namespace dnd {
 			"It's not stealing if I need it more than someone else.",
 			"People who can't take care of themselves get what they deserve."
 		}}
+	};
+
+	// ======================================================================================
+	// Features, Traits, and Proficiencies
+	// ======================================================================================
+
+	// Note: Starting a newline in the Trait constructor signifies a new paragraph.
+
+	const std::unordered_map<std::string, const std::vector<Trait>> RacialFeats = {
+		{"Dwarf", {
+			Trait("Size.", "Dwarves stand between 4 and 5 feet tall and average about 150 pounds. Your size is Medium."),
+			Trait("Darkvision.", "Accustomed to life underground, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can't discern color in darkness, only shades of gray."),
+			Trait("Dwarven Resilience.", "You have advantage on saving throws against poison, and you have resistance against poison damage."),
+			Trait("Stonecunning.", "Whenever you make an Intelligence (History) check related to the origin of stonework, you are considered proficient in the History skill and add double your proficiency bonus to the check, instead of your normal proficiency bonus.")
+		}},
+
+		{"Hill Dwarf", {
+			Trait("Dwarven Toughness.", "Your hit point maximum increases by 1, and it increases by 1 every time you gain a level.")
+		}},
+
+		{"Elf", {
+			Trait("Size.", "Elves range from under 5 to over 6 feet tall and have slender builds. Your size is Medium."),
+			Trait("Darkvision.", "Accustomed to twilit forests and the night sky, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can't discern color in darkness, only shades of gray."),
+			Trait("Fey Ancestry.", "You have advantage on saving throws against being charmed, and magic can't put you to sleep."),
+			Trait("Trance.", "Elves don't need to sleep. Instead, they meditate deeply, remaining semiconscious, for 4 hours a day. (The Common word for such meditation is \"Trance.\") While meditating, you can dream after a fashion; such dreams are actually mental exercises that have become reflexive through years of practice. After resting in this way, you gain the same benefit that a human does from 8 hours of sleep.")
+		}},
+
+		{"Wood Elf", {
+			Trait("Mask of the Wild.", "You can attempt to hide even when you are only lightly obscured by foliage, heavy rain, falling snow, mist, and other natural phenomena.")
+		}},
+
+		{"Dark Elf (Drow)", {
+			Trait("Superior Darkvision.", "Your darkvision has a radius of 120 feet."),
+			Trait("Sunlight Sensitivity.", "You have disadvantage on attack rolls and on Wisdom (Perception) checks that rely on sight when you, the target of your attack, or whatever you are trying to perceive is in direct sunlight.")
+		}},
+
+		{"Halfling", {
+			Trait("Size.", "Halflings average about 3 feet tall and weigh about 40 pounds. Your size is Small."),
+			Trait("Lucky.", "When you roll a 1 on an attack roll, ability check, or saving throw, you can reroll the die and must use the new roll."),
+			Trait("Brave.", "You have advantage on saving throws against being frightened."),
+			Trait("Halfling Nimbleness.", "You can move through the space of any creature that is of a size larger than you.")
+		}},
+
+		{"Lightfoot Halfling", {
+			Trait("Naturally Stealthy.", "You can attempt to hide even when you are obscured only by a creature that is at least one size larger than you.")
+		}},
+
+		{"Stout Halfling", {
+			Trait("Stout Resilience.", "You have advantage on saving throws against poison, and you have resistance against poison damage.")
+		}},
+
+		{"Human", {
+			Trait("Size.", "Humans vary widely in height and build, from barely 5 feet to well over 6 feet tall. Your size is Medium.")
+		}}
+	};
+
+	const std::unordered_map<std::string, const std::vector<Trait>> BackgroundFeats = {
+		{"Acolyte", {Trait("Shelter of the Faithful.", "As an acolyte, you command the respect of those who share your faith, and you can perform the religious ceremonies of your deity. You and your adventuring companions can expect to receive free healing and care at a temple, shrine, or other established presence of your faith, though you must provide any material components needed for spells. Those who share your religion will support you (but only you) at a modest lifestyle.\n"
+													   "You might also have ties to a specific temple dedicated to your chosen deity or pantheon, and you have a residence there. This could be the temple where you used to serve, if you remain on good terms with it, or a temple where you have found a new home. While near your temple, you can call upon the priests for assistance, provided the assistance you ask for is not hazardous and you remain in good standing with your temple.")}},
+
+		{"Charlatan", {Trait("False Identity.", "You have created a second identity that includes documentation, established acquaintances, and disguises that allow you to assume that persona. Additionally, you can forge documents including official papers and personal letters, as long as you have seen an example of the kind of document or the handwriting you are trying to copy.")}},
+
+		{"Criminal", {Trait("Criminal Contact.", "You have a reliable and trustworthy contact who acts as your liaison to a network of other criminals. You know how to get messages to and from your contact, even over great distances; specifically, you know the local messengers, corrupt caravan masters, and seedy sailors who can deliver messages for you.")}},
+
+		{"Spy", {Trait("Criminal Contact.", "You have a reliable and trustworthy contact who acts as your liaison to a network of other criminals. You know how to get messages to and from your contact, even over great distances; specifically, you know the local messengers, corrupt caravan masters, and seedy sailors who can deliver messages for you.")}},
+
+		{"Entertainer", {Trait("By Popular Demand.", "You can always find a place to perform, usually in an inn or tavern but possibly with a circus, at a theater, or even in a noble's court. At such a place, you receive free lodging and food of a modest or comfortable standard (depending on the quality of the establishment), as long as your perform each night. In addition, your performance makes you something of a local figure. When strangers recognize you in a town where you have performed, they typically take a liking to you.")}},
+
+		{"Gladiator", {Trait("By Popular Demand.", "You can always find a place to perform, usually in an inn or tavern but possibly with a circus, at a theater, or even in a noble's court. At such a place, you receive free lodging and food of a modest or comfortable standard (depending on the quality of the establishment), as long as your perform each night. In addition, your performance makes you something of a local figure. When strangers recognize you in a town where you have performed, they typically take a liking to you.")}},
+
+		{"Folk Hero", {Trait("Rustic Hospitality.", "Since you come from the ranks of the common folk, you fit in among them with ease. You can find a place to hide, rest, or recuperate among other commoners, unless you have shown yourself to be a danger to them. They will shield you from the law or anyone else searching for you, though they will not risk their lives for you.")}},
+
+		{"Guild Artisan", {Trait("Guild Membership.", "As an established and respected member of a guild, you can rely on certain benefits that membership provides. Your fellow guild members will provide you with lodging and food if necessary, and pay for your funeral if needed. In some cities and towns, a guildhall offers a central place to meet other members of your profession, which can be a good place to meet potential patrons, allies, or hirelings.\n"
+													  "Guilds often wield tremendous political power. If you are accused of a crime, your guild will support you if a good case can be made for your innocence or the crime is justifiable. You can also gain access to powerful political figures through the guild, if you are a member in good standing. Such connections might require the donation of money or magic items to the guild's coffers.\n"
+													  "You must pay 5 gp per month to the guild. If you miss payments, you must make up back dues to remain in the guild's good graces.")}},
+
+		{"Guild Merchant", {Trait("Guild Membership.", "As an established and respected member of a guild, you can rely on certain benefits that membership provides. Your fellow guild members will provide you with lodging and food if necessary, and pay for your funeral if needed. In some cities and towns, a guildhall offers a central place to meet other members of your profession, which can be a good place to meet potential patrons, allies, or hirelings.\n"
+													   "Guilds often wield tremendous political power. If you are accused of a crime, your guild will support you if a good case can be made for your innocence or the crime is justifiable. You can also gain access to powerful political figures through the guild, if you are a member in good standing. Such connections might require the donation of money or magic items to the guild's coffers.\n"
+													   "You must pay 5 gp per month to the guild. If you miss payments, you must make up back dues to remain in the guild's good graces.")}},
+
+		{"Hermit", {Trait("Discovery.", "The quiet seclusion of your extended hermitage gave you access to a unique and powerful discovery. The exact nature of this revelation depends on the nature of your seclusion. It might be a great truth about the cosmos, the deities, the powerful beings of the outer planes, or the forces of nature. It could be a site that no one else has ever seen. You might have uncovered a fact that has been long forgotten, or unearthed some relic of the past that could rewrite history. It might be information that would be damaging to the people who consigned you to exile, and hence the reason for your return to society.")}},
+
+		{"Noble", {Trait("Position of Privilege.", "Thanks to your noble birth, people are inclined to think the best of you. You are welcome in high society, and people assume you have the right to be wherever you are. The common folk make every effort to accommodate you and avoid your displeasure, and other people of high birth treat you as a member of the same social sphere. You can secure an audience with a local noble if you need to."),
+				   Trait("Retainers.", "You have the service of three retainers loyal to your family. These retainers can be attendants or messengers, and one might be a majordomo. Your retainers are commoners who can perform mundane tasks for you, but they do not fight for you, will not follow you into obviously dangerous areas (such as dungeons), and will leave if they are frequently endangered or abused.")}},
+
+		{"Knight", {Trait("Position of Privilege.", "Thanks to your noble birth, people are inclined to think the best of you. You are welcome in high society, and people assume you have the right to be wherever you are. The common folk make every effort to accommodate you and avoid your displeasure, and other people of high birth treat you as a member of the same social sphere. You can secure an audience with a local noble if you need to."),
+			        Trait("Retainers.", "You have the service of three retainers loyal to your family. These retainers can be attendants or messengers, and one might be a majordomo. Your retainers are commoners who can perform mundane tasks for you, but they do not fight for you, will not follow you into obviously dangerous areas (such as dungeons), and will leave if they are frequently endangered or abused.")}},
+
+		{"Outlander", {Trait("Wanderer.", "You have an excellent memory for maps and geography, and you can always recall the general layout of terrain, settlements, and other features around you. In addition, you can find food and fresh water for yourself and up to five other people each day, provided that the land offers berries, small game, and so forth.")}},
+
+		{"Sage", {Trait("Researcher.", "When you attempt to learn or recall a piece of lore, if you do not know that information, you often know where and from whom you can obtain it. Usually, this information comes from a library, scriptorium, university, or a sage or other learned person or creature.")}},
+
+		{"Sailor", {Trait("Ship's Passage.", "When you need to, you can secure free passage on a sailing ship for yourself and your adventuring companions. You might sail on the ship you served on, or another ship you have good relations with (perhaps one captained by a former crewmate). Because you're calling in a favor, you can't be certain of a schedule or route that will meet your every need. In return for your free passage, you and your companions are expected to assist the crew during the voyage."),
+					Trait("Bad Reputation.", "No matter where you go, people are afraid of you due to your reputation. When you are in a civilized settlement, you can get away with minor criminal offenses, such as refusing to pay for food at a tavern or breaking down doors at a local shop, since most people will not report your activity to the authorities.")}},
+
+		{"Pirate", {Trait("Ship's Passage.", "When you need to, you can secure free passage on a sailing ship for yourself and your adventuring companions. You might sail on the ship you served on, or another ship you have good relations with (perhaps one captained by a former crewmate). Because you're calling in a favor, you can't be certain of a schedule or route that will meet your every need. In return for your free passage, you and your companions are expected to assist the crew during the voyage."),
+				    Trait("Bad Reputation.", "No matter where you go, people are afraid of you due to your reputation. When you are in a civilized settlement, you can get away with minor criminal offenses, such as refusing to pay for food at a tavern or breaking down doors at a local shop, since most people will not report your activity to the authorities.")} },
+
+		{"Soldier", {Trait("Military Rank.", "You have a military rank from your career as a soldier. Soldiers loyal to your former military organization still recognize your authority and influence, and they defer to you if they are of a lower rank. You can invoke your rank to exert influence over other soldiers and requisition simple equipment or horses for temporary use. You can also usually gain access to friendly military encampments and fortresses where your rank is recognized.")}},
+
+		{"Urchin", {Trait("City Secrets.", "You know the secret patterns and flow to cities and can find passages through the urban sprawl that others would miss. When you are not in combat, you (and companions you lead) can travel between any two locations in the city twice as fast as your speed would normally allow.")}}
+	};
+
+	// TODO: Add the feats that are gained after the first level, and separate the feats gained at each level
+	const std::unordered_map<std::string, const std::vector<Trait>> ClassFeats = {
+		{"Barbarian", {Trait("Rage.", "In battle, you fight with primal ferocity. On your turn, you can enter a rage as a bonus action.\n"
+		                              "While raging, you gain the following benefits if you aren't wearing heavy armor:\n"
+		                              "- You have advantage on Strength checks and Strength saving throws.\n"
+		                              "- When you make a melee weapon attack using Strength, you gain a bonus to the damage roll that increases as you gain levels as a barbarian, as shown in the Rage Damage column of the Barbarian table in the rulebook.\n"
+		                              "- You have resistance to bludgeoning, piercing, and slashing damage.\n"
+		                              "If you are able to cast spells, you can't cast them or concentrate on them while raging.\n"
+		                              "Your rage lasts for 1 minute. It ends early if you are knocked unconscious or if your turn ends and you haven't attacked a hostile creature since your last turn or taken damage since then. You can also end your rage on your turn as a bonus action.\n"
+		                              "Once you have raged the number of times shown for your barbarian level in the Rages column of the Barbarian table in the rulebook, you must finish a long rest before you can rage again."),
+	                   Trait("Unarmored Defense.", "While you are not wearing any armor, you Armor Class equals 10 + your Dexterity modifier + your Constitution modifier. You can use a shield and still gain this benefit.")}},
+
+		{"Bard", {Trait("Spellcasting Ability.", "Charisma is your spellcasting for your bard spells. Your magic comes from the heart and soul you pour into the performance of your music or oration. You use your Charisma whenever a spell refers to your spellcasting ability. In addition, you can use your Charisma modifier when setting the saving throw DC for a bard spell you cast and when making an attack roll with one."),
+	              Trait("Bardic Inspiration.", "You can inspire others through stirring words or music. To do so, you use a bonus action on your turn to choose one creature other than yourself within 60 feet of you who can hear you. That creature gains one Bardic Inspiration die, a d6.\n"
+					                           "Once within the next 10 minutes, the creature can roll the die and add the number rolled to one ability check, attack roll, or saving throw it makes. The creature can wait until after it rolls the d20 before deciding to use the Bardic Inspiration die, but must decide before the DM says whether the roll succeeds or fails. Once the Bardic Inspiration die is rolled, it is lost. A creature can have only one Bardic Inspiration die at a time.\n"
+					                           "You can use this feature a number of times equal to your Charisma modifier (a minimum of once). You regain any expended uses when you finish a long rest.\n"
+					                           "Your Bardic Inspiration die changes when you reach certain levels in this class. The die becomes a d8 at 5th level, a d10 at 10th level, and a d12 at 15th level.")}},
+
+		{"Cleric", {Trait("Spellcasting Ability.", "Wisdom is your spellcasting ability for your cleric spells. The power of your spells comes from your devotion to your deity. You use your Wisdom whenever a cleric spell refers to your spellcasting ability. In addition, you use your Wisdom modifier when setting the saving throw DC for a cleric spell you cast and when making an attack roll with one."),
+	                Trait("Disciple of Life.", "Your healing spells are more effective. Whenever you use a spell of 1st level or higher to restore hit points to a creature, the creature regains additional hit points equal to 2 + the spell's level."),
+	                Trait("Warding Flare.", "You can interpose divine light between yourself and an attacking enemy. When you are attacked by a creature within 30 feet of you that you can see, you can use your reaction to impose disadvantage on the attack roll, causing a light to flare before the attacker before it hits or misses. An attacker that can't be blinded is immune to this feature.\n"
+				                            "You can use this feature a number of times equal to your Wisdom modifier (a minimum of once). You regain all expended uses when you finish a long rest."),
+	                Trait("Wrath of the Storm.", "You can thunderously rebuke attackers. When a creature within 5 feet of you that you can see hits you with an attack, you can use your reaction to cause the creature to make a Dexterity saving throw. The creature takes 2d8 lightning or thunder damage (your choice) on a failed saving throw, and half as much damage on a successful one.\n"
+				                                 "You can use this feature a number of times equal to your Wisdom modifier (a minimum of once). You regain all expended uses when you finish a long rest."),
+	                Trait("Blessing of the Trickster.", "You can use your action to touch a willing creature other than yourself to give it an advantage on Dexterity (Stealth) checks. This blessing lasts for 1 hour or until you use this feature again."),
+	                Trait("War Priest.", "Your god delivers bolts of inspiration to you while you are engaged in battle. When you use the Attack action, you can make one weapon attack as a bonus action.\n"
+				                         "You can use this feature a number of times equal to your Wisdom modifier (a minimum of once). You regain all expended uses when you finish a long rest.")}},
+
+		{"Druid", {Trait("Druidic.", "You know Druidic, the secret language of druids. You can speak the language and use it to leave hidden messages. You and others who know this language automatically spot such a message. Others spot the message's presence with a successful DC 15 Wisdom (Perception) check but can't decipher it without magic."),
+			       Trait("Spellcasting Ability.", "Wisdom is your spellcasting ability for your druid spells, since your magic draws upon your devotion and attunement to nature. You use your Wisdom whenever a spell refers to your spellcasting ability. In addition, you use your Wisdom modifier when setting the saving throw DC for a druid spell you cast and when making an attack roll with one.")}},
+
+		{"Fighter", {Trait("Second Wind.", "You have a limited well of stamina that you can draw on to protect yourself from harm. On your turn, you can use a bonus reaction to regain hit points equal to 1d10 + your fighter level.\n"
+										   "Once you use this feature, you must finish a short or long rest before you can use it again."),
+			         Trait("Archery.", "You gain a +2 bonus to attack rolls you make with ranged weapons."),
+	                 Trait("Defense.", "While you are wearing armor, you gain a +1 bonus to AC"),
+	                 Trait("Dueling.", "When you are wielding a melee weapon in one hand and no other weapons, you gain a +2 bonus to damage rolls with that weapon."),
+	                 Trait("Great Weapon Fighting.", "When you roll a 1 or 2 on a damage die for an attack you make with a melee weapon that you are wielding with two hands, you can reroll the die and must use the new roll, even if the new roll is a 1 or a 2. The weapon must have the two-handed or versatile property for you to gain this benefit."),
+	                 Trait("Protection.", "When a creature you can see attacks a target other than you that is within 5 feet of you, you can use your reaction to impose disadvantage on the attack roll. You must be wielding a shield."),
+	                 Trait("Two-Weapon Fighting.", "When you engage in two-weapon fighting, you can add your ability modifier to the damage of the second attack.")}},
+
+		{"Monk", {Trait("Unarmored Defense.", "While you are wearing no armor and not wielding a shield, your AC equals 10 + your Dexterity modifier + your Wisdom modifier."),
+	              Trait("Martial Arts.", "Your practice of martial arts gives you mastery of combat styles that use unarmed strikes and monk weapons, which are shortswords and any simple melee weapons that don't have the two-handed or heavy property.\n"
+				                         "You gain the following benefits while you are unarmed or wielding only monk weapons and you aren't wearing armor or wielding a shield:\n"
+				                         "- You can use Dexterity instead of Strength for the attack and damage rolls of your unarmed strikes and monk weapons.\n"
+				                         "- You can roll a d4 in place of the normal damage on of your unarmed strike or monk weapon. This die changes as you gain monk levels, as shown in the Martial Arts column of the Monk table in the rulebook.\n"
+				                         "- When you use the Attack action with an unarmed strike or a monk weapon on your turn, you can make one unarmed strike as a bonus action. For example, if you take the Attack action and attack with a quarter-staff, you can also make an unarmed strike as a bonus action, assuming you haven't already taken a bonus action this turn.\n"
+				                         "Certain monasteries use specialized forms of the monk weapons. For example, you might use a club that is two lenghts of wood connected by a short chain (called a nunchaku) or a sickle with a shorter, straighter blade (called a kama). Whatever name you use for a monk weapon, you can use the game statistics provided for the weapon in the rulebook.")}},
+
+		{"Paladin", {Trait("Divine Sense.", "The presence of strong evil registers on your senses like a noxious odor, and powerful good rings like heavenly music in your ears. As an action, you can open your awareness to detect such forces. Until the end of your next turn, you know the location of any celestial, fiend, or undead within 60 feet of you that is not behind total cover. You know the type (celestial, fiend, or undead) of any being whose presence you sense, but not its identity (the vampire Count Strahd von Zarovich, for instance). Within the same radius, you also detect the presence of any place or object that has been consecrated or desecrated, as with the hallow spell.\n"
+		                                    "You can use this feature a number of times equal to 1 + your Charisma modifier. When you finish a long rest, you regain all expended uses."),
+	                 Trait("Lay on Hands.", "Your blessed touch can heal wounds. You have a pool of healing power that replenishes when you take a long rest. With that pool, you can restore a total number of hit points equal to your Paladin level x 5.\n"
+					                        "As an action, you can touch a creature and draw power from the pool to restore a number of hit points to that creature, up to the maximum amount remaining in your pool.\n"
+					                        "Alternatively, you can expend 5 hit points from your pool of healing to cure the target of one disease or neutralize one poison affecting it. You can cure multiple diseases or neutralize multiple poisons with a single use of Lay on Hands, expending hit points separately for each one.\n"
+					                        "This feature has no effect on undead and constructs.")}},
+
+		{"Ranger", {Trait("Favored Enemy.", "You have significant experience studying, tracking, hunting, and even talking to a certain type of enemy.\n"
+		                                    "Choose a type of favored enemy: abberations, beasts, celestials, constructs, dragons, elementals, fey, fiends, giants, monstosities, oozes, plants, or undead. Alternatively, you can select two races of humanoid (such as gnolls and orcs) as favored enemies.\n"
+		                                    "You have advantage on Wisdom (Survival) checks to track your favored enemies, as well as on Intelligence checks to recall information about them.\n"
+		                                    "When you gain this feature, you also learn one language of your choice that is spoken by your favored enemies, if they speak one at all.\n"
+		                                    "You choose one additional favored enemy, as well as an associated language, at 6th and 14th level. As you gain levels, your choices should reflect the types of monsters you have encountered on your adventures."),
+	                Trait("Natural Explorer.", "You are particularly familiar with one type of natural environment and are adept at traveling and surviving in such regions. Choose one type of favored terrain: arctic, coast, desert, forest, grassland, mountain, swamp, or the Underdark. When you make an Intelligence or Wisdom check related to your favored terrain, your proficiency bonus is doubled if you are using a skill that you're proficient in.\n"
+					                           "While traveling for an hour or more in your favored terrain, you gain the following benefits:\n"
+					                           "- Difficult terrain doesn't slow your group's travel.\n"
+					                           "- Your group can't become lost except by magical means.\n"
+					                           "- Even when you are engaged in another activity while traveling (such as foraging, navigating, or tracking), you remain alert to danger.\n"
+					                           "- If you are traveling alone, you can move stealthily at a normal pace.\n"
+					                           "- When you forage, you find twice as much food as you normally would.\n"
+					                           "- While tracking other creatures, you also learn their exact number, their sizes, and how long ago they passed through the area.\n"
+					                           "You choose additional favored terrain types at 6th and 10th level.")}},
+
+		{"Rogue", {Trait("Expertise.", "Choose two of your skill proficiencies, or one of your skill profiencies and your proficiency with thieves' tools. Your proficiency bonus is doubled for any ability check you make that uses either of the chosen proficiencies.\n"
+		                               "At 6th level, you can choose two more of you proficiencies (in skills or with thieves' tools) to gain this benefit."),
+	               Trait("Sneak Attack.", "You know how to strike subtly and exploit a foe's distraction. Once per turn, you can deal an extra 1d6 damage to one creature you hit with an attack if you have advantage on the attack roll. The attack must use a finesse or a ranged weapon.\n"
+				                          "You don't need advantage on the attack roll if another enemy of the target is within 5 feet of it, that enemy isn't incapacitated, and you don't have disadvantage on the attack roll.\n"
+				                          "The amount of the extra damage increases as you gain levels in this class, as shown in the Sneak Attack column of the Rogue Table in the rulebook."),
+	               Trait("Thieves' Cant.", "During your rogue training you learned a thieves' cant, a secret mix of dialect, jargon, and code that allows you to hide messages in seemingly normal conversation. Only another creature that knows thieves' cant understands such messages. It takes four times longer to convey such a message than it does to speak the same idea plainly.\n"
+				                           "In addition, you understand a set of secret signs and symbols used to convey short, simple messages, such as whether an area is dangerous or the territory of a thieves' guild, whether loot is nearby, or whether the people in an area are easy marks or will provide a safe house for thieves on the run.")}},
+
+		{"Sorcerer", {Trait("Spellcasting Ability.", "Charisma is your spellcasting ability for your sorcerer spells, since the power of your magic relies on your ability to project your will into the world. You use your Charisma whenever a spell refers to your spellcasting ability. In addition, you use your Charisma modifier when setting the saving throw DC for a sorcerer spell you cast and when making an attack roll with one."),
+	                  Trait("Sorcerous Origin.", "Choose a sorcerous origin, which describes the source of your innate magical power: Draconic Bloodline or Wild Magic, both detailed at the end of the class description in the rulebook.\n"
+						                         "Your choice grants you features when you choose it at 1st level and again at 6th, 14th, and 18th level.")}},
+
+		{"Warlock", {Trait("Otherworldly Patron.", "You have struck a bargain with an otherwordly being of your choice: the Archfey, the Fiend, or the Great Old One, each of which is detailed at the end of the class description. Your choice grants you features at 1st level and again at 6th, 10th, and 14th level."),
+	                 Trait("Pact Magic.", "Your arcane research and the magic bestowed on your by your patron have given you facility with spells. See the rulebook for rules on casting your spells.")}},
+
+		{"Wizard", {Trait("Spellcasting Ability.", "Intelligence is your spellcasting ability for your wizard spells, since you learn your spells through dedicated study and memorization. You use your Intelligence whenever a spell refers to your spellcasting ability. In addition, you use your Intelligence modifier when setting the saving throw DC for a wizard spell you cast and when making an attack roll with one."),
+	                Trait("Arcane Recovery.", "You have learned to regain some of your magical energy by studying your spellbook. Once per day when you finish a short rest, you can choose expended spell slots to recover. The spell slots can have a combined level that is equal to or less than half your wizard level (rounded up), and none of the slots can be 6th level or higher.\n"
+						                      "For example, if you're a 4th-level wizard, you can recover up to two levels worth of spell slots. You can recover either a 2nd-level spell slot or two 1st-level spell slots.")}}
 	};
 
 }

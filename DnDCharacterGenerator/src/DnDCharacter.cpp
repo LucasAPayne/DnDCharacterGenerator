@@ -1,5 +1,6 @@
 #include "dndCharacter.h"
 #include "Random.h"
+#include "Types.h"
 
 #include <algorithm>
 #include <string>
@@ -25,7 +26,7 @@ namespace dnd {
 	}
 
 // Choose a number of skill proficiencies randomly from a given list
-	void chooseSkillProficiencies(int skillsToChoose, std::vector<std::reference_wrapper<dnd::Skill>> list)
+	void chooseSkillProficiencies(int skillsToChoose, std::vector<std::reference_wrapper<Skill>> list)
 	{
 		// Since this uses std::reference_wrapper, when the values in list change, the values in character change also 
 
@@ -61,7 +62,9 @@ namespace dnd {
 		GeneratePassiveWisdom();
 
 		// Feats, Traits, Proficiencies, Languages
-		GenerateFeatsAndTraits();
+		GenerateRacialFeats();
+		GenerateBackgroundFeats();
+		GenerateClassFeats();
 		GenerateLanguages();
 
 		// Equipment and Combat
@@ -82,6 +85,8 @@ namespace dnd {
 	void Character::GenerateClass()
 	{
 		m_Class = Classes[Random::Int(0, NumClasses - 1)];
+
+		// TODO: if class is Cleric, pick a domain so the extra bonuses can applied
 	}
 
 	void Character::GenerateRace()
@@ -144,7 +149,7 @@ namespace dnd {
 	{
 		// Personality Traits
 		// Generate two unique random numbers to ensure personality traits are different
-		auto personalityList = PersonalityTraits.at(m_Background);
+		std::vector<std::string> personalityList = PersonalityTraits.at(m_Background);
 		int first = Random::Int(0, personalityList.size() - 1);
 		int second = Random::Int(0, personalityList.size() - 1);
 
@@ -157,7 +162,7 @@ namespace dnd {
 		// Ideals
 		std::string axis1 = m_Alignment.substr(0, m_Alignment.find(' ')); // Lawful, Neutral, or Chaotic
 		std::string axis2 = m_Alignment.substr(m_Alignment.find(' ') + 1); // Good, Neutral, or Evil;
-		auto idealsList = Ideals.at(m_Background);
+		auto &idealsList = Ideals.at(m_Background);
 
 		while (m_Ideals == "")
 		{
@@ -180,8 +185,8 @@ namespace dnd {
 
 	void Character::GenerateLevel()
 	{
-		m_Level = Random::Int(1, NumLevels - 1);
-		m_Experience = ExpForLevel[m_Level]; // Character starts with 0 progress toward next level
+		// For now, characters should be locked to level 1 since any effects of leveling up are currently not considered
+		m_Level = 1;
 	}
 
 	void Character::GenerateProficiencyBonus()
@@ -323,7 +328,7 @@ namespace dnd {
 		else if (m_Class == "Rogue")
 			chooseSkillProficiencies(4, { m_Acrobatics, m_Athletics, m_Deception, m_Insight, m_Intimidation, m_Investigation, m_Perception, m_Performance, m_Persuasion, m_SleightOfHand, m_Stealth });
 
-		else if (m_Class == "Sorceror")
+		else if (m_Class == "Sorcerer")
 			chooseSkillProficiencies(2, { m_Arcana, m_Deception, m_Insight, m_Intimidation, m_Persuasion, m_Religion });
 
 		else if (m_Class == "Warlock")
@@ -355,7 +360,7 @@ namespace dnd {
 			if (skills[i].get().Proficient)
 				skills[i].get().Modifier += m_ProficiencyBonus;
 
-			// Add other proficiencies
+			// TODO: Add other proficiencies
 		}
 	}
 
@@ -367,7 +372,7 @@ namespace dnd {
 		if (m_Class == "Bard" || m_Class == "Monk" || m_Class == "Ranger" || m_Class == "Rogue")
 			m_DexteritySave.Proficient = true;
 
-		if (m_Class == "Barbarian" || m_Class == "Fighter" || m_Class == "Sorceror")
+		if (m_Class == "Barbarian" || m_Class == "Fighter" || m_Class == "Sorcerer")
 			m_ConstitutionSave.Proficient = true;
 
 		if (m_Class == "Druid" || m_Class == "Rogue" || m_Class == "Wizard")
@@ -376,7 +381,7 @@ namespace dnd {
 		if (m_Class == "Cleric" || m_Class == "Druid" || m_Class == "Paladin" || m_Class == "Warlock" || m_Class == "Wizard")
 			m_WisdomSave.Proficient = true;
 
-		if (m_Class == "Bard" || m_Class == "Cleric" || m_Class == "Paladin" || m_Class == "Sorceror" || m_Class == "Warlock")
+		if (m_Class == "Bard" || m_Class == "Cleric" || m_Class == "Paladin" || m_Class == "Sorcerer" || m_Class == "Warlock")
 			m_CharismaSave.Proficient = true;
 	}
 
@@ -418,12 +423,42 @@ namespace dnd {
 	// ======================================================================================
 
 
-	void Character::GenerateRacialTraits()
+	void Character::GenerateRacialFeats()
 	{
+		m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at(m_MajorRace).begin(), RacialFeats.at(m_MajorRace).end());
+
+		// Humans do not have subraces, some subraces do not give additional feats, and if a character is just a dwarf, for example, they should not receive all the feats twice.
+		if (m_Race != m_MajorRace && m_Race != "Mountain Dwarf" && m_Race != "High Elf")
+			m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at(m_Race).begin(), RacialFeats.at(m_Race).end());
+
+		// TODO: Add optional variant human trait
 	}
 
-	void Character::GenerateFeatsAndTraits()
+	void Character::GenerateBackgroundFeats()
 	{
+		// Some backgrounds offer variant feats, but a character may only choose one feat from a background.
+		int index = Random::Int(0, BackgroundFeats.at(m_Background).size() - 1);
+		m_FeatsAndTraits.push_back(BackgroundFeats.at(m_Background)[index]);
+	}
+
+	void Character::GenerateClassFeats()
+	{
+		if (m_Class == "Cleric" || m_Class == "Fighter")
+		{
+			// Clerics and fighters have a set trait at index 0
+			m_FeatsAndTraits.push_back(ClassFeats.at(m_Class)[0]);
+
+			// Pick a cleric domain for clerics or fighting style for fighters, one of the 1st level traits after index 0
+			int index = Random::Int(1, ClassFeats.at(m_Class).size() - 1);
+			m_FeatsAndTraits.push_back(ClassFeats.at(m_Class)[index]);
+		}
+		else
+		{
+			// Other classes only have set traits
+			m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at(m_Class).begin(), ClassFeats.at(m_Class).end());
+
+			// TODO: Some classes have choices within the set traits, such as Favored Enemy for Rangers
+		}
 	}
 
 	void Character::GenerateProficiencies()
@@ -470,7 +505,7 @@ namespace dnd {
 		else if (m_Class == "Bard" || m_Class == "Cleric" || m_Class == "Druid" || m_Class == "Monk" || m_Class == "Rogue" || m_Class == "Warlock")
 			m_HitDice.Type = "d8";
 
-		else if (m_Class == "Sorceror" || m_Class == "Wizard")
+		else if (m_Class == "Sorcerer" || m_Class == "Wizard")
 			m_HitDice.Type = "d6";
 
 		m_HitDice.Number = m_Level;
@@ -507,7 +542,7 @@ namespace dnd {
 				m_MaxHitPoints += Random::Int(1, 6) + m_Constitution.Modifier;
 		}
 
-		// Add other modifiers
+		// TODO: Add other modifiers
 	}
 
 	void Character::GenerateSpeed()
@@ -522,7 +557,7 @@ namespace dnd {
 	{
 		m_Initiative = m_Dexterity.Modifier;
 
-		// Add other modifiers
+		// TODO: Add other modifiers
 	}
 
 	void Character::GenerateEquipment()
@@ -656,6 +691,12 @@ namespace dnd {
 		std::cout << "Stealth:         " << m_Stealth.Modifier << "\n";
 		std::cout << "Survival:        " << m_Survival.Modifier << "\n\n";
 
-		std::cout << "Passive Wisdom (Perception): " << m_PassiveWisdom << "\n";
+		std::cout << "Passive Wisdom (Perception): " << m_PassiveWisdom << "\n\n";
+
+		std::cout << "===================\n";
+		std::cout << "Features and Traits\n";
+		std::cout << "===================\n";
+		for (size_t i = 0; i < m_FeatsAndTraits.size(); i++)
+			std::cout << m_FeatsAndTraits[i].Name + " " + m_FeatsAndTraits[i].Description + "\n\n";
 	}
 }

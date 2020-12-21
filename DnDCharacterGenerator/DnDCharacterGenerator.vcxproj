@@ -22,6 +22,7 @@
     <ClInclude Include="src\DnDCharacter.h" />
     <ClInclude Include="src\Lists.h" />
     <ClInclude Include="src\Random.h" />
+    <ClInclude Include="src\Types.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\DnDCharacter.cpp" />
