@@ -53,7 +53,7 @@ namespace dnd
 	// The dice a character's hit points are based on
 	struct HitDice
 	{
-		std::string Type; // d6, d8, etc.
+		int Type; // How many faces each die has
 		int Number = 0;   // How many dice
 	};
 

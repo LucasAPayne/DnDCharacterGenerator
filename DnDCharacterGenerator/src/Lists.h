@@ -2,7 +2,6 @@
 
 #include "Types.h"
 
-#include <array>
 #include <string>
 #include <unordered_map>
 #include <utility> // std::pair
@@ -10,55 +9,75 @@
 
 namespace dnd {
 
-	// Constants
-	const int NumClasses = 12;
-	const int NumRaces = 11;
-	const int NumEthnicities = 9;
-	const int NumGenders = 2;
-	const int NumBackgrounds = 18;
-	const int NumAlignments = 9;
-	const int NumLanguages = 15;
-	const int NumLevels = 21;
-
 	// ======================================================================================
 	// Small Lists
 	// ======================================================================================
 
-	const std::array<std::string, NumClasses> Classes = {
+	const std::vector<std::string> Classes = {
 		"Barbarian", "Bard", "Cleric", "Druid", "Fighter", "Monk", "Paladin", "Ranger", "Rogue", "Sorcerer", "Warlock", "Wizard"
 	};
 
-	const std::array<std::string, NumRaces> Races = {
-		"Dwarf", "Hill Dwarf", "Mountain Dwarf", "Elf", "High Elf", "Wood Elf", "Dark Elf (Drow)", "Halfling", "Lightfoot Halfling", "Stout Halfling", "Human"
+	const std::vector<std::string> Races = {
+		"Hill Dwarf", "Mountain Dwarf", "High Elf", "Wood Elf", "Dark Elf (Drow)", "Lightfoot Halfling", "Stout Halfling", "Human"
 	};
 
-	const std::array<std::string, NumEthnicities> Ethnicities = {
+	const std::vector<std::string> Ethnicities = {
 		"Calishite", "Chondathan", "Damaran", "Illuskan", "Mulan", "Rashemi", "Shou", "Tethyrian", "Turami"
 	};
 
-	const std::array<std::string, NumGenders> Genders = {
+	const std::vector<std::string> Genders = {
 		"Male", "Female"
 	};
 
 	// Variants: Spy (Criminal), Gladiator (Entertainer), Guild Merchant (Guild Artisan), Knight (Noble), Pirate (Sailor)
-	const std::array<std::string, NumBackgrounds> Backgrounds = {
+	const std::vector<std::string> Backgrounds = {
 		"Acolyte", "Charlatan", "Criminal", "Entertainer", "Folk Hero", "Gladiator", "Guild Artisan", "Guild Merchant", "Hermit", "Knight",
 		"Noble", "Outlander", "Pirate", "Sage", "Sailor", "Soldier", "Spy", "Urchin"
 	};
 
-	const std::array<std::string, NumAlignments> Alignments = {
+	const std::vector<std::string> Alignments = {
 		"Lawful Good", "Neutral Good", "Chaotic Good", "Lawful Neutral", "Neutral", "Chaotic Neutral", "Lawful Evil", "Neutral Evil", "Chaotic Evil"
 	};
 
 	// Common is not a possible language because every character already knows it
-	std::array<std::string, NumLanguages> Languages = {
+	const std::vector<std::string> Languages = {
 		"Elvish", "Dwarvish", "Giant", "Gnomish", "Goblin", "Halfling", "Orc",                               // Common Languages
 		"Abyssal", "Celestial", "Draconic", "Deep Speech", "Infernal", "Primordial", "Sylvan", "Undercommon" // Exotic Languages
 	};
 
 	// First entry null so that expForLevel[1] is how much exp is required for level one, etc.
-	const std::array<int, NumLevels> ExpForLevel = {
+	const std::vector<int> ExpForLevel = {
 		 NULL, 0, 300, 900, 2700, 6500, 14000, 23000, 34000, 48000, 64000, 85000, 100000, 120000, 140000, 165000, 195000, 225000, 265000, 305000, 355000
+	};
+
+	// Equipment
+
+	const std::vector<std::string> ArmorTypes = {
+		"light armor", "medium armor", "heavy armor", "shields"
+	};
+
+	const std::vector<std::string> WeaponTypes = {
+		"clubs", "daggers", "greatclubs", "handaxes", "javelins", "light hammers", "maces", "quarterstaffs", "sickles", "spears", "unarmed strikes", // Simple melee weapons
+		"light crossbows", "darts", "shortbows", "slings", // simple ranged weapons
+		"battleaxes", "flails", "glaives", "greataxes", "greatswords", "halberds", "lances", "longswords", "mauls", "morningstars", "pikes", "rapiers", "scimitars", "shortswords", "tridents", "war picks", "warhammers", "whips", // martial melee weapons
+		"blowguns", "hand crossbows", "heavy crossbows", "longbows", "nets" // martial ranged weapons
+	};
+
+	const std::vector<std::string> ArtisanTools = {
+		"alchemist's supplies", "brewer's supplies", "calligrapher's supplies", "carpenter's tools", "cobbler's tools", "cook's utensils", "glassblower's tools",
+		"jeweler's tools", "leatherworker's tools", "mason's tools", "painter's supplies", "potter's tools", "smith's tools", "tinker's tools", "weaver's tools", "woodcarver's tools"
+	};
+
+	const std::vector<std::string> GamingSets = {
+		"dice set", "Dragonchess set", "playing card set", "Three-Dragon Ante set"
+	};
+
+	const std::vector<std::string> MusicalInstruments = {
+		"bagpipes", "drum", "dulcimer", "flute", "lute", "lyre", "horn", "pan flute", "shawm", "viol"
+	};
+
+	const std::vector<std::string> OtherTools = {
+		"disguise kit", "forgery kit", "herbalism kit", "navigator's tools", "poisoner's kit", "thieves' tools", "vehicles (land)", "vehicles (water)"
 	};
 
 	// ======================================================================================
@@ -875,7 +894,6 @@ namespace dnd {
 
 	const std::unordered_map<std::string, const std::vector<Trait>> RacialFeats = {
 		{"Dwarf", {
-			Trait("Size.", "Dwarves stand between 4 and 5 feet tall and average about 150 pounds. Your size is Medium."),
 			Trait("Darkvision.", "Accustomed to life underground, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can't discern color in darkness, only shades of gray."),
 			Trait("Dwarven Resilience.", "You have advantage on saving throws against poison, and you have resistance against poison damage."),
 			Trait("Stonecunning.", "Whenever you make an Intelligence (History) check related to the origin of stonework, you are considered proficient in the History skill and add double your proficiency bonus to the check, instead of your normal proficiency bonus.")
@@ -886,7 +904,6 @@ namespace dnd {
 		}},
 
 		{"Elf", {
-			Trait("Size.", "Elves range from under 5 to over 6 feet tall and have slender builds. Your size is Medium."),
 			Trait("Darkvision.", "Accustomed to twilit forests and the night sky, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can't discern color in darkness, only shades of gray."),
 			Trait("Fey Ancestry.", "You have advantage on saving throws against being charmed, and magic can't put you to sleep."),
 			Trait("Trance.", "Elves don't need to sleep. Instead, they meditate deeply, remaining semiconscious, for 4 hours a day. (The Common word for such meditation is \"Trance.\") While meditating, you can dream after a fashion; such dreams are actually mental exercises that have become reflexive through years of practice. After resting in this way, you gain the same benefit that a human does from 8 hours of sleep.")
@@ -898,11 +915,11 @@ namespace dnd {
 
 		{"Dark Elf (Drow)", {
 			Trait("Superior Darkvision.", "Your darkvision has a radius of 120 feet."),
-			Trait("Sunlight Sensitivity.", "You have disadvantage on attack rolls and on Wisdom (Perception) checks that rely on sight when you, the target of your attack, or whatever you are trying to perceive is in direct sunlight.")
+			Trait("Sunlight Sensitivity.", "You have disadvantage on attack rolls and on Wisdom (Perception) checks that rely on sight when you, the target of your attack, or whatever you are trying to perceive is in direct sunlight."),
+			Trait("Drow Magic.", "You know the dancing lights cantrip. When you reach 3rd level, you can cast the faerie fire spell once per day. When you reach 5th level, you can also cast the darkness spell once per day. Charisma is your spellcasting ability for these spells.")
 		}},
 
 		{"Halfling", {
-			Trait("Size.", "Halflings average about 3 feet tall and weigh about 40 pounds. Your size is Small."),
 			Trait("Lucky.", "When you roll a 1 on an attack roll, ability check, or saving throw, you can reroll the die and must use the new roll."),
 			Trait("Brave.", "You have advantage on saving throws against being frightened."),
 			Trait("Halfling Nimbleness.", "You can move through the space of any creature that is of a size larger than you.")
@@ -914,10 +931,6 @@ namespace dnd {
 
 		{"Stout Halfling", {
 			Trait("Stout Resilience.", "You have advantage on saving throws against poison, and you have resistance against poison damage.")
-		}},
-
-		{"Human", {
-			Trait("Size.", "Humans vary widely in height and build, from barely 5 feet to well over 6 feet tall. Your size is Medium.")
 		}}
 	};
 
@@ -950,8 +963,7 @@ namespace dnd {
 		{"Noble", {Trait("Position of Privilege.", "Thanks to your noble birth, people are inclined to think the best of you. You are welcome in high society, and people assume you have the right to be wherever you are. The common folk make every effort to accommodate you and avoid your displeasure, and other people of high birth treat you as a member of the same social sphere. You can secure an audience with a local noble if you need to."),
 				   Trait("Retainers.", "You have the service of three retainers loyal to your family. These retainers can be attendants or messengers, and one might be a majordomo. Your retainers are commoners who can perform mundane tasks for you, but they do not fight for you, will not follow you into obviously dangerous areas (such as dungeons), and will leave if they are frequently endangered or abused.")}},
 
-		{"Knight", {Trait("Position of Privilege.", "Thanks to your noble birth, people are inclined to think the best of you. You are welcome in high society, and people assume you have the right to be wherever you are. The common folk make every effort to accommodate you and avoid your displeasure, and other people of high birth treat you as a member of the same social sphere. You can secure an audience with a local noble if you need to."),
-			        Trait("Retainers.", "You have the service of three retainers loyal to your family. These retainers can be attendants or messengers, and one might be a majordomo. Your retainers are commoners who can perform mundane tasks for you, but they do not fight for you, will not follow you into obviously dangerous areas (such as dungeons), and will leave if they are frequently endangered or abused.")}},
+		{"Knight", {Trait("Retainers.", "You have the service of three retainers loyal to your family. These retainers can be attendants or messengers, and one might be a majordomo. Your retainers are commoners who can perform mundane tasks for you, but they do not fight for you, will not follow you into obviously dangerous areas (such as dungeons), and will leave if they are frequently endangered or abused.")}},
 
 		{"Outlander", {Trait("Wanderer.", "You have an excellent memory for maps and geography, and you can always recall the general layout of terrain, settlements, and other features around you. In addition, you can find food and fresh water for yourself and up to five other people each day, provided that the land offers berries, small game, and so forth.")}},
 

@@ -16,47 +16,6 @@ namespace dnd
 		void DisplayCharacterSheet();
 
 	private:
-		// Descriptors ==============================================================
-		void GenerateClass();
-		void GenerateRace();
-		void GenerateBackground();
-		void GenerateAlignment();
-		void GenerateGender();
-		void GenerateName();
-		void GeneratePersonality();
-
-		// Skills, Abilities, and Level ==============================================
-
-		// Generates random level and sets experience to the starting amount for that level
-		void GenerateLevel();
-
-		void GenerateProficiencyBonus();
-		void GenerateAbilityScores();
-		void GenerateRacialAbilityBonuses();
-		void GenerateAbilityModifiers();
-		void GenerateSkillProficiencies();
-		void GenerateSkillModifiers();
-		void GenerateSavingThrowProficiencies();
-		void GenerateSavingThrowModifiers();
-		void GeneratePassiveWisdom();
-
-		// Feats, Traits, Proficiencies, Languages ===================================
-		void GenerateRacialFeats();
-		void GenerateBackgroundFeats();
-		void GenerateClassFeats();
-		void GenerateProficiencies();
-		void GenerateLanguages();
-
-		// Equipment and Combat ======================================================
-		void GenerateHitDice();
-		void GenerateHitPoints();
-		void GenerateSpeed();
-		void GenerateInitiative();
-		void GenerateEquipment();
-		void GenerateAttacks();
-		void GenerateSpellcastingTraits();
-
-	private:
 		// Descriptors
 		std::string m_PlayerName;
 		std::string m_FirstName;
@@ -118,12 +77,14 @@ namespace dnd
 
 		// Feats, Traits, Lanuguages, Proficiencies
 		std::vector<Trait> m_FeatsAndTraits;
-		std::vector<Trait> m_Profiencies;
 		std::vector<std::string> m_Languages;
+		std::vector<std::string> m_ArmorProficiencies;
+		std::vector<std::string> m_WeaponProficiencies;
+		std::vector<std::string> m_ToolProficiencies;
 
 		// Equipment
 		Wealth m_Wealth;
-		std::string m_EquipmentList;
+		std::vector<std::string> m_EquipmentList;
 
 		// Combat
 		int m_CurrentHitPoints = 0;
