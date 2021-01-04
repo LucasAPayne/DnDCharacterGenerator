@@ -4,7 +4,9 @@
 #include "Types.h"
 
 #include <algorithm>
+#include <map>
 #include <string>
+#include <utility>
 #include <vector>
 
 // Temporary
@@ -581,6 +583,64 @@ namespace dnd {
 
 		// Independent of race, class, and background, but need to be processed after
 		{
+			// Find duplicate values in a vector of strings and output the element and frequency to a map
+			auto findDuplicates = [](const std::vector<std::string>& vec, std::map<std::string, int>& map)
+			{
+				for (const auto& it : vec)
+				{
+					auto result = map.insert(std::pair<std::string, int>(it, 1));
+					// If the string already exists in the map, increment its count by 1
+					if (result.second == false)
+						result.first->second++;
+				}
+			};
+
+			// Keep track of how many times the character is proficient in each of its proficiencies
+			std::map<std::string, int> proficiencyCount;
+
+			findDuplicates(m_ArmorProficiencies, proficiencyCount);
+			for (const auto& it : proficiencyCount)
+			{
+				if (it.second > 1)
+				{
+					m_ArmorProficiencies.erase(find(m_ArmorProficiencies.begin(), m_ArmorProficiencies.end(), it.first));
+					addUniqueProficiency(m_ArmorProficiencies, ArmorTypes);
+				}
+			}
+			proficiencyCount.clear();
+
+			findDuplicates(m_WeaponProficiencies, proficiencyCount);
+			for (const auto& it : proficiencyCount)
+			{
+				if (it.second > 1)
+				{
+					m_WeaponProficiencies.erase(find(m_WeaponProficiencies.begin(), m_WeaponProficiencies.end(), it.first));
+					addUniqueProficiency(m_WeaponProficiencies, WeaponTypes);
+				}
+			}
+			proficiencyCount.clear();
+
+			findDuplicates(m_ToolProficiencies, proficiencyCount);
+			for (const auto& it : proficiencyCount)
+			{
+				if (it.second > 1)
+				{
+					std::vector<std::string> toolTypes;
+					int choice = Random::Int(0, 3);
+					if (choice == 0)
+						toolTypes = ArtisanTools;
+					else if (choice == 1)
+						toolTypes = GamingSets;
+					else if (choice == 2)
+						toolTypes = MusicalInstruments;
+					else if (choice == 3)
+						toolTypes = OtherTools;
+
+					m_ToolProficiencies.erase(find(m_ToolProficiencies.begin(), m_ToolProficiencies.end(), it.first));
+					addUniqueProficiency(m_ArmorProficiencies, toolTypes);
+				}
+			}
+
 			// Hit dice/points
 			m_HitDice.Number = m_Level;
 			m_MaxHitPoints = m_HitDice.Type + m_Constitution.Modifier;
