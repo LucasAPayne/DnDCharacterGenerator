@@ -53,7 +53,7 @@ namespace dnd
 	// The dice a character's hit points are based on
 	struct HitDice
 	{
-		int Type; // How many faces each die has
+		int Type = 0; // How many faces each die has
 		int Number = 0;   // How many dice
 	};
 

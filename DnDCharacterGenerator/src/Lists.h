@@ -56,9 +56,12 @@ namespace dnd {
 		"light armor", "medium armor", "heavy armor", "shields"
 	};
 
-	const std::vector<std::string> WeaponTypes = {
+	const std::vector<std::string> SimpleWeapons = {
 		"clubs", "daggers", "greatclubs", "handaxes", "javelins", "light hammers", "maces", "quarterstaffs", "sickles", "spears", "unarmed strikes", // Simple melee weapons
-		"light crossbows", "darts", "shortbows", "slings", // simple ranged weapons
+		"light crossbows", "darts", "shortbows", "slings" // simple ranged weapons
+	};
+
+	const std::vector<std::string> MartialWeapons = {
 		"battleaxes", "flails", "glaives", "greataxes", "greatswords", "halberds", "lances", "longswords", "mauls", "morningstars", "pikes", "rapiers", "scimitars", "shortswords", "tridents", "war picks", "warhammers", "whips", // martial melee weapons
 		"blowguns", "hand crossbows", "heavy crossbows", "longbows", "nets" // martial ranged weapons
 	};

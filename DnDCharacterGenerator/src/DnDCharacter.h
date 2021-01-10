@@ -2,6 +2,7 @@
 
 #include "Types.h"
 
+#include <set>
 #include <string>
 #include <vector>
 
@@ -77,10 +78,10 @@ namespace dnd
 
 		// Feats, Traits, Lanuguages, Proficiencies
 		std::vector<Trait> m_FeatsAndTraits;
-		std::vector<std::string> m_Languages;
-		std::vector<std::string> m_ArmorProficiencies;
-		std::vector<std::string> m_WeaponProficiencies;
-		std::vector<std::string> m_ToolProficiencies;
+		std::set<std::string> m_Languages;
+		std::set<std::string> m_ArmorProficiencies;
+		std::set<std::string> m_WeaponProficiencies;
+		std::set<std::string> m_ToolProficiencies;
 
 		// Equipment
 		Wealth m_Wealth;

@@ -4,9 +4,8 @@
 #include "Types.h"
 
 #include <algorithm>
-#include <map>
+#include <set>
 #include <string>
-#include <utility>
 #include <vector>
 
 // Temporary
@@ -29,15 +28,12 @@ namespace dnd {
 	Character::Character()
 	{
 		// Add a proficiency or language that the character does not already have
-		auto addUniqueProficiency = [this](std::vector<std::string>& characterList, const std::vector<std::string>& proficiencyList)
+		auto addUniqueProficiency = [this](std::set<std::string>& characterList, const std::vector<std::string>& proficiencyList)
 		{
 			std::string proficiency = proficiencyList[Random::Int(0, proficiencyList.size() - 1)];
 
-			// Make sure the character does not already have the proficiency
-			while (std::find(characterList.begin(), characterList.end(), proficiency) != characterList.end())
-				proficiency = proficiencyList[Random::Int(0, proficiencyList.size() - 1)];
-
-			characterList.push_back(proficiency);
+			while (characterList.insert(proficiency).second == false)
+				std::string proficiency = proficiencyList[Random::Int(0, proficiencyList.size() - 1)];
 		};
 
 		// Independent of race, background, and class
@@ -98,11 +94,6 @@ namespace dnd {
 			m_Wisdom.Modifier = abilities[4].Modifier;
 			m_Charisma.Modifier = abilities[5].Modifier;
 
-			// Passive wisdom is wisdom modifier + 10 + proficiency bonus (if proficient in perception)
-			m_PassiveWisdom = m_Wisdom.Modifier + 10;
-			if (m_Perception.Proficient)
-				m_PassiveWisdom += m_ProficiencyBonus;
-
 			m_Initiative = m_Dexterity.Modifier;
 			// TODO: Add other modifiers
 		}
@@ -146,7 +137,7 @@ namespace dnd {
 			}
 
 			// All characters can speak, read, and write in the Common tongue
-			m_Languages.push_back("Common"); 
+			m_Languages.insert("Common"); 
 
 			// Ability score increases, feats, proficiencies, languages
 			// Subraces also get parent race benefits
@@ -154,13 +145,13 @@ namespace dnd {
 			{
 				m_Speed = 25;
 				m_Constitution.Score += 2;
-				m_Languages.push_back("Dwarvish");
+				m_Languages.insert("Dwarvish");
 				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Dwarf").begin(), RacialFeats.at("Dwarf").end());
 
 				// All dwarves get set weapon proficiencies and can choose one set of tools to be proficient with
 				std::vector<std::string> choices = { "smith's tools", "brewer's supplies", "mason's tools" };
-				m_ToolProficiencies.push_back(choices[Random::Int(0, choices.size() - 1)]);
-				m_WeaponProficiencies.insert(m_WeaponProficiencies.end(), { "battleaxe", "handaxe", "throwing hammer", "warhammer" });
+				m_ToolProficiencies.insert(choices[Random::Int(0, choices.size() - 1)]);
+				m_WeaponProficiencies.insert({ "battleaxes", "handaxes", "throwing hammers", "warhammers" });
 
 				if (m_Race == "Hill Dwarf")
 				{
@@ -180,7 +171,7 @@ namespace dnd {
 				m_Speed = 30;
 				m_Dexterity.Score += 2;
 				m_Perception.Proficient = true;
-				m_Languages.push_back("Elvish");
+				m_Languages.insert("Elvish");
 				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Elf").begin(), RacialFeats.at("Elf").end());
 
 				if (m_Race == "High Elf")
@@ -188,10 +179,10 @@ namespace dnd {
 					// TODO: High elves get a cantrip from the wizard spell list
 
 					m_Intelligence.Score++;
-					m_WeaponProficiencies.insert(m_WeaponProficiencies.end(), { "longsword", "shortsword", "shortbow", "longbow" });
+					m_WeaponProficiencies.insert({ "longswords", "shortswords", "shortbows", "longbows" });
 
 					// Choose one additional language
-					m_Languages.push_back(Languages[Random::Int(1, Languages.size() - 1)]); // 1 is the minimum number to avoid picking Elvish twice
+					m_Languages.insert(Languages[Random::Int(1, Languages.size() - 1)]); // 1 is the minimum number to avoid picking Elvish twice
 				}
 				else if (m_Race == "Wood Elf")
 				{
@@ -199,20 +190,20 @@ namespace dnd {
 					m_Wisdom.Score++;
 
 					m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Wood Elf").begin(), RacialFeats.at("Wood Elf").end());
-					m_WeaponProficiencies.insert(m_WeaponProficiencies.end(), { "longsword", "shortsword", "shortbow", "longbow" });
+					m_WeaponProficiencies.insert({ "longswords", "shortswords", "shortbows", "longbows" });
 				}
 				else if (m_Race == "Dark Elf (Drow)")
 				{ 
 					m_Charisma.Score++;
 					m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Dark Elf (Drow)").begin(), RacialFeats.at("Dark Elf (Drow)").end());
-					m_WeaponProficiencies.insert(m_WeaponProficiencies.end(), { "rapiers", "shortswords", "hand crossbows" });
+					m_WeaponProficiencies.insert({ "rapiers", "shortswords", "hand crossbows" });
 				}
 			}
 			else if (m_MajorRace == "Halfling")
 			{
 				m_Speed = 25;
 				m_Dexterity.Score += 2;
-				m_Languages.push_back("Halfling");
+				m_Languages.insert("Halfling");
 				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Halfling").begin(), RacialFeats.at("Halfling").end());
 
 				if (m_Race == "Lightfoot Halfling")
@@ -236,8 +227,186 @@ namespace dnd {
 				m_Wisdom.Score++;
 				m_Charisma.Score++;
 
-				m_Languages.push_back(Languages[Random::Int(0, Languages.size() - 1)]);
+				m_Languages.insert(Languages[Random::Int(0, Languages.size() - 1)]);
 				// TODO: Add optional variant human trait
+			}
+		}
+
+		// Class
+		{
+			m_Class = Classes[Random::Int(0, Classes.size() - 1)];
+
+			// Choose a number of skill proficiencies randomly from a given list
+			auto chooseSkillProficiencies = [](int skillsToChoose, std::vector<std::reference_wrapper<Skill>> list)
+			{
+				// Since this uses std::reference_wrapper, when the values in list change, the values in character change also 
+
+				// Randomize the order of entries and pick the first x of them
+				std::shuffle(list.begin(), list.end(), Random::GetEngine());
+
+				for (int i = 0; i < skillsToChoose; ++i)
+					list[i].get().Proficient = true;
+			};
+
+			// Hit dice/points, proficiencies, saving throw proficiencies, skill proficiencies
+			if (m_Class == "Barbarian")
+			{
+				m_HitDice.Type = 12;
+				m_ArmorProficiencies.insert({ "light armor", "medium armor", "shields" });
+				m_WeaponProficiencies.insert(SimpleWeapons.begin(), SimpleWeapons.end());
+				m_WeaponProficiencies.insert(MartialWeapons.begin(), MartialWeapons.end());
+				m_StrengthSave.Proficient = true;
+				m_ConstitutionSave.Proficient = true;
+				chooseSkillProficiencies(2, { m_AnimalHandling, m_Athletics, m_Intimidation, m_Nature, m_Perception, m_Survival });
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Barbarian").begin(), ClassFeats.at("Barbarian").end());
+			}
+			else if (m_Class == "Bard")
+			{
+				m_HitDice.Type = 8;
+
+				// Pick three musical instruments to be proficient with
+				for (int i = 0; i < 3; i++)
+					addUniqueProficiency(m_ToolProficiencies, MusicalInstruments);
+
+				m_ArmorProficiencies.insert("light armor");
+				m_WeaponProficiencies.insert(SimpleWeapons.begin(), SimpleWeapons.end());
+				m_WeaponProficiencies.insert({ "hand crossbows", "longswords", "rapiers", "shortswords" });
+
+				m_DexteritySave.Proficient = true;
+				m_CharismaSave.Proficient = true;
+
+				// Pick any three skills to be proficient in
+				chooseSkillProficiencies(3, { m_Acrobatics, m_AnimalHandling, m_Arcana, m_Athletics, m_Deception, m_History, m_Insight,
+					m_Intimidation, m_Investigation, m_Medicine, m_Nature, m_Perception, m_Performance, m_Persuasion, m_Religion,
+					m_SleightOfHand, m_Stealth, m_Survival });
+
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Bard").begin(), ClassFeats.at("Bard").end());
+			}
+			else if (m_Class == "Cleric")
+			{
+				m_HitDice.Type = 8;
+				m_ArmorProficiencies.insert({ "light armor", "medium armor", "shields" });
+				m_WeaponProficiencies.insert(SimpleWeapons.begin(), SimpleWeapons.end());
+				m_WisdomSave.Proficient = true;
+				m_CharismaSave.Proficient = true;
+				chooseSkillProficiencies(2, { m_History, m_Insight, m_Medicine, m_Persuasion, m_Religion });
+
+				// Clerics have a set trait at index 0
+				m_FeatsAndTraits.push_back(ClassFeats.at(m_Class)[0]);
+
+				// Pick a cleric domain, one of the 1st level traits after index 0
+				int index = Random::Int(1, ClassFeats.at(m_Class).size() - 1);
+				m_FeatsAndTraits.push_back(ClassFeats.at(m_Class)[index]);
+			}
+			else if (m_Class == "Druid")
+			{
+				m_HitDice.Type = 8;
+				m_Languages.insert("Druidic"); // From Druidic class feat
+				m_ArmorProficiencies.insert({ "light armor", "medium armor", "shields" });
+				m_WeaponProficiencies.insert({ "clubs", "daggers", "darts", "javelins", "maces", "quarterstaffs", "scimitars", "sickles", "slings", "spears" });
+				m_ToolProficiencies.insert("herbalism kit");
+				m_IntelligenceSave.Proficient = true;
+				m_WisdomSave.Proficient = true;
+				chooseSkillProficiencies(2, { m_Arcana, m_AnimalHandling, m_Insight, m_Medicine, m_Nature, m_Perception, m_Religion, m_Survival });
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Druid").begin(), ClassFeats.at("Druid").end());
+			}
+			else if (m_Class == "Fighter")
+			{
+				m_HitDice.Type = 10;
+				m_ArmorProficiencies.insert({ "light armor", "medium armor", "heavy armor", "shields" });
+				m_WeaponProficiencies.insert(SimpleWeapons.begin(), SimpleWeapons.end());
+				m_WeaponProficiencies.insert(MartialWeapons.begin(), MartialWeapons.end());
+				m_StrengthSave.Proficient = true;
+				m_ConstitutionSave.Proficient = true;
+				chooseSkillProficiencies(2, { m_Acrobatics, m_AnimalHandling, m_Athletics, m_History, m_Insight, m_Intimidation, m_Perception, m_Survival });
+
+				// Fighters have a set trait at index 0
+				m_FeatsAndTraits.push_back(ClassFeats.at(m_Class)[0]);
+
+				// Pick a fighting style, one of the 1st level traits after index 0
+				int index = Random::Int(1, ClassFeats.at(m_Class).size() - 1);
+				m_FeatsAndTraits.push_back(ClassFeats.at(m_Class)[index]);
+			}
+			else if (m_Class == "Monk")
+			{
+				m_HitDice.Type = 8;
+
+				m_WeaponProficiencies.insert(SimpleWeapons.begin(), SimpleWeapons.end());
+				m_WeaponProficiencies.insert("shortswords");
+				// Choose one type of artisan's tools or musical instrument
+				if (Random::Int(0, 1) == 0)
+					m_ToolProficiencies.insert(ArtisanTools[Random::Int(0, ArtisanTools.size() - 1)]);
+				else
+					m_ToolProficiencies.insert(MusicalInstruments[Random::Int(0, MusicalInstruments.size() - 1)]);
+
+				m_StrengthSave.Proficient = true;
+				m_DexteritySave.Proficient = true;
+				chooseSkillProficiencies(2, { m_Acrobatics, m_Athletics, m_History, m_Insight, m_Religion, m_Stealth }); \
+					m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Monk").begin(), ClassFeats.at("Monk").end());
+			}
+			else if (m_Class == "Paladin")
+			{
+				m_HitDice.Type = 10;
+				m_ArmorProficiencies.insert({ "light armor", "medium armor", "heavy armor", "shields" });
+				m_WeaponProficiencies.insert(SimpleWeapons.begin(), SimpleWeapons.end());
+				m_WeaponProficiencies.insert(MartialWeapons.begin(), MartialWeapons.end());
+				m_WisdomSave.Proficient = true;
+				m_CharismaSave.Proficient = true;
+				chooseSkillProficiencies(2, { m_Athletics, m_Insight, m_Intimidation, m_Medicine, m_Persuasion, m_Religion });
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Paladin").begin(), ClassFeats.at("Paladin").end());
+			}
+			else if (m_Class == "Ranger")
+			{
+				m_HitDice.Type = 10;
+				m_ArmorProficiencies.insert({ "light armor", "medium armor", "shields" });
+				m_WeaponProficiencies.insert(SimpleWeapons.begin(), SimpleWeapons.end());
+				m_WeaponProficiencies.insert(MartialWeapons.begin(), MartialWeapons.end());
+				m_StrengthSave.Proficient = true;
+				m_DexteritySave.Proficient = true;
+				chooseSkillProficiencies(3, { m_AnimalHandling, m_Athletics, m_Insight, m_Investigation, m_Nature, m_Perception, m_Stealth, m_Survival });
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Ranger").begin(), ClassFeats.at("Ranger").end());
+				// TODO: Some classes have choices within the set traits, such as Favored Enemy for Rangers
+			}
+			else if (m_Class == "Rogue")
+			{
+				m_HitDice.Type = 8;
+				m_Languages.insert("Thieves' Cant"); // From Thieves' Cant class feat
+				m_ArmorProficiencies.insert("light armor");
+				m_WeaponProficiencies.insert(SimpleWeapons.begin(), SimpleWeapons.end());
+				m_WeaponProficiencies.insert({ "hand crossbows", "longswords", "rapiers", "shortswords" });
+				m_ToolProficiencies.insert("thieves' tools");
+				m_DexteritySave.Proficient = true;
+				m_IntelligenceSave.Proficient = true;
+				chooseSkillProficiencies(4, { m_Acrobatics, m_Athletics, m_Deception, m_Insight, m_Intimidation, m_Investigation, m_Perception, m_Performance, m_Persuasion, m_SleightOfHand, m_Stealth });
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Rogue").begin(), ClassFeats.at("Rogue").end());
+			}
+			else if (m_Class == "Sorcerer")
+			{
+				m_HitDice.Type = 6;
+				m_WeaponProficiencies.insert({ "daggers", "darts", "quarterstaffs", "light crossbows" });
+				m_ConstitutionSave.Proficient = true;
+				m_CharismaSave.Proficient = true;
+				chooseSkillProficiencies(2, { m_Arcana, m_Deception, m_Insight, m_Intimidation, m_Persuasion, m_Religion });
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Sorcerer").begin(), ClassFeats.at("Sorcerer").end());
+			}
+			else if (m_Class == "Warlock")
+			{
+				m_HitDice.Type = 8;
+				m_ArmorProficiencies.insert("light armor");
+				m_WeaponProficiencies.insert(SimpleWeapons.begin(), SimpleWeapons.end());
+				m_WisdomSave.Proficient = true;
+				m_CharismaSave.Proficient = true;
+				chooseSkillProficiencies(2, { m_Arcana, m_Deception, m_History, m_Intimidation, m_Investigation, m_Nature, m_Religion });
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Warlock").begin(), ClassFeats.at("Warlock").end());
+			}
+			else if (m_Class == "Wizard")
+			{
+				m_HitDice.Type = 6;
+				m_WeaponProficiencies.insert({ "daggers", "darts", "slings", "quarterstaffs", "light crossbows" });
+				m_IntelligenceSave.Proficient = true;
+				m_WisdomSave.Proficient = true;
+				chooseSkillProficiencies(2, { m_Arcana, m_History, m_Insight, m_Investigation, m_Medicine, m_Religion });
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Wizard").begin(), ClassFeats.at("Wizard").end());
 			}
 		}
 
@@ -281,11 +450,24 @@ namespace dnd {
 			int index = Random::Int(0, BackgroundFeats.at(m_Background).size() - 1);
 			m_FeatsAndTraits.push_back(BackgroundFeats.at(m_Background)[index]);
 
+			std::vector<std::reference_wrapper<Skill>> skills = { m_Acrobatics, m_AnimalHandling, m_Arcana, m_Athletics, m_Deception, m_History, m_Insight,
+					m_Intimidation, m_Investigation, m_Medicine, m_Nature, m_Perception, m_Performance, m_Persuasion, m_Religion, m_SleightOfHand, m_Stealth, m_Survival };
+
+			// Attempt to make the character proficient in a skill. If the character is already proficient in that skill, choose another 
+			auto addSkillProficiency = [skills](std::reference_wrapper<Skill> skill)
+			{
+				while (skill.get().Proficient)
+					skill = skills[Random::Int(0, skills.size() - 1)];
+
+				skill.get().Proficient = true;
+			};
+
 			// Proficiencies
+			// If backgrounds give a character duplicate proficiencies, the character can choose another proficiency of the same type (skill or tool)
 			if (m_Background == "Acolyte")
 			{
-				m_Insight.Proficient = true;
-				m_Religion.Proficient = true;
+				addSkillProficiency(m_Insight);
+				addSkillProficiency(m_Religion);
 
 				// Choose two additional languages
 				for (int i = 0; i < 2; i++)
@@ -293,85 +475,74 @@ namespace dnd {
 			}
 			else if (m_Background == "Charlatan")
 			{
-				m_Deception.Proficient = true;
-				m_SleightOfHand.Proficient = true;
+				addSkillProficiency(m_Deception);
+				addSkillProficiency(m_SleightOfHand);
 
-				m_ToolProficiencies.insert(m_ToolProficiencies.end(), { "disguise kit", "forgery kit" });
+				// if second == false, then the element could not be inserted (was a duplicate)
+				if (m_ToolProficiencies.insert("disguise kit").second == false) addUniqueProficiency(m_ToolProficiencies, OtherTools);
+				if (m_ToolProficiencies.insert("forgery kit").second == false)  addUniqueProficiency(m_ToolProficiencies, OtherTools);
+
 			}
 			else if (m_Background == "Criminal" || m_Background == "Spy")
 			{
-				m_Deception.Proficient = true;
-				m_Stealth.Proficient = true;
+				addSkillProficiency(m_Deception);
+				addSkillProficiency(m_Stealth);
 
-				// Choose one gaming set to be proficient with
-				m_ToolProficiencies.push_back(GamingSets[Random::Int(0, GamingSets.size() - 1)]);
-				m_ToolProficiencies.push_back("thieves' tools");
+				addUniqueProficiency(m_ToolProficiencies, GamingSets);
+				if (m_ToolProficiencies.insert("thieves' tools").second == false) addUniqueProficiency(m_ToolProficiencies, OtherTools);
 			}
 			else if (m_Background == "Entertainer" || m_Background == "Gladiator")
 			{
-				m_Acrobatics.Proficient = true;
-				m_Performance.Proficient = true;
+				addSkillProficiency(m_Acrobatics);
+				addSkillProficiency(m_Performance);
 
-				// Choose one musical instrument to be proficient with
-				m_ToolProficiencies.push_back(MusicalInstruments[Random::Int(0, MusicalInstruments.size() - 1)]);
-				m_ToolProficiencies.push_back("disguise kit");
+				addUniqueProficiency(m_ToolProficiencies, MusicalInstruments); 
+				if (m_ToolProficiencies.insert("disguise kit").second == false) addUniqueProficiency(m_ToolProficiencies, OtherTools);
 			}
 			else if (m_Background == "Folk Hero")
 			{
-				m_AnimalHandling.Proficient = true;
-				m_Survival.Proficient = true;
+				addSkillProficiency(m_AnimalHandling);
+				addSkillProficiency(m_Survival);
 
-				// Choose one type of artisan's tools to be proficient with
-				m_ToolProficiencies.push_back(ArtisanTools[Random::Int(0, ArtisanTools.size() - 1)]);
-				m_ToolProficiencies.push_back("vehicles (land)");
+				addUniqueProficiency(m_ToolProficiencies, ArtisanTools);
+				if (m_ToolProficiencies.insert("vehicles (land)").second == false) addUniqueProficiency(m_ToolProficiencies, OtherTools);
 			}
 			else if (m_Background == "Guild Artisan" || m_Background == "Guild Merchant")
 			{
-				m_Insight.Proficient = true;
-				m_Persuasion.Proficient = true;
-				
-				// Choose one type of artisan's tools to be proficient with
-				m_ToolProficiencies.push_back(ArtisanTools[Random::Int(0, ArtisanTools.size() - 1)]);
-				
-				// Choose one additional language
+				addSkillProficiency(m_Insight);
+				addSkillProficiency(m_Persuasion);
+
 				addUniqueProficiency(m_Languages, Languages);
+				addUniqueProficiency(m_ToolProficiencies, ArtisanTools);
 			}
 			else if (m_Background == "Hermit")
 			{
-				m_Medicine.Proficient = true;
-				m_Religion.Proficient = true;
+				addSkillProficiency(m_Medicine);
+				addSkillProficiency(m_Religion);
 
-				m_ToolProficiencies.push_back("herbalism kit");
-
-				// Choose one additional language
 				addUniqueProficiency(m_Languages, Languages);
+				if (m_ToolProficiencies.insert("herbalism kit").second == false) addUniqueProficiency(m_ToolProficiencies, OtherTools);
 			}
 			else if (m_Background == "Noble" || m_Background == "Knight")
 			{
-				m_History.Proficient = true;
-				m_Persuasion.Proficient = true;
+				addSkillProficiency(m_History);
+				addSkillProficiency(m_Persuasion);
 
-				// Choose one gaming set to be proficient with
-				m_ToolProficiencies.push_back(GamingSets[Random::Int(0, GamingSets.size() - 1)]);
-
-				// Choose one additional language
 				addUniqueProficiency(m_Languages, Languages);
+				addUniqueProficiency(m_ToolProficiencies, GamingSets);
 			}
 			else if (m_Background == "Outlander")
 			{
-				m_Athletics.Proficient = true;
-				m_Survival.Proficient = true;
+				addSkillProficiency(m_Athletics);
+				addSkillProficiency(m_Survival);
 
-				// Choose one musical instrument to be proficient with
-				m_ToolProficiencies.push_back(MusicalInstruments[Random::Int(0, MusicalInstruments.size() - 1)]);
-
-				// Choose one additional language
 				addUniqueProficiency(m_Languages, Languages);
+				addUniqueProficiency(m_ToolProficiencies, MusicalInstruments);
 			}
 			else if (m_Background == "Sage")
 			{
-				m_Arcana.Proficient = true;
-				m_History.Proficient = true;
+				addSkillProficiency(m_Arcana);
+				addSkillProficiency(m_History);
 
 				// Choose two additional languages
 				for (int i = 0; i < 2; i++)
@@ -379,268 +550,32 @@ namespace dnd {
 			}
 			else if (m_Background == "Sailor" || m_Background == "Pirate")
 			{
-				m_Athletics.Proficient = true;
-				m_Perception.Proficient = true;
+				addSkillProficiency(m_Athletics);
+				addSkillProficiency(m_Perception);
 
-				m_ToolProficiencies.insert(m_ToolProficiencies.end(), { "navigator's tools", "vehicles (water)" });
+				if (m_ToolProficiencies.insert("navigator's tools").second == false) addUniqueProficiency(m_ToolProficiencies, OtherTools);
+				if (m_ToolProficiencies.insert("vehicles (water)").second == false)  addUniqueProficiency(m_ToolProficiencies, OtherTools);
 			}
 			else if (m_Background == "Soldier")
 			{
-				m_Athletics.Proficient = true;
-				m_Intimidation.Proficient = true;
+				addSkillProficiency(m_Athletics);
+				addSkillProficiency(m_Intimidation);
 
-				// Choose one gaming set to be proficient with
-				m_ToolProficiencies.push_back(GamingSets[Random::Int(0, GamingSets.size() - 1)]);
-				m_ToolProficiencies.push_back("vehicles (land)");
+				addUniqueProficiency(m_ToolProficiencies, GamingSets);
+				if (m_ToolProficiencies.insert("vehicles (land)").second == false) addUniqueProficiency(m_ToolProficiencies, OtherTools);
 			}
 			else if (m_Background == "Urchin")
 			{
-				m_SleightOfHand.Proficient = true;
-				m_Stealth.Proficient = true;
+				addSkillProficiency(m_SleightOfHand);
+				addSkillProficiency(m_Stealth);
 
-				m_ToolProficiencies.insert(m_ToolProficiencies.end(), { "disguise kit", "thieves' tools" });
-			}
-		}
-
-		// Class
-		{
-			m_Class = Classes[Random::Int(0, Classes.size() - 1)];
-
-			// Choose a number of skill proficiencies randomly from a given list
-			auto chooseSkillProficiencies = [](int skillsToChoose, std::vector<std::reference_wrapper<Skill>> list)
-			{
-				// Since this uses std::reference_wrapper, when the values in list change, the values in character change also 
-
-				// Randomize the order of entries and pick the first x of them
-				std::shuffle(list.begin(), list.end(), Random::GetEngine());
-
-				for (int i = 0; i < skillsToChoose; ++i)
-					list[i].get().Proficient = true;
-			};
-
-			// Hit dice/points, proficiencies, saving throw proficiencies, skill proficiencies
-			if (m_Class == "Barbarian")
-			{
-				m_HitDice.Type = 12;
-				m_ArmorProficiencies.insert(m_ArmorProficiencies.end(), { "light armor", "medium armor", "shields" });
-				m_WeaponProficiencies.insert(m_WeaponProficiencies.end(), { "simple weapons", "martial weapons" });
-				m_StrengthSave.Proficient = true;
-				m_ConstitutionSave.Proficient = true;
-				chooseSkillProficiencies(2, { m_AnimalHandling, m_Athletics, m_Intimidation, m_Nature, m_Perception, m_Survival });
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Barbarian").begin(), ClassFeats.at("Barbarian").end());
-			}
-			else if (m_Class == "Bard")
-			{
-				m_HitDice.Type = 8;
-
-				// Pick three musical instruments to be proficient with
-				for (int i = 0; i < 3; i++)
-				{
-					std::string instrument = MusicalInstruments[Random::Int(0, MusicalInstruments.size() - 1)];
-
-					// Make sure the character is not already proficient with the instrument
-					while (std::find(m_ToolProficiencies.begin(), m_ToolProficiencies.end(), instrument) != m_ToolProficiencies.end())
-						instrument = MusicalInstruments[Random::Int(0, MusicalInstruments.size() - 1)];
-
-					m_Languages.push_back(instrument);
-				}
-
-				m_ArmorProficiencies.push_back("light armor");
-				m_WeaponProficiencies.insert(m_WeaponProficiencies.end(), { "simple weapons", "hand crossbows", "longswords", "rapiers", "shortswords" });
-
-				m_DexteritySave.Proficient = true;
-				m_CharismaSave.Proficient = true;
-
-				// Pick any three skills to be proficient in
-				chooseSkillProficiencies(3, { m_Acrobatics, m_AnimalHandling, m_Arcana, m_Athletics, m_Deception, m_History, m_Insight,
-					m_Intimidation, m_Investigation, m_Medicine, m_Nature, m_Perception, m_Performance, m_Persuasion, m_Religion,
-					m_SleightOfHand, m_Stealth, m_Survival });
-
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Bard").begin(), ClassFeats.at("Bard").end());
-			}
-			else if (m_Class == "Cleric")
-			{
-				m_HitDice.Type = 8;
-				m_ArmorProficiencies.insert(m_ArmorProficiencies.end(), { "light armor", "medium armor", "shields" });
-				m_WeaponProficiencies.push_back("simple weapons");
-				m_WisdomSave.Proficient = true;
-				m_CharismaSave.Proficient = true;
-				chooseSkillProficiencies(2, { m_History, m_Insight, m_Medicine, m_Persuasion, m_Religion });
-
-				// Clerics have a set trait at index 0
-				m_FeatsAndTraits.push_back(ClassFeats.at(m_Class)[0]);
-
-				// Pick a cleric domain, one of the 1st level traits after index 0
-				int index = Random::Int(1, ClassFeats.at(m_Class).size() - 1);
-				m_FeatsAndTraits.push_back(ClassFeats.at(m_Class)[index]);
-			}
-			else if (m_Class == "Druid")
-			{
-				m_HitDice.Type = 8;
-				m_Languages.push_back("Druidic"); // From Druidic class feat
-				m_ArmorProficiencies.insert(m_ArmorProficiencies.end(), { "light armor", "medium armor", "shields (druids will not wear armor or use shields made of metal)" });
-				m_WeaponProficiencies.insert(m_WeaponProficiencies.end(), {"clubs", "daggers", "darts", "javelins", "maces", "quarterstaffs", "scimitars", "sickles", "slings", "spears" });
-				m_ToolProficiencies.push_back("herbalism kit");
-				m_IntelligenceSave.Proficient = true;
-				m_WisdomSave.Proficient = true;
-				chooseSkillProficiencies(2, { m_Arcana, m_AnimalHandling, m_Insight, m_Medicine, m_Nature, m_Perception, m_Religion, m_Survival });
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Druid").begin(), ClassFeats.at("Druid").end());
-			}
-			else if (m_Class == "Fighter")
-			{
-				m_HitDice.Type = 10;
-				m_ArmorProficiencies.insert(m_ArmorProficiencies.end(), { "light armor", "medium armor", "heavy armor", "shields" });
-				m_WeaponProficiencies.insert(m_WeaponProficiencies.end(), { "simple weapons", "martial weapons" });
-				m_StrengthSave.Proficient = true;
-				m_ConstitutionSave.Proficient = true;
-				chooseSkillProficiencies(2, { m_Acrobatics, m_AnimalHandling, m_Athletics, m_History, m_Insight, m_Intimidation, m_Perception, m_Survival });
-
-				// Fighters have a set trait at index 0
-				m_FeatsAndTraits.push_back(ClassFeats.at(m_Class)[0]);
-
-				// Pick a fighting style, one of the 1st level traits after index 0
-				int index = Random::Int(1, ClassFeats.at(m_Class).size() - 1);
-				m_FeatsAndTraits.push_back(ClassFeats.at(m_Class)[index]);
-			}
-			else if (m_Class == "Monk")
-			{
-				m_HitDice.Type = 8;
-
-				m_WeaponProficiencies.insert(m_WeaponProficiencies.end(), { "simple weapons", "shortswords" });
-				// Choose one type of artisan's tools or musical instrument
-				if (Random::Int(0, 1) == 0)
-					m_ToolProficiencies.push_back(ArtisanTools[Random::Int(0, ArtisanTools.size() - 1)]);
-				else
-					m_ToolProficiencies.push_back(MusicalInstruments[Random::Int(0, MusicalInstruments.size() - 1)]);
-
-				m_StrengthSave.Proficient = true;
-				m_DexteritySave.Proficient = true;
-				chooseSkillProficiencies(2, { m_Acrobatics, m_Athletics, m_History, m_Insight, m_Religion, m_Stealth }); \
-					m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Monk").begin(), ClassFeats.at("Monk").end());
-			}
-			else if (m_Class == "Paladin")
-			{
-				m_HitDice.Type = 10;
-				m_ArmorProficiencies.insert(m_ArmorProficiencies.end(), { "light armor", "medium armor", "heavy armor", "shields" });
-				m_WeaponProficiencies.insert(m_WeaponProficiencies.end(), { "simple weapons", "martial weapons" });
-				m_WisdomSave.Proficient = true;
-				m_CharismaSave.Proficient = true;
-				chooseSkillProficiencies(2, { m_Athletics, m_Insight, m_Intimidation, m_Medicine, m_Persuasion, m_Religion });
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Paladin").begin(), ClassFeats.at("Paladin").end());
-			}
-			else if (m_Class == "Ranger")
-			{
-				m_HitDice.Type = 10;
-				m_ArmorProficiencies.insert(m_ArmorProficiencies.end(), { "light armor", "medium armor", "shields" });
-				m_WeaponProficiencies.insert(m_WeaponProficiencies.end(), { "simple weapons", "martial weapons" });
-				m_StrengthSave.Proficient = true;
-				m_DexteritySave.Proficient = true;
-				chooseSkillProficiencies(3, { m_AnimalHandling, m_Athletics, m_Insight, m_Investigation, m_Nature, m_Perception, m_Stealth, m_Survival });
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Ranger").begin(), ClassFeats.at("Ranger").end());
-				// TODO: Some classes have choices within the set traits, such as Favored Enemy for Rangers
-			}
-			else if (m_Class == "Rogue")
-			{
-				m_HitDice.Type = 8;
-				m_Languages.push_back("Thieves' Cant"); // From Thieves' Cant class feat
-				m_ArmorProficiencies.push_back("light armor");
-				m_WeaponProficiencies.insert(m_WeaponProficiencies.end(), { "simple weapons", "hand crossbows", "longswords", "rapiers", "shortswords" });
-				m_ToolProficiencies.push_back("thieves' tools");
-				m_DexteritySave.Proficient = true;
-				m_IntelligenceSave.Proficient = true;
-				chooseSkillProficiencies(4, { m_Acrobatics, m_Athletics, m_Deception, m_Insight, m_Intimidation, m_Investigation, m_Perception, m_Performance, m_Persuasion, m_SleightOfHand, m_Stealth });
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Rogue").begin(), ClassFeats.at("Rogue").end());
-			}
-			else if (m_Class == "Sorcerer")
-			{
-				m_HitDice.Type = 6;
-				m_WeaponProficiencies.insert(m_WeaponProficiencies.end(), { "daggers", "darts", "quarterstaffs", "light crossbows" });
-				m_ConstitutionSave.Proficient = true;
-				m_CharismaSave.Proficient = true;
-				chooseSkillProficiencies(2, { m_Arcana, m_Deception, m_Insight, m_Intimidation, m_Persuasion, m_Religion });
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Sorcerer").begin(), ClassFeats.at("Sorcerer").end());
-			}
-			else if (m_Class == "Warlock")
-			{
-				m_HitDice.Type = 8;
-				m_ArmorProficiencies.push_back("light armor");
-				m_WeaponProficiencies.push_back("simple weapons");
-				m_WisdomSave.Proficient = true;
-				m_CharismaSave.Proficient = true;
-				chooseSkillProficiencies(2, { m_Arcana, m_Deception, m_History, m_Intimidation, m_Investigation, m_Nature, m_Religion });
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Warlock").begin(), ClassFeats.at("Warlock").end());
-			}
-			else if (m_Class == "Wizard")
-			{
-				m_HitDice.Type = 6;
-				m_WeaponProficiencies.insert(m_WeaponProficiencies.end(), { "daggers", "darts", "slings", "quarterstaffs", "light crossbows" });
-				m_IntelligenceSave.Proficient = true;
-				m_WisdomSave.Proficient = true;
-				chooseSkillProficiencies(2, { m_Arcana, m_History, m_Insight, m_Investigation, m_Medicine, m_Religion });
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Wizard").begin(), ClassFeats.at("Wizard").end());
+				if (m_ToolProficiencies.insert("disguise kit").second == false)   addUniqueProficiency(m_ToolProficiencies, OtherTools);
+				if (m_ToolProficiencies.insert("thieves' tools").second == false) addUniqueProficiency(m_ToolProficiencies, OtherTools);
 			}
 		}
 
 		// Independent of race, class, and background, but need to be processed after
 		{
-			// Find duplicate values in a vector of strings and output the element and frequency to a map
-			auto findDuplicates = [](const std::vector<std::string>& vec, std::map<std::string, int>& map)
-			{
-				for (const auto& it : vec)
-				{
-					auto result = map.insert(std::pair<std::string, int>(it, 1));
-					// If the string already exists in the map, increment its count by 1
-					if (result.second == false)
-						result.first->second++;
-				}
-			};
-
-			// Keep track of how many times the character is proficient in each of its proficiencies
-			std::map<std::string, int> proficiencyCount;
-
-			findDuplicates(m_ArmorProficiencies, proficiencyCount);
-			for (const auto& it : proficiencyCount)
-			{
-				if (it.second > 1)
-				{
-					m_ArmorProficiencies.erase(find(m_ArmorProficiencies.begin(), m_ArmorProficiencies.end(), it.first));
-					addUniqueProficiency(m_ArmorProficiencies, ArmorTypes);
-				}
-			}
-			proficiencyCount.clear();
-
-			findDuplicates(m_WeaponProficiencies, proficiencyCount);
-			for (const auto& it : proficiencyCount)
-			{
-				if (it.second > 1)
-				{
-					m_WeaponProficiencies.erase(find(m_WeaponProficiencies.begin(), m_WeaponProficiencies.end(), it.first));
-					addUniqueProficiency(m_WeaponProficiencies, WeaponTypes);
-				}
-			}
-			proficiencyCount.clear();
-
-			findDuplicates(m_ToolProficiencies, proficiencyCount);
-			for (const auto& it : proficiencyCount)
-			{
-				if (it.second > 1)
-				{
-					std::vector<std::string> toolTypes;
-					int choice = Random::Int(0, 3);
-					if (choice == 0)
-						toolTypes = ArtisanTools;
-					else if (choice == 1)
-						toolTypes = GamingSets;
-					else if (choice == 2)
-						toolTypes = MusicalInstruments;
-					else if (choice == 3)
-						toolTypes = OtherTools;
-
-					m_ToolProficiencies.erase(find(m_ToolProficiencies.begin(), m_ToolProficiencies.end(), it.first));
-					addUniqueProficiency(m_ArmorProficiencies, toolTypes);
-				}
-			}
-
 			// Hit dice/points
 			m_HitDice.Number = m_Level;
 			m_MaxHitPoints = m_HitDice.Type + m_Constitution.Modifier;
@@ -652,9 +587,8 @@ namespace dnd {
 			m_AnimalHandling.Parent = m_Insight.Parent = m_Medicine.Parent = m_Perception.Parent = m_Survival.Parent = m_Wisdom;
 			m_Deception.Parent = m_Intimidation.Parent = m_Performance.Parent = m_Persuasion.Parent = m_Charisma;
 
-			std::vector<std::reference_wrapper<Skill> > skills = { m_Acrobatics, m_AnimalHandling, m_Arcana, m_Athletics, m_Deception, m_History, m_Insight,
-				m_Intimidation, m_Investigation, m_Medicine, m_Nature, m_Perception, m_Performance, m_Persuasion, m_Religion,
-				m_SleightOfHand, m_Stealth, m_Survival };
+			std::vector<std::reference_wrapper<Skill>> skills = { m_Acrobatics, m_AnimalHandling, m_Arcana, m_Athletics, m_Deception, m_History, m_Insight,
+				m_Intimidation, m_Investigation, m_Medicine, m_Nature, m_Perception, m_Performance, m_Persuasion, m_Religion, m_SleightOfHand, m_Stealth, m_Survival };
 
 			for (size_t i = 0; i < skills.size(); ++i)
 			{
@@ -688,6 +622,12 @@ namespace dnd {
 				if (saves[i].get().Proficient)
 					saves[i].get().Modifier += m_ProficiencyBonus;
 			}
+
+			// Passive wisdom is wisdom modifier + 10 + proficiency bonus (if proficient in perception)
+			m_PassiveWisdom = m_Wisdom.Modifier + 10;
+
+			if (m_Perception.Proficient)
+				m_PassiveWisdom += m_ProficiencyBonus;
 		}
 	}	
 
@@ -806,25 +746,25 @@ namespace dnd {
 		std::cout << "Proficiencies and Languages\n";
 		std::cout << "===========================\n";
 		std::cout << "Proficiencies: ";
-		for (size_t i = 0; i < m_ArmorProficiencies.size(); i++)
-			std::cout << m_ArmorProficiencies[i] << ", ";
+		for (const auto& it : m_ArmorProficiencies)
+			std::cout << it << ", ";
 
-		for (size_t i = 0; i < m_WeaponProficiencies.size(); i++)
-			std::cout << m_WeaponProficiencies[i] << ", ";
+		for (const auto& it : m_WeaponProficiencies)
+			std::cout << it << ", ";
 
-		for (size_t i = 0; i < m_ToolProficiencies.size(); i++)
+		for (const auto& it : m_ToolProficiencies)
 		{ 
-			std::cout << m_ToolProficiencies[i];
-			if (i != m_ToolProficiencies.size() - 1)
+			std::cout << it;
+			if (it != *m_ToolProficiencies.rbegin())
 				std::cout << ", ";
 		}
 		std::cout << "\n\n";
 
 		std::cout << "Languages: ";
-		for (size_t i = 0; i < m_Languages.size(); ++i)
+		for (const auto& it : m_Languages)
 		{
-			std::cout << m_Languages[i];
-			if (i != m_Languages.size() - 1)
+			std::cout << it;
+			if (it != *m_Languages.rbegin())
 				std::cout << ", ";
 
 		}
