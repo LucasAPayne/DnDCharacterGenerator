@@ -33,7 +33,7 @@ namespace dnd {
 			std::string proficiency = proficiencyList[Random::Int(0, proficiencyList.size() - 1)];
 
 			while (characterList.insert(proficiency).second == false)
-				std::string proficiency = proficiencyList[Random::Int(0, proficiencyList.size() - 1)];
+				proficiency = proficiencyList[Random::Int(0, proficiencyList.size() - 1)];
 		};
 
 		// Independent of race, background, and class
@@ -496,7 +496,7 @@ namespace dnd {
 				addSkillProficiency(m_Acrobatics);
 				addSkillProficiency(m_Performance);
 
-				addUniqueProficiency(m_ToolProficiencies, MusicalInstruments); 
+				addUniqueProficiency(m_ToolProficiencies, MusicalInstruments);
 				if (m_ToolProficiencies.insert("disguise kit").second == false) addUniqueProficiency(m_ToolProficiencies, OtherTools);
 			}
 			else if (m_Background == "Folk Hero")
@@ -571,6 +571,44 @@ namespace dnd {
 
 				if (m_ToolProficiencies.insert("disguise kit").second == false)   addUniqueProficiency(m_ToolProficiencies, OtherTools);
 				if (m_ToolProficiencies.insert("thieves' tools").second == false) addUniqueProficiency(m_ToolProficiencies, OtherTools);
+			}
+		}
+
+		// Sort out proficiency lists
+		{
+			if (m_ArmorProficiencies.contains("light armor") && m_ArmorProficiencies.contains("medium armor") && m_ArmorProficiencies.contains("heavy armor"))
+			{
+				m_ArmorProficiencies.erase("light armor");
+				m_ArmorProficiencies.erase("medium armor");
+				m_ArmorProficiencies.erase("heavy armor");
+				m_ArmorProficiencies.insert("all armor");
+			}
+
+			auto setContainsVec = [](const std::set<std::string>& s, const std::vector<std::string>& v) -> bool
+			{
+				int count = 0;
+				for (const auto& it : v)
+				{
+					if (s.contains(it))
+						count++;
+				}
+				return count == v.size();
+			};
+
+			if (setContainsVec(m_WeaponProficiencies, SimpleWeapons))
+			{
+				for (const auto& it : SimpleWeapons)
+					m_WeaponProficiencies.erase(it);
+				
+				m_WeaponProficiencies.insert("all simple weapons");
+			}
+
+			if (setContainsVec(m_WeaponProficiencies, MartialWeapons))
+			{
+				for (const auto& it : MartialWeapons)
+					m_WeaponProficiencies.erase(it);
+
+				m_WeaponProficiencies.insert("all martial weapons");
 			}
 		}
 
