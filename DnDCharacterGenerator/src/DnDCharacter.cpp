@@ -163,7 +163,7 @@ namespace dnd {
 				else if (m_Race == "Mountain Dwarf")
 				{
 					m_Strength.Score += 2;
-					m_ArmorProficiencies.insert(m_ArmorProficiencies.end(), { "light armor", "medium armor" });
+					m_ArmorProficiencies.insert({ "light armor", "medium armor" });
 				}
 			}
 			else if (m_MajorRace == "Elf")
