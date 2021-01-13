@@ -32,16 +32,6 @@ namespace dnd
 		{}
 	};
 
-	// A collection of the different types of coins a character owns
-	struct Wealth
-	{
-		int CopperPieces = 0;
-		int SilverPieces = 0;
-		int ElectrumPieces = 0;
-		int GoldPieces = 0;
-		int PlatinumPieces = 0;
-	};
-
 	struct Attack
 	{
 		std::string Name;

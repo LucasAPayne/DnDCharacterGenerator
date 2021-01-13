@@ -17,6 +17,16 @@ public:
 		return s_Distribution(s_RandomEngine, std::uniform_int_distribution<unsigned>::param_type(min, max));
 	}
 
+	// Return the sum of n random integers between min and max
+	static int IntSum(int min, int max, int n)
+	{
+		int sum = 0;
+		for (int i = 0; i < n; i++)
+			sum += Random::Int(min, max);
+
+		return sum;
+	}
+
 	static std::mt19937 GetEngine()
 	{
 		return s_RandomEngine;

@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <set>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 // Temporary
@@ -28,13 +29,29 @@ namespace dnd {
 	Character::Character()
 	{
 		// Add a proficiency or language that the character does not already have
-		auto addUniqueProficiency = [this](std::set<std::string>& characterList, const std::vector<std::string>& proficiencyList)
+		auto addUniqueProficiency = [](std::set<std::string>& characterList, const std::vector<std::string>& proficiencyList)
 		{
 			std::string proficiency = proficiencyList[Random::Int(0, proficiencyList.size() - 1)];
 
 			while (characterList.insert(proficiency).second == false)
 				proficiency = proficiencyList[Random::Int(0, proficiencyList.size() - 1)];
 		};
+
+		// Add a list of equipment to the character. If the character already has at least one of a type of equipment, just add the number to that.
+		auto addEquipment = [this](const std::unordered_map<std::string, int>& equipment)
+		{
+			for (const auto& it : equipment)
+			{
+				if (!m_Equipment.contains(it.first))
+					m_Equipment.insert(it);
+				else
+					m_Equipment.at(it.first) += it.second;
+			}
+		};
+
+		// A character may choose to start with either equipment or money to buy equipment.
+		// For now, this will be chosen randomly.
+		bool startWithEquipment = Random::Int(0, 1); // true for equipment and false for money
 
 		// Independent of race, background, and class
 		{
@@ -253,12 +270,21 @@ namespace dnd {
 			{
 				m_HitDice.Type = 12;
 				m_ArmorProficiencies.insert({ "light armor", "medium armor", "shields" });
-				m_WeaponProficiencies.insert(SimpleWeapons.begin(), SimpleWeapons.end());
-				m_WeaponProficiencies.insert(MartialWeapons.begin(), MartialWeapons.end());
+				m_WeaponProficiencies.insert(AllSimpleWeapons.begin(), AllSimpleWeapons.end());
+				m_WeaponProficiencies.insert(AllMartialWeapons.begin(), AllMartialWeapons.end());
 				m_StrengthSave.Proficient = true;
 				m_ConstitutionSave.Proficient = true;
 				chooseSkillProficiencies(2, { m_AnimalHandling, m_Athletics, m_Intimidation, m_Nature, m_Perception, m_Survival });
 				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Barbarian").begin(), ClassFeats.at("Barbarian").end());
+				
+				if (startWithEquipment)
+				{
+					// Most classes give certain set starting equipment, and allow the character to choose between a couple options for the rest of the equipment
+					Random::Int(0, 1) ? addEquipment({ {"greataxe", 1} }) : addEquipment({ {MartialMeleeWeapons[Random::Int(0, MartialMeleeWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {"handaxe", 2} }) : addEquipment({ {AllSimpleWeapons[Random::Int(0, AllSimpleWeapons.size() - 1)], 1} });
+					addEquipment({ {"explorer's pack", 1}, {"javelin", 4} });
+				}
+				else m_GoldPieces = 10 * Random::IntSum(1, 4, 2);
 			}
 			else if (m_Class == "Bard")
 			{
@@ -269,7 +295,7 @@ namespace dnd {
 					addUniqueProficiency(m_ToolProficiencies, MusicalInstruments);
 
 				m_ArmorProficiencies.insert("light armor");
-				m_WeaponProficiencies.insert(SimpleWeapons.begin(), SimpleWeapons.end());
+				m_WeaponProficiencies.insert(AllSimpleWeapons.begin(), AllSimpleWeapons.end());
 				m_WeaponProficiencies.insert({ "hand crossbows", "longswords", "rapiers", "shortswords" });
 
 				m_DexteritySave.Proficient = true;
@@ -281,12 +307,25 @@ namespace dnd {
 					m_SleightOfHand, m_Stealth, m_Survival });
 
 				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Bard").begin(), ClassFeats.at("Bard").end());
+
+				if (startWithEquipment)
+				{
+					int choice = Random::Int(0, 2);
+					if (choice == 0) addEquipment({ {"rapier", 1} });
+					else if (choice == 1) addEquipment({ {"longsword", 1} });
+					else addEquipment({ {AllSimpleWeapons[Random::Int(0, AllSimpleWeapons.size() - 1)], 1} });
+
+					Random::Int(0, 1) ? addEquipment({ {"diplomat's pack", 1} }) : addEquipment({ {"entertainer's pack", 1} });
+					Random::Int(0, 1) ? addEquipment({ {"lute", 1} }) : addEquipment({ {MusicalInstruments[Random::Int(0, MusicalInstruments.size() - 1)], 1} });
+					addEquipment({ {"leather armor", 1}, {"dagger", 1} });
+				}
+				else m_GoldPieces = 10 * Random::IntSum(1, 4, 5);
 			}
 			else if (m_Class == "Cleric")
 			{
 				m_HitDice.Type = 8;
 				m_ArmorProficiencies.insert({ "light armor", "medium armor", "shields" });
-				m_WeaponProficiencies.insert(SimpleWeapons.begin(), SimpleWeapons.end());
+				m_WeaponProficiencies.insert(AllSimpleWeapons.begin(), AllSimpleWeapons.end());
 				m_WisdomSave.Proficient = true;
 				m_CharismaSave.Proficient = true;
 				chooseSkillProficiencies(2, { m_History, m_Insight, m_Medicine, m_Persuasion, m_Religion });
@@ -297,6 +336,31 @@ namespace dnd {
 				// Pick a cleric domain, one of the 1st level traits after index 0
 				int index = Random::Int(1, ClassFeats.at(m_Class).size() - 1);
 				m_FeatsAndTraits.push_back(ClassFeats.at(m_Class)[index]);
+
+				if (startWithEquipment)
+				{
+					// A cleric must be proficient with warhammers to choose between a warhammer and a mace. Otherwise, a mace is their only choice
+					if (m_WeaponProficiencies.contains("warhammers") || m_WeaponProficiencies.contains("all martial weapons"))
+						Random::Int(0, 1) ? addEquipment({ {"mace", 1} }) : addEquipment({ {"warhammer", 1} });
+					else
+						addEquipment({ {"mace", 1} });
+
+					int choice = 0;
+					// A cleric must be proficient with heavy armor to have chain mail as a choice of starting equipment
+					if (m_ArmorProficiencies.contains("heavy armor") || m_ArmorProficiencies.contains("all armor")) choice = Random::Int(0, 2);
+					else choice = Random::Int(0, 1);
+
+					if (choice == 0) addEquipment({ {"scale mail", 1} });
+					else if (choice == 1) addEquipment({ {"leather armor", 1} });
+					else if (choice == 3) addEquipment({ {"chain mail", 1} });
+					
+					Random::Int(0, 1) ? addEquipment({ {"light crossbow", 1}, {"bolts", 20} }) : addEquipment({ {AllSimpleWeapons[Random::Int(0, SimpleMeleeWeapons.size() - 1)], 1} });
+
+					Random::Int(0, 1) ? addEquipment({ {"priest's pack", 1} }) : addEquipment({ {"explorer's pack", 1} });
+
+					addEquipment({ {"shield", 1}, {"holy symbol", 1} });
+				}
+				else m_GoldPieces = 10 * Random::IntSum(1, 4, 5);
 			}
 			else if (m_Class == "Druid")
 			{
@@ -309,13 +373,21 @@ namespace dnd {
 				m_WisdomSave.Proficient = true;
 				chooseSkillProficiencies(2, { m_Arcana, m_AnimalHandling, m_Insight, m_Medicine, m_Nature, m_Perception, m_Religion, m_Survival });
 				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Druid").begin(), ClassFeats.at("Druid").end());
+
+				if (startWithEquipment)
+				{
+					Random::Int(0, 1) ? addEquipment({ {"wooden shield", 1} }) : addEquipment({ {AllSimpleWeapons[Random::Int(0, AllSimpleWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {"scimitar", 1} }) : addEquipment({ {SimpleMeleeWeapons[Random::Int(0, SimpleMeleeWeapons.size() - 1)], 1} });
+					addEquipment({ {"leather armor", 1}, {"explorer's pack", 1}, {"druidic focus", 1} });
+				}
+				else m_GoldPieces = 10 * Random::IntSum(1, 4, 2);
 			}
 			else if (m_Class == "Fighter")
 			{
 				m_HitDice.Type = 10;
 				m_ArmorProficiencies.insert({ "light armor", "medium armor", "heavy armor", "shields" });
-				m_WeaponProficiencies.insert(SimpleWeapons.begin(), SimpleWeapons.end());
-				m_WeaponProficiencies.insert(MartialWeapons.begin(), MartialWeapons.end());
+				m_WeaponProficiencies.insert(AllSimpleWeapons.begin(), AllSimpleWeapons.end());
+				m_WeaponProficiencies.insert(AllMartialWeapons.begin(), AllMartialWeapons.end());
 				m_StrengthSave.Proficient = true;
 				m_ConstitutionSave.Proficient = true;
 				chooseSkillProficiencies(2, { m_Acrobatics, m_AnimalHandling, m_Athletics, m_History, m_Insight, m_Intimidation, m_Perception, m_Survival });
@@ -326,12 +398,22 @@ namespace dnd {
 				// Pick a fighting style, one of the 1st level traits after index 0
 				int index = Random::Int(1, ClassFeats.at(m_Class).size() - 1);
 				m_FeatsAndTraits.push_back(ClassFeats.at(m_Class)[index]);
+
+				if (startWithEquipment)
+				{
+					Random::Int(0, 1) ? addEquipment({ {"chain mail", 1} }) : addEquipment({ {"leather armor", 1}, {"longbow", 1}, {"arrows", 20} });
+					Random::Int(0, 1) ? addEquipment({ {AllMartialWeapons[Random::Int(0, AllMartialWeapons.size() - 1)], 1}, {"shield", 1} }) :
+						addEquipment({ {AllMartialWeapons[Random::Int(0, AllMartialWeapons.size() - 1)], 1}, {AllMartialWeapons[Random::Int(0, AllMartialWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {"light crossbow", 1}, {"bolts", 20} }) : addEquipment({ {"handaxe", 2} });
+					Random::Int(0, 1) ? addEquipment({ {"dungeoneer's pack", 1} }) : addEquipment({ {"explorer's pack", 1} });
+				}
+				else m_GoldPieces = 10 * Random::IntSum(1, 4, 5);
 			}
 			else if (m_Class == "Monk")
 			{
 				m_HitDice.Type = 8;
 
-				m_WeaponProficiencies.insert(SimpleWeapons.begin(), SimpleWeapons.end());
+				m_WeaponProficiencies.insert(AllSimpleWeapons.begin(), AllSimpleWeapons.end());
 				m_WeaponProficiencies.insert("shortswords");
 				// Choose one type of artisan's tools or musical instrument
 				if (Random::Int(0, 1) == 0)
@@ -343,42 +425,84 @@ namespace dnd {
 				m_DexteritySave.Proficient = true;
 				chooseSkillProficiencies(2, { m_Acrobatics, m_Athletics, m_History, m_Insight, m_Religion, m_Stealth }); \
 					m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Monk").begin(), ClassFeats.at("Monk").end());
+
+				if (startWithEquipment)
+				{
+					Random::Int(0, 1) ? addEquipment({ {"shortsword", 1} }) : addEquipment({ {AllSimpleWeapons[Random::Int(0, AllSimpleWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {"dungeoneer's pack", 1} }) : addEquipment({ {"explorer's pack", 1} });
+					addEquipment({ {"darts", 10} });
+				}
+				else m_GoldPieces = Random::IntSum(1, 4, 5);
 			}
 			else if (m_Class == "Paladin")
 			{
 				m_HitDice.Type = 10;
 				m_ArmorProficiencies.insert({ "light armor", "medium armor", "heavy armor", "shields" });
-				m_WeaponProficiencies.insert(SimpleWeapons.begin(), SimpleWeapons.end());
-				m_WeaponProficiencies.insert(MartialWeapons.begin(), MartialWeapons.end());
+				m_WeaponProficiencies.insert(AllSimpleWeapons.begin(), AllSimpleWeapons.end());
+				m_WeaponProficiencies.insert(AllMartialWeapons.begin(), AllMartialWeapons.end());
 				m_WisdomSave.Proficient = true;
 				m_CharismaSave.Proficient = true;
 				chooseSkillProficiencies(2, { m_Athletics, m_Insight, m_Intimidation, m_Medicine, m_Persuasion, m_Religion });
 				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Paladin").begin(), ClassFeats.at("Paladin").end());
+
+				if (startWithEquipment)
+				{
+					Random::Int(0, 1) ? addEquipment({ {AllMartialWeapons[Random::Int(0, AllMartialWeapons.size() - 1)], 1}, {"shield", 1} }) :
+						addEquipment({ {AllMartialWeapons[Random::Int(0, AllMartialWeapons.size() - 1)], 1}, { AllMartialWeapons[Random::Int(0, AllMartialWeapons.size() - 1)], 1 } });
+					Random::Int(0, 1) ? addEquipment({ {"javeline", 5} }) : addEquipment({ {SimpleMeleeWeapons[Random::Int(0, SimpleMeleeWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {"priest's pack", 1} }) : addEquipment({ {"explorer's pack", 1} });
+					addEquipment({ {"chain mail", 1}, {"holy symbol", 1} });
+				}
+				else m_GoldPieces = 10 * Random::IntSum(1, 4, 5);
 			}
 			else if (m_Class == "Ranger")
 			{
 				m_HitDice.Type = 10;
 				m_ArmorProficiencies.insert({ "light armor", "medium armor", "shields" });
-				m_WeaponProficiencies.insert(SimpleWeapons.begin(), SimpleWeapons.end());
-				m_WeaponProficiencies.insert(MartialWeapons.begin(), MartialWeapons.end());
+				m_WeaponProficiencies.insert(AllSimpleWeapons.begin(), AllSimpleWeapons.end());
+				m_WeaponProficiencies.insert(AllMartialWeapons.begin(), AllMartialWeapons.end());
 				m_StrengthSave.Proficient = true;
 				m_DexteritySave.Proficient = true;
 				chooseSkillProficiencies(3, { m_AnimalHandling, m_Athletics, m_Insight, m_Investigation, m_Nature, m_Perception, m_Stealth, m_Survival });
 				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Ranger").begin(), ClassFeats.at("Ranger").end());
 				// TODO: Some classes have choices within the set traits, such as Favored Enemy for Rangers
+
+				if (startWithEquipment)
+				{
+					Random::Int(0, 1) ? addEquipment({ {"scale mail", 1} }) : addEquipment({ {"leather armor", 1} });
+					Random::Int(0, 1) ? addEquipment({ {"shortsword", 2} }) :
+						addEquipment({ {SimpleMeleeWeapons[Random::Int(0, SimpleMeleeWeapons.size() - 1)], 1}, {SimpleMeleeWeapons[Random::Int(0, SimpleMeleeWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {"dungeoneer's pack", 1} }) : addEquipment({ {"explorer's pack", 1} });
+					addEquipment({ {"longbow", 1}, {"arrows", 20} });
+				}
+				else m_GoldPieces = 10 * Random::IntSum(1, 4, 5);
 			}
 			else if (m_Class == "Rogue")
 			{
 				m_HitDice.Type = 8;
 				m_Languages.insert("Thieves' Cant"); // From Thieves' Cant class feat
 				m_ArmorProficiencies.insert("light armor");
-				m_WeaponProficiencies.insert(SimpleWeapons.begin(), SimpleWeapons.end());
+				m_WeaponProficiencies.insert(AllSimpleWeapons.begin(), AllSimpleWeapons.end());
 				m_WeaponProficiencies.insert({ "hand crossbows", "longswords", "rapiers", "shortswords" });
 				m_ToolProficiencies.insert("thieves' tools");
 				m_DexteritySave.Proficient = true;
 				m_IntelligenceSave.Proficient = true;
 				chooseSkillProficiencies(4, { m_Acrobatics, m_Athletics, m_Deception, m_Insight, m_Intimidation, m_Investigation, m_Perception, m_Performance, m_Persuasion, m_SleightOfHand, m_Stealth });
 				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Rogue").begin(), ClassFeats.at("Rogue").end());
+
+				if (startWithEquipment)
+				{
+					Random::Int(0, 1) ? addEquipment({ {"rapier", 1} }) : addEquipment({ {"shortsword", 1} });
+					Random::Int(0, 1) ? addEquipment({ {"shortbow", 1}, {"arrows", 20} }) : addEquipment({ {"shortsword", 1} });
+					
+					int choice = Random::Int(0, 2);
+					if (choice == 0) addEquipment({ {"burglar's pack", 1} });
+					else if (choice == 1) addEquipment({ {"dungeoneer's pack", 1} });
+					else addEquipment({ {"explorer's pack", 1} });
+
+					addEquipment({ {"leather armor", 1}, {"dagger", 2}, {"thieves' tools", 1} });
+				}
+				else m_GoldPieces = 10 * Random::IntSum(1, 4, 4);
 			}
 			else if (m_Class == "Sorcerer")
 			{
@@ -388,16 +512,34 @@ namespace dnd {
 				m_CharismaSave.Proficient = true;
 				chooseSkillProficiencies(2, { m_Arcana, m_Deception, m_Insight, m_Intimidation, m_Persuasion, m_Religion });
 				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Sorcerer").begin(), ClassFeats.at("Sorcerer").end());
+
+				if (startWithEquipment)
+				{
+					Random::Int(0, 1) ? addEquipment({ {"light crossbow", 1}, {"bolts", 20} }) : addEquipment({ {AllSimpleWeapons[Random::Int(0, AllSimpleWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {"component pouch", 1} }) : addEquipment({ {"arcane focus", 1} });
+					Random::Int(0, 1) ? addEquipment({ {"dungeoneer's pack", 1} }) : addEquipment({ {"explorer's pack", 1} });
+					addEquipment({ {"dagger", 2} });
+				}
+				else m_GoldPieces = 10 * Random::IntSum(1, 4, 3);
 			}
 			else if (m_Class == "Warlock")
 			{
 				m_HitDice.Type = 8;
 				m_ArmorProficiencies.insert("light armor");
-				m_WeaponProficiencies.insert(SimpleWeapons.begin(), SimpleWeapons.end());
+				m_WeaponProficiencies.insert(AllSimpleWeapons.begin(), AllSimpleWeapons.end());
 				m_WisdomSave.Proficient = true;
 				m_CharismaSave.Proficient = true;
 				chooseSkillProficiencies(2, { m_Arcana, m_Deception, m_History, m_Intimidation, m_Investigation, m_Nature, m_Religion });
 				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Warlock").begin(), ClassFeats.at("Warlock").end());
+
+				if (startWithEquipment)
+				{
+					Random::Int(0, 1) ? addEquipment({ {"light crossbow", 1}, {"bolts", 20} }) : addEquipment({ {AllSimpleWeapons[Random::Int(0, AllSimpleWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {"component pouch", 1} }) : addEquipment({ {"arcane focus", 1} });
+					Random::Int(0, 1) ? addEquipment({ {"scholar's pack", 1} }) : addEquipment({ {"dungeoneer's pack", 1} });
+					addEquipment({ {"leather armor", 1}, {"dagger", 2}, {AllSimpleWeapons[Random::Int(0, AllSimpleWeapons.size() - 1)], 1} });
+				}
+				else m_GoldPieces = 10 * Random::IntSum(1, 4, 4);
 			}
 			else if (m_Class == "Wizard")
 			{
@@ -407,12 +549,22 @@ namespace dnd {
 				m_WisdomSave.Proficient = true;
 				chooseSkillProficiencies(2, { m_Arcana, m_History, m_Insight, m_Investigation, m_Medicine, m_Religion });
 				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Wizard").begin(), ClassFeats.at("Wizard").end());
+
+				if (startWithEquipment)
+				{
+					Random::Int(0, 1) ? addEquipment({ {"quarterstaff", 1} }) : addEquipment({ {"dagger", 1} });
+					Random::Int(0, 1) ? addEquipment({ {"component pouch", 1} }) : addEquipment({ {"arcane focus", 1} });
+					Random::Int(0, 1) ? addEquipment({ {"scholar's pack", 1} }) : addEquipment({ {"explorer's pack", 1} });
+					addEquipment({ {"spellbook", 1} });
+				}
+				else m_GoldPieces = 10 * Random::IntSum(1, 4, 4);
 			}
 		}
 
 		// Background
 		{
 			m_Background = Backgrounds[Random::Int(0, Backgrounds.size() - 1)];
+			m_Background = "Acolyte";
 
 			// Personality Traits
 			// Generate two unique random numbers to ensure personality traits are different
@@ -481,7 +633,6 @@ namespace dnd {
 				// if second == false, then the element could not be inserted (was a duplicate)
 				if (m_ToolProficiencies.insert("disguise kit").second == false) addUniqueProficiency(m_ToolProficiencies, OtherTools);
 				if (m_ToolProficiencies.insert("forgery kit").second == false)  addUniqueProficiency(m_ToolProficiencies, OtherTools);
-
 			}
 			else if (m_Background == "Criminal" || m_Background == "Spy")
 			{
@@ -595,17 +746,17 @@ namespace dnd {
 				return count == v.size();
 			};
 
-			if (setContainsVec(m_WeaponProficiencies, SimpleWeapons))
+			if (setContainsVec(m_WeaponProficiencies, AllSimpleWeapons))
 			{
-				for (const auto& it : SimpleWeapons)
+				for (const auto& it : AllSimpleWeapons)
 					m_WeaponProficiencies.erase(it);
 				
 				m_WeaponProficiencies.insert("all simple weapons");
 			}
 
-			if (setContainsVec(m_WeaponProficiencies, MartialWeapons))
+			if (setContainsVec(m_WeaponProficiencies, AllMartialWeapons))
 			{
-				for (const auto& it : MartialWeapons)
+				for (const auto& it : AllMartialWeapons)
 					m_WeaponProficiencies.erase(it);
 
 				m_WeaponProficiencies.insert("all martial weapons");
@@ -681,102 +832,102 @@ namespace dnd {
 		if (m_Race == "Human")
 			std::cout << "Ethnicity: " << m_Ethnicity << "\n";
 
-		std::cout << "Class: "              << m_Class << "\n";
-		std::cout << "Level: "              << m_Level << "\n";
-		std::cout << "Experience Points: "  << m_Experience << "\n";
-		std::cout << "Proficiency Bonus: "  << m_ProficiencyBonus << "\n";
-		std::cout << "Hit Points: "         << m_MaxHitPoints << "\n";
-		std::cout << "Speed: "              << m_Speed << "\n";
-		std::cout << "Initiative: "         << m_Initiative << "\n";
-		std::cout << "Background: "         << m_Background << "\n";
-		std::cout << "Alignment: "          << m_Alignment << "\n\n";
+		std::cout << "Class: "              << m_Class             << "\n";
+		std::cout << "Level: "              << m_Level             << "\n";
+		std::cout << "Experience Points: "  << m_Experience        << "\n";
+		std::cout << "Proficiency Bonus: "  << m_ProficiencyBonus  << "\n";
+		std::cout << "Hit Points: "         << m_MaxHitPoints      << "\n";
+		std::cout << "Speed: "              << m_Speed             << " feet\n";
+		std::cout << "Initiative: "         << m_Initiative        << "\n";
+		std::cout << "Background: "         << m_Background        << "\n";
+		std::cout << "Alignment: "          << m_Alignment         << "\n\n";
 		std::cout << "Personality Traits: " << m_PersonalityTraits << "\n\n";
-		std::cout << "Ideals: "             << m_Ideals << "\n\n";
-		std::cout << "Bonds: "              << m_Bonds << "\n\n";
-		std::cout << "Flaws: "              << m_Flaws << "\n\n";
+		std::cout << "Ideals: "             << m_Ideals            << "\n\n";
+		std::cout << "Bonds: "              << m_Bonds             << "\n\n";
+		std::cout << "Flaws: "              << m_Flaws             << "\n\n";
 
 		std::cout << "========\n";
 		std::cout << "Abilites\n";
 		std::cout << "========\n";
 		std::cout << "Strength\n";
-		std::cout << "Score:    " << m_Strength.Score << "\n";
+		std::cout << "Score:    " << m_Strength.Score    << "\n";
 		std::cout << "Modifier: " << m_Strength.Modifier << "\n\n";
 		std::cout << "Dexterity\n";
-		std::cout << "Score:    " << m_Dexterity.Score << "\n";
+		std::cout << "Score:    " << m_Dexterity.Score    << "\n";
 		std::cout << "Modifier: " << m_Dexterity.Modifier << "\n\n";
 		std::cout << "Constitution\n";
-		std::cout << "Score:    " << m_Constitution.Score << "\n";
+		std::cout << "Score:    " << m_Constitution.Score    << "\n";
 		std::cout << "Modifier: " << m_Constitution.Modifier << "\n\n";
 		std::cout << "Intelligence\n";
-		std::cout << "Score:    " << m_Intelligence.Score << "\n";
+		std::cout << "Score:    " << m_Intelligence.Score    << "\n";
 		std::cout << "Modifier: " << m_Intelligence.Modifier << "\n\n";
 		std::cout << "Wisdom\n";
-		std::cout << "Score:    " << m_Wisdom.Score << "\n";
+		std::cout << "Score:    " << m_Wisdom.Score    << "\n";
 		std::cout << "Modifier: " << m_Wisdom.Modifier << "\n\n";
 		std::cout << "Charisma\n";
-		std::cout << "Score:    " << m_Charisma.Score << "\n";
+		std::cout << "Score:    " << m_Charisma.Score    << "\n";
 		std::cout << "Modifier: " << m_Charisma.Modifier << "\n\n";
 
 		std::cout << "=============\n";
 		std::cout << "Saving Throws\n";
 		std::cout << "=============\n";
 		std::cout << "Proficiencies\n";
-		std::cout << "Strength:     " << m_StrengthSave.Proficient << "\n";
-		std::cout << "Dexterity:    " << m_DexteritySave.Proficient << "\n";
+		std::cout << "Strength:     " << m_StrengthSave.Proficient     << "\n";
+		std::cout << "Dexterity:    " << m_DexteritySave.Proficient    << "\n";
 		std::cout << "Constitution: " << m_ConstitutionSave.Proficient << "\n";
 		std::cout << "Intelligence: " << m_IntelligenceSave.Proficient << "\n";
-		std::cout << "Wisdom:       " << m_WisdomSave.Proficient << "\n";
-		std::cout << "Charisma:     " << m_CharismaSave.Proficient << "\n\n";
+		std::cout << "Wisdom:       " << m_WisdomSave.Proficient       << "\n";
+		std::cout << "Charisma:     " << m_CharismaSave.Proficient     << "\n\n";
 		std::cout << "Modifiers\n";
-		std::cout << "Strength:     " << m_StrengthSave.Modifier << "\n";
-		std::cout << "Dexterity:    " << m_DexteritySave.Modifier << "\n";
-		std::cout << "Constitution: " << m_Constitution.Modifier << "\n";
+		std::cout << "Strength:     " << m_StrengthSave.Modifier     << "\n";
+		std::cout << "Dexterity:    " << m_DexteritySave.Modifier    << "\n";
+		std::cout << "Constitution: " << m_Constitution.Modifier     << "\n";
 		std::cout << "Intelligence: " << m_IntelligenceSave.Modifier << "\n";
-		std::cout << "Wisdom:       " << m_WisdomSave.Modifier << "\n";
-		std::cout << "Charisma:     " << m_CharismaSave.Modifier << "\n\n";
+		std::cout << "Wisdom:       " << m_WisdomSave.Modifier       << "\n";
+		std::cout << "Charisma:     " << m_CharismaSave.Modifier     << "\n\n";
 
 		std::cout << "======\n";
 		std::cout << "Skills\n";
 		std::cout << "======\n";
 		std::cout << "Proficiencies\n";
-		std::cout << "Acrobatics:      " << m_Acrobatics.Proficient << "\n";
+		std::cout << "Acrobatics:      " << m_Acrobatics.Proficient     << "\n";
 		std::cout << "Animal Handling: " << m_AnimalHandling.Proficient << "\n";
-		std::cout << "Arcana:          " << m_Arcana.Proficient << "\n";
-		std::cout << "Athletics:       " << m_Athletics.Proficient << "\n";
-		std::cout << "Deception:       " << m_Deception.Proficient << "\n";
-		std::cout << "History:         " << m_History.Proficient << "\n";
-		std::cout << "Insight:         " << m_Insight.Proficient << "\n";
-		std::cout << "Intimidation:    " << m_Intimidation.Proficient << "\n";
-		std::cout << "Investigation:   " << m_Investigation.Proficient << "\n";
-		std::cout << "Medicine:        " << m_Medicine.Proficient << "\n";
-		std::cout << "Nature:          " << m_Nature.Proficient << "\n";
-		std::cout << "Perception:      " << m_Perception.Proficient << "\n";
-		std::cout << "Performance:     " << m_Performance.Proficient << "\n";
-		std::cout << "Persuasion:      " << m_Persuasion.Proficient << "\n";
-		std::cout << "Religion:        " << m_Religion.Proficient << "\n";
-		std::cout << "Sleight of Hand: " << m_SleightOfHand.Proficient << "\n";
-		std::cout << "Stealth:         " << m_Stealth.Proficient << "\n";
-		std::cout << "Survival:        " << m_Survival.Proficient << "\n\n";
+		std::cout << "Arcana:          " << m_Arcana.Proficient         << "\n";
+		std::cout << "Athletics:       " << m_Athletics.Proficient      << "\n";
+		std::cout << "Deception:       " << m_Deception.Proficient      << "\n";
+		std::cout << "History:         " << m_History.Proficient        << "\n";
+		std::cout << "Insight:         " << m_Insight.Proficient        << "\n";
+		std::cout << "Intimidation:    " << m_Intimidation.Proficient   << "\n";
+		std::cout << "Investigation:   " << m_Investigation.Proficient  << "\n";
+		std::cout << "Medicine:        " << m_Medicine.Proficient       << "\n";
+		std::cout << "Nature:          " << m_Nature.Proficient         << "\n";
+		std::cout << "Perception:      " << m_Perception.Proficient     << "\n";
+		std::cout << "Performance:     " << m_Performance.Proficient    << "\n";
+		std::cout << "Persuasion:      " << m_Persuasion.Proficient     << "\n";
+		std::cout << "Religion:        " << m_Religion.Proficient       << "\n";
+		std::cout << "Sleight of Hand: " << m_SleightOfHand.Proficient  << "\n";
+		std::cout << "Stealth:         " << m_Stealth.Proficient        << "\n";
+		std::cout << "Survival:        " << m_Survival.Proficient       << "\n\n";
 
 		std::cout << "Modifiers\n";
-		std::cout << "Acrobatics:      " << m_Acrobatics.Modifier << "\n";
+		std::cout << "Acrobatics:      " << m_Acrobatics.Modifier     << "\n";
 		std::cout << "Animal Handling: " << m_AnimalHandling.Modifier << "\n";
-		std::cout << "Arcana:          " << m_Arcana.Modifier << "\n";
-		std::cout << "Athletics:       " << m_Athletics.Modifier << "\n";
-		std::cout << "Deception:       " << m_Deception.Modifier << "\n";
-		std::cout << "History:         " << m_History.Modifier << "\n";
-		std::cout << "Insight:         " << m_Insight.Modifier << "\n";
-		std::cout << "Intimidation:    " << m_Intimidation.Modifier << "\n";
-		std::cout << "Investigation:   " << m_Investigation.Modifier << "\n";
-		std::cout << "Medicine:        " << m_Medicine.Modifier << "\n";
-		std::cout << "Nature:          " << m_Nature.Modifier << "\n";
-		std::cout << "Perception:      " << m_Perception.Modifier << "\n";
-		std::cout << "Performance:     " << m_Performance.Modifier << "\n";
-		std::cout << "Persuasion:      " << m_Persuasion.Modifier << "\n";
-		std::cout << "Religion:        " << m_Religion.Modifier << "\n";
-		std::cout << "Sleight of Hand: " << m_SleightOfHand.Modifier << "\n";
-		std::cout << "Stealth:         " << m_Stealth.Modifier << "\n";
-		std::cout << "Survival:        " << m_Survival.Modifier << "\n\n";
+		std::cout << "Arcana:          " << m_Arcana.Modifier         << "\n";
+		std::cout << "Athletics:       " << m_Athletics.Modifier      << "\n";
+		std::cout << "Deception:       " << m_Deception.Modifier      << "\n";
+		std::cout << "History:         " << m_History.Modifier        << "\n";
+		std::cout << "Insight:         " << m_Insight.Modifier        << "\n";
+		std::cout << "Intimidation:    " << m_Intimidation.Modifier   << "\n";
+		std::cout << "Investigation:   " << m_Investigation.Modifier  << "\n";
+		std::cout << "Medicine:        " << m_Medicine.Modifier       << "\n";
+		std::cout << "Nature:          " << m_Nature.Modifier         << "\n";
+		std::cout << "Perception:      " << m_Perception.Modifier     << "\n";
+		std::cout << "Performance:     " << m_Performance.Modifier    << "\n";
+		std::cout << "Persuasion:      " << m_Persuasion.Modifier     << "\n";
+		std::cout << "Religion:        " << m_Religion.Modifier       << "\n";
+		std::cout << "Sleight of Hand: " << m_SleightOfHand.Modifier  << "\n";
+		std::cout << "Stealth:         " << m_Stealth.Modifier        << "\n";
+		std::cout << "Survival:        " << m_Survival.Modifier       << "\n\n";
 
 		std::cout << "Passive Wisdom (Perception): " << m_PassiveWisdom << "\n\n";
 
@@ -804,7 +955,6 @@ namespace dnd {
 			std::cout << it;
 			if (it != *m_Languages.rbegin())
 				std::cout << ", ";
-
 		}
 		std::cout << "\n\n";
 
@@ -813,5 +963,22 @@ namespace dnd {
 		std::cout << "===================\n";
 		for (size_t i = 0; i < m_FeatsAndTraits.size(); i++)
 			std::cout << m_FeatsAndTraits[i].Name + " " + m_FeatsAndTraits[i].Description + "\n\n";
+
+		std::cout << "=========\n";
+		std::cout << "Equipment\n";
+		std::cout << "=========\n";
+		for (const auto& it : m_Equipment)
+		{
+			std::cout << it.second << " " << it.first;
+			if (it != *m_Equipment.rbegin())
+				std::cout << ", ";
+		}
+		std::cout << "\n\n";
+
+		std::cout << "CP: " << m_CopperPieces   << "\n";
+		std::cout << "SP: " << m_SilverPieces   << "\n";
+		std::cout << "EP: " << m_ElectrumPieces << "\n";
+		std::cout << "GP: " << m_GoldPieces     << "\n";
+		std::cout << "PP: " << m_PlatinumPieces << "\n";
 	}
 }
