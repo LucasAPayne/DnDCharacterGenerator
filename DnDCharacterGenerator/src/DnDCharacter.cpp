@@ -564,7 +564,6 @@ namespace dnd {
 		// Background
 		{
 			m_Background = Backgrounds[Random::Int(0, Backgrounds.size() - 1)];
-			m_Background = "Acolyte";
 
 			// Personality Traits
 			// Generate two unique random numbers to ensure personality traits are different
@@ -624,6 +623,14 @@ namespace dnd {
 				// Choose two additional languages
 				for (int i = 0; i < 2; i++)
 					addUniqueProficiency(m_Languages, Languages);
+
+				if (startWithEquipment)
+				{
+					std::vector<std::pair<std::string, int>> flavorItems = { { "prayer book", 1}, {"prayer wheel", 1 } };
+					addEquipment({ {"holy symbol", 1}, {"stick of incense", 5 }, {"vestments", 1}, {"set of common clothes", 1}, {"pouch", 1} });
+					addEquipment({ flavorItems[Random::Int(0, flavorItems.size() - 1)] }); // Add a random flavor item
+					m_GoldPieces += 15; // From the pouch
+				}
 			}
 			else if (m_Background == "Charlatan")
 			{
@@ -633,6 +640,15 @@ namespace dnd {
 				// if second == false, then the element could not be inserted (was a duplicate)
 				if (m_ToolProficiencies.insert("disguise kit").second == false) addUniqueProficiency(m_ToolProficiencies, OtherTools);
 				if (m_ToolProficiencies.insert("forgery kit").second == false)  addUniqueProficiency(m_ToolProficiencies, OtherTools);
+
+				if (startWithEquipment)
+				{
+					std::vector<std::pair<std::string, int>> flavorItems = { {"toppered bottles filled with colored liquid", 10}, {"set of weighted dice", 1 },
+						{"deck of marked cards", 1 }, {"signet ring of an imaginary duke", 1} };
+					addEquipment({ {"set of fine clothes", 1}, {"disguise kit", 1}, {"pouch", 1} });
+					addEquipment({ flavorItems[Random::Int(0, flavorItems.size() - 1)] });
+					m_GoldPieces += 15;
+				}
 			}
 			else if (m_Background == "Criminal" || m_Background == "Spy")
 			{
@@ -641,6 +657,12 @@ namespace dnd {
 
 				addUniqueProficiency(m_ToolProficiencies, GamingSets);
 				if (m_ToolProficiencies.insert("thieves' tools").second == false) addUniqueProficiency(m_ToolProficiencies, OtherTools);
+
+				if (startWithEquipment)
+				{
+					addEquipment({ {"crowbar", 1}, {"set of dark common clothes including a hood", 1}, {"pouch", 1} });
+					m_GoldPieces += 15;
+				}
 			}
 			else if (m_Background == "Entertainer" || m_Background == "Gladiator")
 			{
@@ -649,6 +671,15 @@ namespace dnd {
 
 				addUniqueProficiency(m_ToolProficiencies, MusicalInstruments);
 				if (m_ToolProficiencies.insert("disguise kit").second == false) addUniqueProficiency(m_ToolProficiencies, OtherTools);
+
+				if (startWithEquipment)
+				{
+					std::vector<std::pair<std::string, int>> flavorItems = { {"love letter from an admirer", 1}, {"lock of hair from an admirer", 1}, {"trinket from an admirer", 1} };
+					addEquipment({ {MusicalInstruments[Random::Int(0, MusicalInstruments.size() - 1)], 1}, {"costume", 1}, {"pouch", 1} });
+					addEquipment({ flavorItems[Random::Int(0, flavorItems.size() - 1)] });
+					m_GoldPieces += 15;
+				}
+
 			}
 			else if (m_Background == "Folk Hero")
 			{
@@ -657,6 +688,12 @@ namespace dnd {
 
 				addUniqueProficiency(m_ToolProficiencies, ArtisanTools);
 				if (m_ToolProficiencies.insert("vehicles (land)").second == false) addUniqueProficiency(m_ToolProficiencies, OtherTools);
+
+				if (startWithEquipment)
+				{
+					addEquipment({ {ArtisanTools[Random::Int(0, ArtisanTools.size() - 1)], 1}, {"shovel", 1}, {"iron pot", 1}, {"set of common clothes", 1}, {"pouch", 1} });
+					m_GoldPieces += 10;
+				}
 			}
 			else if (m_Background == "Guild Artisan" || m_Background == "Guild Merchant")
 			{
@@ -665,6 +702,13 @@ namespace dnd {
 
 				addUniqueProficiency(m_Languages, Languages);
 				addUniqueProficiency(m_ToolProficiencies, ArtisanTools);
+
+				if (startWithEquipment)
+				{
+					addEquipment({ {ArtisanTools[Random::Int(0, ArtisanTools.size() - 1)], 1}, {"set of traveler's clothes", 1}, {"pouch", 1},
+						{"letter of introduction from your guild", 1} });
+					m_GoldPieces += 15;
+				}
 			}
 			else if (m_Background == "Hermit")
 			{
@@ -673,6 +717,15 @@ namespace dnd {
 
 				addUniqueProficiency(m_Languages, Languages);
 				if (m_ToolProficiencies.insert("herbalism kit").second == false) addUniqueProficiency(m_ToolProficiencies, OtherTools);
+
+				if (startWithEquipment)
+				{
+					std::vector<std::pair<std::string, int>> flavorItems = { {"scroll case stuffed full of notes from your studies", 1},
+						{"scroll case stuffed full of notes from your prayers", 1} };
+					addEquipment({ {"winter blanket", 1}, {"set of common clothes", 1}, {"herbalism kit", 1} });
+					addEquipment({ flavorItems[Random::Int(0, flavorItems.size() - 1)] });
+					m_GoldPieces += 5;
+				}
 			}
 			else if (m_Background == "Noble" || m_Background == "Knight")
 			{
@@ -681,6 +734,13 @@ namespace dnd {
 
 				addUniqueProficiency(m_Languages, Languages);
 				addUniqueProficiency(m_ToolProficiencies, GamingSets);
+
+				if (startWithEquipment)
+				{
+					addEquipment({ {"set of fine clothes", 1}, {"signet ring", 1}, {"scroll of pedigree", 1}, {"purse", 1} });
+					m_GoldPieces += 25;
+				}
+
 			}
 			else if (m_Background == "Outlander")
 			{
@@ -689,6 +749,12 @@ namespace dnd {
 
 				addUniqueProficiency(m_Languages, Languages);
 				addUniqueProficiency(m_ToolProficiencies, MusicalInstruments);
+
+				if (startWithEquipment)
+				{
+					addEquipment({ {"staff", 1}, {"hunting trap", 1}, {"animal trophy", 1}, {"set of traveler's clothes", 1}, {"pouch", 1} });
+					m_GoldPieces += 10;
+				}
 			}
 			else if (m_Background == "Sage")
 			{
@@ -698,6 +764,14 @@ namespace dnd {
 				// Choose two additional languages
 				for (int i = 0; i < 2; i++)
 					addUniqueProficiency(m_Languages, Languages);
+
+				if (startWithEquipment)
+				{
+					addEquipment({ {"bottle of black ink", 1}, {"quill", 1}, {"small knife", 1}, {"set of common clothes", 1}, {"pouch", 1},
+						{"letter from a dead colleague posing a question you have not yet been able to answer", 1} });
+					m_GoldPieces += 10;
+				}
+
 			}
 			else if (m_Background == "Sailor" || m_Background == "Pirate")
 			{
@@ -706,6 +780,14 @@ namespace dnd {
 
 				if (m_ToolProficiencies.insert("navigator's tools").second == false) addUniqueProficiency(m_ToolProficiencies, OtherTools);
 				if (m_ToolProficiencies.insert("vehicles (water)").second == false)  addUniqueProficiency(m_ToolProficiencies, OtherTools);
+
+				if (startWithEquipment)
+				{
+					std::vector<std::pair<std::string, int>> flavorItems = { {"rabbit's foot", 1}, {"small stone with a hole in the center", 1} };
+					addEquipment({ {"belaying pin (club)", 1}, {"50 feet of silk rope", 1}, {"set of common clothes", 1}, {"pouch", 1} });
+					Random::Int(0, 1) ? addEquipment({flavorItems[Random::Int(0, flavorItems.size() - 1)]}) : addEquipment({ {Trinkets[Random::Int(0, Trinkets.size() - 1)], 1} });
+					m_GoldPieces += 10;
+				}
 			}
 			else if (m_Background == "Soldier")
 			{
@@ -714,6 +796,15 @@ namespace dnd {
 
 				addUniqueProficiency(m_ToolProficiencies, GamingSets);
 				if (m_ToolProficiencies.insert("vehicles (land)").second == false) addUniqueProficiency(m_ToolProficiencies, OtherTools);
+
+				if (startWithEquipment)
+				{
+					std::vector<std::string> choices = { "dagger", "broken blade", "piece of banner" };
+					std::string flavorText = choices[Random::Int(0, choices.size() - 1)] + " taken as a trophy from a fallen enemy";
+					addEquipment({ {"insignia of rank", 1}, {"pouch", 1}, {flavorText, 1} });
+					Random::Int(0, 1) ? addEquipment({ {"set of bone dice", 1} }) : addEquipment({ {"deck of cards", 1} });
+					m_GoldPieces += 10;
+				}
 			}
 			else if (m_Background == "Urchin")
 			{
@@ -722,6 +813,12 @@ namespace dnd {
 
 				if (m_ToolProficiencies.insert("disguise kit").second == false)   addUniqueProficiency(m_ToolProficiencies, OtherTools);
 				if (m_ToolProficiencies.insert("thieves' tools").second == false) addUniqueProficiency(m_ToolProficiencies, OtherTools);
+
+				if (startWithEquipment)
+				{
+					addEquipment({ {"small knife", 1}, {"map of the city you grew up in", 1}, {"pet mouse", 1}, {"token to remember your parents by", 1}, {"pouch", 1} });
+					m_GoldPieces += 10;
+				}
 			}
 		}
 
