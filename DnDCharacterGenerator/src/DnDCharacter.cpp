@@ -914,6 +914,11 @@ namespace dnd {
 
 			if (m_Perception.Proficient)
 				m_PassiveWisdom += m_ProficiencyBonus;
+
+			// Every character can pick one trinket. Make sure it is unique
+			std::string trinket = Trinkets[Random::Int(0, Trinkets.size() - 1)];
+			if (!m_Equipment.contains(trinket))
+				addEquipment({ {trinket, 1} });
 		}
 	}	
 
