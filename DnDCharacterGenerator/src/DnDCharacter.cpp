@@ -168,7 +168,7 @@ namespace dnd {
 				// All dwarves get set weapon proficiencies and can choose one set of tools to be proficient with
 				std::vector<std::string> choices = { "smith's tools", "brewer's supplies", "mason's tools" };
 				m_ToolProficiencies.insert(choices[Random::Int(0, choices.size() - 1)]);
-				m_WeaponProficiencies.insert({ "battleaxes", "handaxes", "throwing hammers", "warhammers" });
+				m_WeaponProficiencies.insert({ "battleaxe", "handaxe", "throwing hammer", "warhammer" });
 
 				if (m_Race == "Hill Dwarf")
 				{
@@ -196,7 +196,7 @@ namespace dnd {
 					// TODO: High elves get a cantrip from the wizard spell list
 
 					m_Intelligence.Score++;
-					m_WeaponProficiencies.insert({ "longswords", "shortswords", "shortbows", "longbows" });
+					m_WeaponProficiencies.insert({ "longsword", "shortsword", "shortbow", "longbow" });
 
 					// Choose one additional language
 					m_Languages.insert(Languages[Random::Int(1, Languages.size() - 1)]); // 1 is the minimum number to avoid picking Elvish twice
@@ -207,13 +207,13 @@ namespace dnd {
 					m_Wisdom.Score++;
 
 					m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Wood Elf").begin(), RacialFeats.at("Wood Elf").end());
-					m_WeaponProficiencies.insert({ "longswords", "shortswords", "shortbows", "longbows" });
+					m_WeaponProficiencies.insert({ "longsword", "shortsword", "shortbow", "longbow" });
 				}
 				else if (m_Race == "Dark Elf (Drow)")
 				{ 
 					m_Charisma.Score++;
 					m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Dark Elf (Drow)").begin(), RacialFeats.at("Dark Elf (Drow)").end());
-					m_WeaponProficiencies.insert({ "rapiers", "shortswords", "hand crossbows" });
+					m_WeaponProficiencies.insert({ "rapier", "shortsword", "hand crossbow" });
 				}
 			}
 			else if (m_MajorRace == "Halfling")
@@ -296,7 +296,7 @@ namespace dnd {
 
 				m_ArmorProficiencies.insert("light armor");
 				m_WeaponProficiencies.insert(AllSimpleWeapons.begin(), AllSimpleWeapons.end());
-				m_WeaponProficiencies.insert({ "hand crossbows", "longswords", "rapiers", "shortswords" });
+				m_WeaponProficiencies.insert({ "hand crossbow", "longsword", "rapier", "shortsword" });
 
 				m_DexteritySave.Proficient = true;
 				m_CharismaSave.Proficient = true;
@@ -313,7 +313,7 @@ namespace dnd {
 					int choice = Random::Int(0, 2);
 					if (choice == 0) addEquipment({ {"rapier", 1} });
 					else if (choice == 1) addEquipment({ {"longsword", 1} });
-					else addEquipment({ {AllSimpleWeapons[Random::Int(0, AllSimpleWeapons.size() - 1)], 1} });
+					else if (choice == 2) addEquipment({ {AllSimpleWeapons[Random::Int(0, AllSimpleWeapons.size() - 1)], 1} });
 
 					Random::Int(0, 1) ? addEquipment({ {"diplomat's pack", 1} }) : addEquipment({ {"entertainer's pack", 1} });
 					Random::Int(0, 1) ? addEquipment({ {"lute", 1} }) : addEquipment({ {MusicalInstruments[Random::Int(0, MusicalInstruments.size() - 1)], 1} });
@@ -340,7 +340,7 @@ namespace dnd {
 				if (startWithEquipment)
 				{
 					// A cleric must be proficient with warhammers to choose between a warhammer and a mace. Otherwise, a mace is their only choice
-					if (m_WeaponProficiencies.contains("warhammers") || m_WeaponProficiencies.contains("all martial weapons"))
+					if (m_WeaponProficiencies.contains("warhammer") || m_WeaponProficiencies.contains("all martial weapons"))
 						Random::Int(0, 1) ? addEquipment({ {"mace", 1} }) : addEquipment({ {"warhammer", 1} });
 					else
 						addEquipment({ {"mace", 1} });
@@ -352,12 +352,10 @@ namespace dnd {
 
 					if (choice == 0) addEquipment({ {"scale mail", 1} });
 					else if (choice == 1) addEquipment({ {"leather armor", 1} });
-					else if (choice == 3) addEquipment({ {"chain mail", 1} });
+					else if (choice == 2) addEquipment({ {"chain mail", 1} });
 					
-					Random::Int(0, 1) ? addEquipment({ {"light crossbow", 1}, {"bolts", 20} }) : addEquipment({ {AllSimpleWeapons[Random::Int(0, SimpleMeleeWeapons.size() - 1)], 1} });
-
+					Random::Int(0, 1) ? addEquipment({ {"light crossbow", 1}, {"bolt", 20} }) : addEquipment({ {AllSimpleWeapons[Random::Int(0, SimpleMeleeWeapons.size() - 1)], 1} });
 					Random::Int(0, 1) ? addEquipment({ {"priest's pack", 1} }) : addEquipment({ {"explorer's pack", 1} });
-
 					addEquipment({ {"shield", 1}, {"holy symbol", 1} });
 				}
 				else m_GoldPieces = 10 * Random::IntSum(1, 4, 5);
@@ -367,7 +365,7 @@ namespace dnd {
 				m_HitDice.Type = 8;
 				m_Languages.insert("Druidic"); // From Druidic class feat
 				m_ArmorProficiencies.insert({ "light armor", "medium armor", "shields" });
-				m_WeaponProficiencies.insert({ "clubs", "daggers", "darts", "javelins", "maces", "quarterstaffs", "scimitars", "sickles", "slings", "spears" });
+				m_WeaponProficiencies.insert({ "club", "dagger", "dart", "javelin", "mace", "quarterstaff", "scimitar", "sickle", "sling", "spear" });
 				m_ToolProficiencies.insert("herbalism kit");
 				m_IntelligenceSave.Proficient = true;
 				m_WisdomSave.Proficient = true;
@@ -401,10 +399,10 @@ namespace dnd {
 
 				if (startWithEquipment)
 				{
-					Random::Int(0, 1) ? addEquipment({ {"chain mail", 1} }) : addEquipment({ {"leather armor", 1}, {"longbow", 1}, {"arrows", 20} });
+					Random::Int(0, 1) ? addEquipment({ {"chain mail", 1} }) : addEquipment({ {"leather armor", 1}, {"longbow", 1}, {"arrow", 20} });
 					Random::Int(0, 1) ? addEquipment({ {AllMartialWeapons[Random::Int(0, AllMartialWeapons.size() - 1)], 1}, {"shield", 1} }) :
 						addEquipment({ {AllMartialWeapons[Random::Int(0, AllMartialWeapons.size() - 1)], 1}, {AllMartialWeapons[Random::Int(0, AllMartialWeapons.size() - 1)], 1} });
-					Random::Int(0, 1) ? addEquipment({ {"light crossbow", 1}, {"bolts", 20} }) : addEquipment({ {"handaxe", 2} });
+					Random::Int(0, 1) ? addEquipment({ {"light crossbow", 1}, {"bolt", 20} }) : addEquipment({ {"handaxe", 2} });
 					Random::Int(0, 1) ? addEquipment({ {"dungeoneer's pack", 1} }) : addEquipment({ {"explorer's pack", 1} });
 				}
 				else m_GoldPieces = 10 * Random::IntSum(1, 4, 5);
@@ -414,7 +412,7 @@ namespace dnd {
 				m_HitDice.Type = 8;
 
 				m_WeaponProficiencies.insert(AllSimpleWeapons.begin(), AllSimpleWeapons.end());
-				m_WeaponProficiencies.insert("shortswords");
+				m_WeaponProficiencies.insert("shortsword");
 				// Choose one type of artisan's tools or musical instrument
 				if (Random::Int(0, 1) == 0)
 					m_ToolProficiencies.insert(ArtisanTools[Random::Int(0, ArtisanTools.size() - 1)]);
@@ -430,7 +428,7 @@ namespace dnd {
 				{
 					Random::Int(0, 1) ? addEquipment({ {"shortsword", 1} }) : addEquipment({ {AllSimpleWeapons[Random::Int(0, AllSimpleWeapons.size() - 1)], 1} });
 					Random::Int(0, 1) ? addEquipment({ {"dungeoneer's pack", 1} }) : addEquipment({ {"explorer's pack", 1} });
-					addEquipment({ {"darts", 10} });
+					addEquipment({ {"dart", 10} });
 				}
 				else m_GoldPieces = Random::IntSum(1, 4, 5);
 			}
@@ -473,7 +471,7 @@ namespace dnd {
 					Random::Int(0, 1) ? addEquipment({ {"shortsword", 2} }) :
 						addEquipment({ {SimpleMeleeWeapons[Random::Int(0, SimpleMeleeWeapons.size() - 1)], 1}, {SimpleMeleeWeapons[Random::Int(0, SimpleMeleeWeapons.size() - 1)], 1} });
 					Random::Int(0, 1) ? addEquipment({ {"dungeoneer's pack", 1} }) : addEquipment({ {"explorer's pack", 1} });
-					addEquipment({ {"longbow", 1}, {"arrows", 20} });
+					addEquipment({ {"longbow", 1}, {"arrow", 20} });
 				}
 				else m_GoldPieces = 10 * Random::IntSum(1, 4, 5);
 			}
@@ -483,7 +481,7 @@ namespace dnd {
 				m_Languages.insert("Thieves' Cant"); // From Thieves' Cant class feat
 				m_ArmorProficiencies.insert("light armor");
 				m_WeaponProficiencies.insert(AllSimpleWeapons.begin(), AllSimpleWeapons.end());
-				m_WeaponProficiencies.insert({ "hand crossbows", "longswords", "rapiers", "shortswords" });
+				m_WeaponProficiencies.insert({ "hand crossbow", "longsword", "rapier", "shortsword" });
 				m_ToolProficiencies.insert("thieves' tools");
 				m_DexteritySave.Proficient = true;
 				m_IntelligenceSave.Proficient = true;
@@ -493,21 +491,21 @@ namespace dnd {
 				if (startWithEquipment)
 				{
 					Random::Int(0, 1) ? addEquipment({ {"rapier", 1} }) : addEquipment({ {"shortsword", 1} });
-					Random::Int(0, 1) ? addEquipment({ {"shortbow", 1}, {"arrows", 20} }) : addEquipment({ {"shortsword", 1} });
+					Random::Int(0, 1) ? addEquipment({ {"shortbow", 1}, {"arrow", 20} }) : addEquipment({ {"shortsword", 1} });
 					
 					int choice = Random::Int(0, 2);
 					if (choice == 0) addEquipment({ {"burglar's pack", 1} });
 					else if (choice == 1) addEquipment({ {"dungeoneer's pack", 1} });
 					else addEquipment({ {"explorer's pack", 1} });
 
-					addEquipment({ {"leather armor", 1}, {"dagger", 2}, {"thieves' tools", 1} });
+					addEquipment({ {"leather armor", 1}, {"dagger", 2}, {"set of thieves' tools", 1} });
 				}
 				else m_GoldPieces = 10 * Random::IntSum(1, 4, 4);
 			}
 			else if (m_Class == "Sorcerer")
 			{
 				m_HitDice.Type = 6;
-				m_WeaponProficiencies.insert({ "daggers", "darts", "quarterstaffs", "light crossbows" });
+				m_WeaponProficiencies.insert({ "dagger", "dart", "quarterstaff", "light crossbow" });
 				m_ConstitutionSave.Proficient = true;
 				m_CharismaSave.Proficient = true;
 				chooseSkillProficiencies(2, { m_Arcana, m_Deception, m_Insight, m_Intimidation, m_Persuasion, m_Religion });
@@ -515,7 +513,7 @@ namespace dnd {
 
 				if (startWithEquipment)
 				{
-					Random::Int(0, 1) ? addEquipment({ {"light crossbow", 1}, {"bolts", 20} }) : addEquipment({ {AllSimpleWeapons[Random::Int(0, AllSimpleWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {"light crossbow", 1}, {"bolt", 20} }) : addEquipment({ {AllSimpleWeapons[Random::Int(0, AllSimpleWeapons.size() - 1)], 1} });
 					Random::Int(0, 1) ? addEquipment({ {"component pouch", 1} }) : addEquipment({ {"arcane focus", 1} });
 					Random::Int(0, 1) ? addEquipment({ {"dungeoneer's pack", 1} }) : addEquipment({ {"explorer's pack", 1} });
 					addEquipment({ {"dagger", 2} });
@@ -534,7 +532,7 @@ namespace dnd {
 
 				if (startWithEquipment)
 				{
-					Random::Int(0, 1) ? addEquipment({ {"light crossbow", 1}, {"bolts", 20} }) : addEquipment({ {AllSimpleWeapons[Random::Int(0, AllSimpleWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {"light crossbow", 1}, {"bolt", 20} }) : addEquipment({ {AllSimpleWeapons[Random::Int(0, AllSimpleWeapons.size() - 1)], 1} });
 					Random::Int(0, 1) ? addEquipment({ {"component pouch", 1} }) : addEquipment({ {"arcane focus", 1} });
 					Random::Int(0, 1) ? addEquipment({ {"scholar's pack", 1} }) : addEquipment({ {"dungeoneer's pack", 1} });
 					addEquipment({ {"leather armor", 1}, {"dagger", 2}, {AllSimpleWeapons[Random::Int(0, AllSimpleWeapons.size() - 1)], 1} });
@@ -544,7 +542,7 @@ namespace dnd {
 			else if (m_Class == "Wizard")
 			{
 				m_HitDice.Type = 6;
-				m_WeaponProficiencies.insert({ "daggers", "darts", "slings", "quarterstaffs", "light crossbows" });
+				m_WeaponProficiencies.insert({ "dagger", "dart", "sling", "quarterstaff", "light crossbow" });
 				m_IntelligenceSave.Proficient = true;
 				m_WisdomSave.Proficient = true;
 				chooseSkillProficiencies(2, { m_Arcana, m_History, m_Insight, m_Investigation, m_Medicine, m_Religion });
@@ -691,7 +689,7 @@ namespace dnd {
 
 				if (startWithEquipment)
 				{
-					addEquipment({ {ArtisanTools[Random::Int(0, ArtisanTools.size() - 1)], 1}, {"shovel", 1}, {"iron pot", 1}, {"set of common clothes", 1}, {"pouch", 1} });
+					addEquipment({ {"set of " + ArtisanTools[Random::Int(0, ArtisanTools.size() - 1)], 1}, {"shovel", 1}, {"iron pot", 1}, {"set of common clothes", 1}, {"pouch", 1} });
 					m_GoldPieces += 10;
 				}
 			}
@@ -705,7 +703,7 @@ namespace dnd {
 
 				if (startWithEquipment)
 				{
-					addEquipment({ {ArtisanTools[Random::Int(0, ArtisanTools.size() - 1)], 1}, {"set of traveler's clothes", 1}, {"pouch", 1},
+					addEquipment({ {"set of " + ArtisanTools[Random::Int(0, ArtisanTools.size() - 1)], 1}, {"set of traveler's clothes", 1}, {"pouch", 1},
 						{"letter of introduction from your guild", 1} });
 					m_GoldPieces += 15;
 				}
@@ -824,6 +822,7 @@ namespace dnd {
 
 		// Sort out proficiency lists
 		{
+			// If the character is proficient in all items in a category, replace the individual proficiencies with one that encompasses the category
 			if (m_ArmorProficiencies.contains("light armor") && m_ArmorProficiencies.contains("medium armor") && m_ArmorProficiencies.contains("heavy armor"))
 			{
 				m_ArmorProficiencies.erase("light armor");
@@ -857,6 +856,36 @@ namespace dnd {
 					m_WeaponProficiencies.erase(it);
 
 				m_WeaponProficiencies.insert("all martial weapons");
+			}
+
+			// All proficiencies should be plural
+			// Some words like armor, tools, supplies, and vehicles are already plural
+			
+			{
+				auto it = m_WeaponProficiencies.begin();
+				while (it != m_WeaponProficiencies.end())
+				{
+					std::string item = *it;
+					if (item.find("weapons") == std::string::npos)
+					{
+						it = m_WeaponProficiencies.erase(it);
+						m_WeaponProficiencies.insert(item + "s");
+					}
+					else it++;
+				}
+			}
+
+			auto it = m_ToolProficiencies.begin();
+			std::vector<std::string> exceptions = { "bagpipes", "supplies", "tools", "vehicles" };
+			while (it != m_ToolProficiencies.end())
+			{
+				std::string item = *it;
+				if (item.find("bagpipes") == std::string::npos && item.find("supplies") && std::string::npos && item.find("tools") == std::string::npos && item.find("vehicles") == std::string::npos)
+				{
+					it = m_ToolProficiencies.erase(it);
+					m_ToolProficiencies.insert(item + "s");
+				}
+				else it++;
 			}
 		}
 
@@ -1069,13 +1098,59 @@ namespace dnd {
 		std::cout << "=========\n";
 		std::cout << "Equipment\n";
 		std::cout << "=========\n";
-		for (const auto& it : m_Equipment)
+		// Format equipment list
 		{
-			std::cout << it.second << " " << it.first;
-			if (it != *m_Equipment.rbegin())
-				std::cout << ", ";
+			// Incredibly naive solution for resolving articles for now. Will improve as needed
+			auto isVowel = [](std::string c) -> bool
+			{
+				return (c == "a" || c == "e" || c == "i" || c == "o" || c == "u");
+			};
+
+			// Some items, especially trinkets, are singular but should not have "a" or "an" added before them
+			std::vector<std::string> singularExceptions = { "armor", "half", "mail", "two", "vestments" };
+
+			auto foundSingularExceptions = [singularExceptions](std::string str) -> bool
+			{
+				for (size_t i = 0; i < singularExceptions.size(); i++)
+				{
+					if (str.find(singularExceptions[i]) != std::string::npos)
+						return true;
+				}
+
+				// "the is also an exception, but only if it starts the string
+				if (str.substr(0, 3) == "the")
+					return true;
+
+				return false;
+			};
+
+			for (const auto& it : m_Equipment)
+			{
+				// If the character has only one of a particular item
+				if (it.second == 1)
+				{
+					if (foundSingularExceptions(it.first))
+						std::cout << it.first;
+					else if (isVowel(it.first.substr(0, 1)))
+						std::cout << "an " << it.first;
+					else
+						std::cout << "a " << it.first;
+				}
+				else if (it.second > 1)
+				{
+					if (it.first.substr(0, 3) == "set")
+						std::cout << it.second << " " << it.first.substr(0, 3) << "s " << it.first.substr(4);
+					else if (it.first.substr(0, 5) == "stick")
+						std::cout << it.second << " " << it.first.substr(0, 5) << "s " << it.first.substr(6);
+					else
+						std::cout << it.second << " " << it.first << "s";
+				}
+
+				if (it != *m_Equipment.rbegin())
+					std::cout << ", ";
+			}
+			std::cout << "\n\n";
 		}
-		std::cout << "\n\n";
 
 		std::cout << "CP: " << m_CopperPieces   << "\n";
 		std::cout << "SP: " << m_SilverPieces   << "\n";

@@ -53,33 +53,33 @@ namespace dnd {
 	// Equipment
 
 	const std::vector<std::string> ArmorTypes = {
-		"light armor", "medium armor", "heavy armor", "shields"
+		"light armor", "medium armor", "heavy armor", "shield"
 	};
 
 	const std::vector<std::string> AllSimpleWeapons = {
-		"clubs", "daggers", "greatclubs", "handaxes", "javelins", "light hammers", "maces", "quarterstaffs", "sickles", "spears", // Simple melee weapons
-		"light crossbows", "darts", "shortbows", "slings" // simple ranged weapons
+		"club", "dagger", "greatclub", "handaxe", "javelin", "light hammer", "mace", "quarterstaff", "sickle", "spear", // Simple melee weapons
+		"light crossbow", "dart", "shortbow", "sling" // simple ranged weapons
 	};
 
 	const std::vector<std::string> SimpleMeleeWeapons = {
-		"clubs", "daggers", "greatclubs", "handaxes", "javelins", "light hammers", "maces", "quarterstaffs", "sickles", "spears"
+		"club", "dagger", "greatclub", "handaxe", "javelin", "light hammer", "mace", "quarterstaff", "sickle", "spear"
 	};
 
 	const std::vector<std::string> SimpleRangedWeapons = {
-		"light crossbows", "darts", "shortbows", "slings"
+		"light crossbow", "dart", "shortbow", "sling"
 	};
 
 	const std::vector<std::string> AllMartialWeapons = {
-		"battleaxes", "flails", "glaives", "greataxes", "greatswords", "halberds", "lances", "longswords", "mauls", "morningstars", "pikes", "rapiers", "scimitars", "shortswords", "tridents", "war picks", "warhammers", "whips", // martial melee weapons
-		"blowguns", "hand crossbows", "heavy crossbows", "longbows", "nets" // martial ranged weapons
+		"battleaxe", "flail", "glaive", "greataxe", "greatsword", "halberd", "lance", "longsword", "maul", "morningstar", "pike", "rapier", "scimitar", "shortsword", "trident", "war pick", "warhammer", "whip", // martial melee weapons
+		"blowgun", "hand crossbow", "heavy crossbow", "longbow", "net" // martial ranged weapons
 	};
 
 	const std::vector<std::string> MartialMeleeWeapons = {
-		"battleaxes", "flails", "glaives", "greataxes", "greatswords", "halberds", "lances", "longswords", "mauls", "morningstars", "pikes", "rapiers", "scimitars", "shortswords", "tridents", "war picks", "warhammers", "whips"
+		"battleaxe", "flail", "glaive", "greataxe", "greatsword", "halberd", "lance", "longsword", "maul", "morningstar", "pike", "rapier", "scimitar", "shortsword", "trident", "war pick", "warhammer", "whip"
 	};
 
 	const std::vector<std::string> MartialRangedWeapons = {
-		"blowguns", "hand crossbows", "heavy crossbows", "longbows", "nets"
+		"blowgun", "hand crossbow", "heavy crossbow", "longbow", "net"
 	};
 
 	const std::vector<std::string> ArtisanTools = {
@@ -100,106 +100,106 @@ namespace dnd {
 	};
 
 	const std::vector<std::string> Trinkets = {
-		"a mummified goblin hand",
-		"a piece of crystal that faintly glows in the moonlight",
-		"a gold coin minted in an unknown land",
-		"a diary written in a language you don't know",
-		"a brass ring that never tarnishes",
-		"an old chess piece made from glass",
-		"a pair of knucklebone dice, each with a skull symbol on the side that would normally show six pips",
-		"a small idol depicting a nightmarish creature that gives you unsettling dreams when you sleep near it",
-		"a rope necklace from which dangles four mummified elf fingers",
+		"mummified goblin hand",
+		"piece of crystal that faintly glows in the moonlight",
+		"gold coin minted in an unknown land",
+		"diary written in a language you don't know",
+		"brass ring that never tarnishes",
+		"old chess piece made from glass",
+		"pair of knucklebone dice, each with a skull symbol on the side that would normally show six pips",
+		"small idol depicting a nightmarish creature that gives you unsettling dreams when you sleep near it",
+		"rope necklace from which dangles four mummified elf fingers",
 		"the deed for a parcel of land in a realm unknown to you",
-		"a 1-ounce block made from an unknown material",
-		"a small cloth doll skewered with needles",
-		"a tooth from an unknown beast",
-		"an enormous scale, perhaps from a dragon",
-		"a bright green feather",
-		"an old divination card bearing your likeness",
-		"a glass orb filled with moving smoke",
-		"a 1-pound egg with a bright red shell",
-		"a pipe that blows bubbles",
-		"a glass jar containing a weird bit of flesh floating in pickling fluid",
-		"a tiny gnome-crafted music box that plays a song you dimly remember from your childhood",
-		"a small wooden statuette of a smug halfling",
-		"a brass orb etched with strange runes",
-		"a multicolored stone disk",
-		"a tiny silver icon of a raven",
-		"a bag containing forty-seven humanoid teeth, one of which is rotten",
-		"a shard of obsidian that always feels warm to the touch",
-		"a dragon's bony talon hanging from a plain leather necklace",
-		"a pair of old socks",
-		"a blank book whose pages refuse to hold ink, chalk, graphite, or any other substance or marking",
-		"a silver badge in the shape of a five-pointed star",
-		"a knife that belonged to a relative",
-		"a glass vial filled with nail clippings",
-		"a rectangular metal device with two tiny metal cups on one end that throws sparks when wet",
-		"a white, sequined glove sized for a human",
-		"a vest with one hundred tiny pockets",
-		"a small, weightless stone block",
-		"a tiny sketch portrait of a goblin",
-		"an empty glass vial that smells of perfume when opened",
-		"a gemstone that looks like a lump of coal when examined by anyone but you",
-		"a scrap of cloth from an old banner",
-		"a rank insignia from a lost legionnaire",
-		"a tiny silver bell without a clapper",
-		"a mechanical canary inside a gnomish lamp",
-		"a tiny chest carved to look like it has numerous feet on the bottom",
-		"a dead sprite inside a clear glass bottle",
-		"a metal can that has no opening but sounds as if it is filled with liquid, sand, spiders, or broken glass (your choice)",
-		"a glass orb filled with water, in which swims a clockwork goldfish",
-		"a silver spoon with an M engraved on the handle",
-		"a whistle made from gold-colored wood",
-		"a dead scarab beetle the size of your hand",
+		"1-ounce block made from an unknown material",
+		"small cloth doll skewered with needles",
+		"tooth from an unknown beast",
+		"enormous scale, perhaps from a dragon",
+		"bright green feather",
+		"old divination card bearing your likeness",
+		"glass orb filled with moving smoke",
+		"1-pound egg with a bright red shell",
+		"pipe that blows bubbles",
+		"glass jar containing a weird bit of flesh floating in pickling fluid",
+		"tiny gnome-crafted music box that plays a song you dimly remember from your childhood",
+		"small wooden statuette of a smug halfling",
+		"brass orb etched with strange runes",
+		"multicolored stone disk",
+		"tiny silver icon of a raven",
+		"bag containing forty-seven humanoid teeth, one of which is rotten",
+		"shard of obsidian that always feels warm to the touch",
+		"dragon's bony talon hanging from a plain leather necklace",
+		"pair of old socks",
+		"blank book whose pages refuse to hold ink, chalk, graphite, or any other substance or marking",
+		"silver badge in the shape of a five-pointed star",
+		"knife that belonged to a relative",
+		"glass vial filled with nail clippings",
+		"rectangular metal device with two tiny metal cups on one end that throws sparks when wet",
+		"white, sequined glove sized for a human",
+		"vest with one hundred tiny pockets",
+		"small, weightless stone block",
+		"tiny sketch portrait of a goblin",
+		"empty glass vial that smells of perfume when opened",
+		"gemstone that looks like a lump of coal when examined by anyone but you",
+		"scrap of cloth from an old banner",
+		"rank insignia from a lost legionnaire",
+		"tiny silver bell without a clapper",
+		"mechanical canary inside a gnomish lamp",
+		"tiny chest carved to look like it has numerous feet on the bottom",
+		"dead sprite inside a clear glass bottle",
+		"metal can that has no opening but sounds as if it is filled with liquid, sand, spiders, or broken glass (your choice)",
+		"glass orb filled with water, in which swims a clockwork goldfish",
+		"silver spoon with an M engraved on the handle",
+		"whistle made from gold-colored wood",
+		"dead scarab beetle the size of your hand",
 		"two toy soldiers, one with a missing head",
-		"a small box filled with different-sized buttons",
-		"a candle that can't be lit",
-		"a tiny cage with no door",
-		"an old key",
-		"an indecipherable treasure map",
-		"a hilt from a broken sword",
-		"a rabbit's foot",
-		"a glass eye",
-		"a cameo carved in the likeness of a hideous person",
-		"a silver skull the size of a coin",
-		"an alabaster mask",
-		"a pyramid of sticky black incense that smells very bad",
-		"a nightcap that, when worn, gives you pleasant dreams",
-		"a single caltrop made from bone",
-		"a gold monocle frame without the lens",
-		"a 1-inch cube, each side painted a different color",
-		"a crystal knob from a door",
-		"a small packet filled with pink dust",
-		"a fragment of a beautiful song, written as musical notes on two pieces of parchment",
-		"a silver teardrop earring made from a real teardrop",
+		"small box filled with different-sized buttons",
+		"candle that can't be lit",
+		"tiny cage with no door",
+		"old key",
+		"indecipherable treasure map",
+		"hilt from a broken sword",
+		"rabbit's foot",
+		"glass eye",
+		"cameo carved in the likeness of a hideous person",
+		"silver skull the size of a coin",
+		"alabaster mask",
+		"pyramid of sticky black incense that smells very bad",
+		"nightcap that, when worn, gives you pleasant dreams",
+		"single caltrop made from bone",
+		"gold monocle frame without the lens",
+		"1-inch cube, each side painted a different color",
+		"crystal knob from a door",
+		"small packet filled with pink dust",
+		"fragment of a beautiful song, written as musical notes on two pieces of parchment",
+		"silver teardrop earring made from a real teardrop",
 		"the shell of an egg painted with scenes of human misery in disturbing detail",
-		"a fan that, when unfolded, shows a sleeping cat",
-		"a set of bone pipes",
-		"a four-leaf clover pressed inside a book discussing manners and etiquette",
-		"a sheet of parchment upon which is drawn a complex mechanical contraption",
-		"an ornate scabbard that fits no blade you have found so far",
-		"an invitation to a party where a murder happened",
-		"a bronze pentacle with an etching of a rat's head in its center",
-		"a purple handkerchief embroidered with the name of a powerful archmage",
+		"fan that, when unfolded, shows a sleeping cat",
+		"set of bone pipes",
+		"four-leaf clover pressed inside a book discussing manners and etiquette",
+		"sheet of parchment upon which is drawn a complex mechanical contraption",
+		"ornate scabbard that fits no blade you have found so far",
+		"invitation to a party where a murder happened",
+		"bronze pentacle with an etching of a rat's head in its center",
+		"purple handkerchief embroidered with the name of a powerful archmage",
 		"half of a floorplan for a temple, castle, or some other structure",
-		"a bit of folded cloth that, when unfolded, turns into a stylish cap",
-		"a receipt of deposit at a bank in a far-flung city",
-		"a diary with seven missing pages",
-		"an empty silver snuffbox bearing an inscription on the surface that says \"dreams\"",
-		"an iron holy symbol devoted to an unknown god",
-		"a book that tells the story of a legendary hero's rise and fall, with the last chapter missing",
-		"a vial of dragon blood",
-		"an ancient arrow of elven design",
-		"a needle that never bends",
-		"an ornate brooch of dwarven design",
-		"an empty wine bottle bearing a pretty label that says, \"The Wizard of Wines Winery, Red Dragon Crush, 331422-W\"",
-		"a mosaic tile with a multicolored, glazed surface",
-		"a petrified mouse",
-		"a black pirate flag adorned with a dragon's skull and crossbones",
-		"a tiny mechanical crab or spider that moves about when it's no longer being observed",
-		"a glass jar containing lard with a label that reads, \"Griffon Grease\"",
-		"a wooden box with a ceramic bottom that holds a living worm with a head on each end of its body",
-		"a metal urn containing the ashes of a hero"
+		"bit of folded cloth that, when unfolded, turns into a stylish cap",
+		"receipt of deposit at a bank in a far-flung city",
+		"diary with seven missing pages",
+		"empty silver snuffbox bearing an inscription on the surface that says \"dreams\"",
+		"iron holy symbol devoted to an unknown god",
+		"book that tells the story of a legendary hero's rise and fall, with the last chapter missing",
+		"vial of dragon blood",
+		"ancient arrow of elven design",
+		"needle that never bends",
+		"ornate brooch of dwarven design",
+		"empty wine bottle bearing a pretty label that says, \"The Wizard of Wines Winery, Red Dragon Crush, 331422-W\"",
+		"mosaic tile with a multicolored, glazed surface",
+		"petrified mouse",
+		"black pirate flag adorned with a dragon's skull and crossbones",
+		"tiny mechanical crab or spider that moves about when it's no longer being observed",
+		"glass jar containing lard with a label that reads, \"Griffon Grease\"",
+		"wooden box with a ceramic bottom that holds a living worm with a head on each end of its body",
+		"metal urn containing the ashes of a hero"
 	};
 
 	// ======================================================================================
