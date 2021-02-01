@@ -1107,7 +1107,7 @@ namespace dnd {
 			};
 
 			// Some items, especially trinkets, are singular but should not have "a" or "an" added before them
-			std::vector<std::string> singularExceptions = { "armor", "half", "mail", "two", "vestments" };
+			std::vector<std::string> singularExceptions = { "armor", "half", "mail", "vestments" };
 
 			auto foundSingularExceptions = [singularExceptions](std::string str) -> bool
 			{
@@ -1117,8 +1117,8 @@ namespace dnd {
 						return true;
 				}
 
-				// "the is also an exception, but only if it starts the string
-				if (str.substr(0, 3) == "the")
+				// "the and two are also exceptions, but only if they start the string
+				if (str.substr(0, 3) == "the" || str.substr(0, 3) == "two")
 					return true;
 
 				return false;
