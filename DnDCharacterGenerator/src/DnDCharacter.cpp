@@ -940,7 +940,6 @@ namespace dnd {
 
 			// Passive wisdom is wisdom modifier + 10 + proficiency bonus (if proficient in perception)
 			m_PassiveWisdom = m_Wisdom.Modifier + 10;
-
 			if (m_Perception.Proficient)
 				m_PassiveWisdom += m_ProficiencyBonus;
 
@@ -948,6 +947,54 @@ namespace dnd {
 			std::string trinket = Trinkets[Random::Index(0, Trinkets.size() - 1)];
 			if (!m_Equipment.contains(trinket))
 				addEquipment({ {trinket, 1} });
+		}
+
+		// Determine armor class by finding the armor in the character's equipment that has the highest armor class
+		{
+			// If result.second remains 10 after all the for loops, then the character is unarmored
+			std::pair<std::string, int> result = { "", 10 };
+
+			for (const auto& it : LightArmorClasses)
+			{
+				if (m_Equipment.contains(it.first) && it.second >= result.second)
+					result = it;
+			}
+
+			for (const auto& it : MediumArmorClasses)
+			{
+				if (m_Equipment.contains(it.first) && it.second >= result.second)
+					result = it;
+			}
+
+			for (const auto& it : HeavyArmorClasses)
+			{
+				if (m_Equipment.contains(it.first) && it.second >= result.second)
+					result = it;
+			}
+
+			m_ArmorClass += result.second;
+			if (LightArmorClasses.contains(result.first))
+				m_ArmorClass += m_Dexterity.Modifier;
+			else if (MediumArmorClasses.contains(result.first))
+				m_ArmorClass += std::min(2, m_Dexterity.Modifier);
+			else if (result.second == 10)
+			{
+				// Every unarmored character adds their dex modifier, but some classes gain additional benefits
+				m_ArmorClass += m_Dexterity.Modifier;
+
+				if (m_Class == "Barbarian")
+					m_ArmorClass += m_Constitution.Modifier;
+				if (m_Class == "Monk")
+				{
+					m_ArmorClass += m_Wisdom.Modifier;
+
+					// Monks cannot benefit use a shield and still benefit from their Unarmored Defense trait
+					if (m_Equipment.contains("shield")) m_ArmorClass -= 2;
+				}
+			}
+
+			if (m_Equipment.contains("shield"))
+				m_ArmorClass += 2;
 		}
 	}	
 
@@ -968,6 +1015,7 @@ namespace dnd {
 		std::cout << "Experience Points: "  << m_Experience        << "\n";
 		std::cout << "Proficiency Bonus: "  << m_ProficiencyBonus  << "\n";
 		std::cout << "Hit Points: "         << m_MaxHitPoints      << "\n";
+		std::cout << "Armor Class: "        << m_ArmorClass        << "\n";
 		std::cout << "Speed: "              << m_Speed             << " feet\n";
 		std::cout << "Initiative: "         << m_Initiative        << "\n";
 		std::cout << "Background: "         << m_Background        << "\n";
@@ -1131,7 +1179,7 @@ namespace dnd {
 				{
 					if (foundSingularExceptions(it.first))
 						std::cout << it.first;
-					else if (isVowel(it.first.substr(0, 1)))
+					else if (isVowel(it.first.substr(0, 1)) || it.first == "herbalism kit")
 						std::cout << "an " << it.first;
 					else
 						std::cout << "a " << it.first;

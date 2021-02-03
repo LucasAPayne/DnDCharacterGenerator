@@ -56,6 +56,28 @@ namespace dnd {
 		"light armor", "medium armor", "heavy armor", "shield"
 	};
 
+	// Maps armor to its armor class 
+	const std::unordered_map<std::string, int> LightArmorClasses = {
+		{"padded armor", 11},
+		{"leather armor", 11},
+		{"studded leather armor", 12},
+	};
+
+	const std::unordered_map<std::string, int> MediumArmorClasses = {
+		{"hide armor", 12},
+		{"chain shirt", 13},
+		{"scale mail", 14},
+		{"breastplate", 14},
+		{"half plate", 15},
+	};
+
+	const std::unordered_map<std::string, int> HeavyArmorClasses = {
+		{"ring mail", 14},
+		{"chain mail", 16},
+		{"splint armor", 17},
+		{"plate armor", 18}
+	};
+
 	const std::vector<std::string> AllSimpleWeapons = {
 		"club", "dagger", "greatclub", "handaxe", "javelin", "light hammer", "mace", "quarterstaff", "sickle", "spear", // Simple melee weapons
 		"light crossbow", "dart", "shortbow", "sling" // simple ranged weapons
@@ -1112,7 +1134,7 @@ namespace dnd {
 		                              "If you are able to cast spells, you can't cast them or concentrate on them while raging.\n"
 		                              "Your rage lasts for 1 minute. It ends early if you are knocked unconscious or if your turn ends and you haven't attacked a hostile creature since your last turn or taken damage since then. You can also end your rage on your turn as a bonus action.\n"
 		                              "Once you have raged the number of times shown for your barbarian level in the Rages column of the Barbarian table in the rulebook, you must finish a long rest before you can rage again."),
-	                   Trait("Unarmored Defense.", "While you are not wearing any armor, you Armor Class equals 10 + your Dexterity modifier + your Constitution modifier. You can use a shield and still gain this benefit.")}},
+	                   Trait("Unarmored Defense.", "While you are not wearing any armor, your Armor Class equals 10 + your Dexterity modifier + your Constitution modifier. You can use a shield and still gain this benefit.")}},
 
 		{"Bard", {Trait("Spellcasting Ability.", "Charisma is your spellcasting for your bard spells. Your magic comes from the heart and soul you pour into the performance of your music or oration. You use your Charisma whenever a spell refers to your spellcasting ability. In addition, you can use your Charisma modifier when setting the saving throw DC for a bard spell you cast and when making an attack roll with one."),
 	              Trait("Bardic Inspiration.", "You can inspire others through stirring words or music. To do so, you use a bonus action on your turn to choose one creature other than yourself within 60 feet of you who can hear you. That creature gains one Bardic Inspiration die, a d6.\n"
