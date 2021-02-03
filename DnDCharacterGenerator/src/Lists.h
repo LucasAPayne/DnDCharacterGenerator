@@ -53,17 +53,55 @@ namespace dnd {
 	// Equipment
 
 	const std::vector<std::string> ArmorTypes = {
-		"light armor", "medium armor", "heavy armor", "shields"
+		"light armor", "medium armor", "heavy armor", "shield"
 	};
 
-	const std::vector<std::string> SimpleWeapons = {
-		"clubs", "daggers", "greatclubs", "handaxes", "javelins", "light hammers", "maces", "quarterstaffs", "sickles", "spears", "unarmed strikes", // Simple melee weapons
-		"light crossbows", "darts", "shortbows", "slings" // simple ranged weapons
+	// Maps armor to its armor class 
+	const std::unordered_map<std::string, int> LightArmorClasses = {
+		{"padded armor", 11},
+		{"leather armor", 11},
+		{"studded leather armor", 12},
 	};
 
-	const std::vector<std::string> MartialWeapons = {
-		"battleaxes", "flails", "glaives", "greataxes", "greatswords", "halberds", "lances", "longswords", "mauls", "morningstars", "pikes", "rapiers", "scimitars", "shortswords", "tridents", "war picks", "warhammers", "whips", // martial melee weapons
-		"blowguns", "hand crossbows", "heavy crossbows", "longbows", "nets" // martial ranged weapons
+	const std::unordered_map<std::string, int> MediumArmorClasses = {
+		{"hide armor", 12},
+		{"chain shirt", 13},
+		{"scale mail", 14},
+		{"breastplate", 14},
+		{"half plate", 15},
+	};
+
+	const std::unordered_map<std::string, int> HeavyArmorClasses = {
+		{"ring mail", 14},
+		{"chain mail", 16},
+		{"splint armor", 17},
+		{"plate armor", 18}
+	};
+
+	const std::vector<std::string> AllSimpleWeapons = {
+		"club", "dagger", "greatclub", "handaxe", "javelin", "light hammer", "mace", "quarterstaff", "sickle", "spear", // Simple melee weapons
+		"light crossbow", "dart", "shortbow", "sling" // simple ranged weapons
+	};
+
+	const std::vector<std::string> SimpleMeleeWeapons = {
+		"club", "dagger", "greatclub", "handaxe", "javelin", "light hammer", "mace", "quarterstaff", "sickle", "spear"
+	};
+
+	const std::vector<std::string> SimpleRangedWeapons = {
+		"light crossbow", "dart", "shortbow", "sling"
+	};
+
+	const std::vector<std::string> AllMartialWeapons = {
+		"battleaxe", "flail", "glaive", "greataxe", "greatsword", "halberd", "lance", "longsword", "maul", "morningstar", "pike", "rapier", "scimitar", "shortsword", "trident", "war pick", "warhammer", "whip", // martial melee weapons
+		"blowgun", "hand crossbow", "heavy crossbow", "longbow", "net" // martial ranged weapons
+	};
+
+	const std::vector<std::string> MartialMeleeWeapons = {
+		"battleaxe", "flail", "glaive", "greataxe", "greatsword", "halberd", "lance", "longsword", "maul", "morningstar", "pike", "rapier", "scimitar", "shortsword", "trident", "war pick", "warhammer", "whip"
+	};
+
+	const std::vector<std::string> MartialRangedWeapons = {
+		"blowgun", "hand crossbow", "heavy crossbow", "longbow", "net"
 	};
 
 	const std::vector<std::string> ArtisanTools = {
@@ -81,6 +119,109 @@ namespace dnd {
 
 	const std::vector<std::string> OtherTools = {
 		"disguise kit", "forgery kit", "herbalism kit", "navigator's tools", "poisoner's kit", "thieves' tools", "vehicles (land)", "vehicles (water)"
+	};
+
+	const std::vector<std::string> Trinkets = {
+		"mummified goblin hand",
+		"piece of crystal that faintly glows in the moonlight",
+		"gold coin minted in an unknown land",
+		"diary written in a language you don't know",
+		"brass ring that never tarnishes",
+		"old chess piece made from glass",
+		"pair of knucklebone dice, each with a skull symbol on the side that would normally show six pips",
+		"small idol depicting a nightmarish creature that gives you unsettling dreams when you sleep near it",
+		"rope necklace from which dangles four mummified elf fingers",
+		"the deed for a parcel of land in a realm unknown to you",
+		"1-ounce block made from an unknown material",
+		"small cloth doll skewered with needles",
+		"tooth from an unknown beast",
+		"enormous scale, perhaps from a dragon",
+		"bright green feather",
+		"old divination card bearing your likeness",
+		"glass orb filled with moving smoke",
+		"1-pound egg with a bright red shell",
+		"pipe that blows bubbles",
+		"glass jar containing a weird bit of flesh floating in pickling fluid",
+		"tiny gnome-crafted music box that plays a song you dimly remember from your childhood",
+		"small wooden statuette of a smug halfling",
+		"brass orb etched with strange runes",
+		"multicolored stone disk",
+		"tiny silver icon of a raven",
+		"bag containing forty-seven humanoid teeth, one of which is rotten",
+		"shard of obsidian that always feels warm to the touch",
+		"dragon's bony talon hanging from a plain leather necklace",
+		"pair of old socks",
+		"blank book whose pages refuse to hold ink, chalk, graphite, or any other substance or marking",
+		"silver badge in the shape of a five-pointed star",
+		"knife that belonged to a relative",
+		"glass vial filled with nail clippings",
+		"rectangular metal device with two tiny metal cups on one end that throws sparks when wet",
+		"white, sequined glove sized for a human",
+		"vest with one hundred tiny pockets",
+		"small, weightless stone block",
+		"tiny sketch portrait of a goblin",
+		"empty glass vial that smells of perfume when opened",
+		"gemstone that looks like a lump of coal when examined by anyone but you",
+		"scrap of cloth from an old banner",
+		"rank insignia from a lost legionnaire",
+		"tiny silver bell without a clapper",
+		"mechanical canary inside a gnomish lamp",
+		"tiny chest carved to look like it has numerous feet on the bottom",
+		"dead sprite inside a clear glass bottle",
+		"metal can that has no opening but sounds as if it is filled with liquid, sand, spiders, or broken glass (your choice)",
+		"glass orb filled with water, in which swims a clockwork goldfish",
+		"silver spoon with an M engraved on the handle",
+		"whistle made from gold-colored wood",
+		"dead scarab beetle the size of your hand",
+		"two toy soldiers, one with a missing head",
+		"small box filled with different-sized buttons",
+		"candle that can't be lit",
+		"tiny cage with no door",
+		"old key",
+		"indecipherable treasure map",
+		"hilt from a broken sword",
+		"rabbit's foot",
+		"glass eye",
+		"cameo carved in the likeness of a hideous person",
+		"silver skull the size of a coin",
+		"alabaster mask",
+		"pyramid of sticky black incense that smells very bad",
+		"nightcap that, when worn, gives you pleasant dreams",
+		"single caltrop made from bone",
+		"gold monocle frame without the lens",
+		"1-inch cube, each side painted a different color",
+		"crystal knob from a door",
+		"small packet filled with pink dust",
+		"fragment of a beautiful song, written as musical notes on two pieces of parchment",
+		"silver teardrop earring made from a real teardrop",
+		"the shell of an egg painted with scenes of human misery in disturbing detail",
+		"fan that, when unfolded, shows a sleeping cat",
+		"set of bone pipes",
+		"four-leaf clover pressed inside a book discussing manners and etiquette",
+		"sheet of parchment upon which is drawn a complex mechanical contraption",
+		"ornate scabbard that fits no blade you have found so far",
+		"invitation to a party where a murder happened",
+		"bronze pentacle with an etching of a rat's head in its center",
+		"purple handkerchief embroidered with the name of a powerful archmage",
+		"half of a floorplan for a temple, castle, or some other structure",
+		"bit of folded cloth that, when unfolded, turns into a stylish cap",
+		"receipt of deposit at a bank in a far-flung city",
+		"diary with seven missing pages",
+		"empty silver snuffbox bearing an inscription on the surface that says \"dreams\"",
+		"iron holy symbol devoted to an unknown god",
+		"book that tells the story of a legendary hero's rise and fall, with the last chapter missing",
+		"vial of dragon blood",
+		"ancient arrow of elven design",
+		"needle that never bends",
+		"ornate brooch of dwarven design",
+		"empty wine bottle bearing a pretty label that says, \"The Wizard of Wines Winery, Red Dragon Crush, 331422-W\"",
+		"mosaic tile with a multicolored, glazed surface",
+		"petrified mouse",
+		"black pirate flag adorned with a dragon's skull and crossbones",
+		"tiny mechanical crab or spider that moves about when it's no longer being observed",
+		"glass jar containing lard with a label that reads, \"Griffon Grease\"",
+		"wooden box with a ceramic bottom that holds a living worm with a head on each end of its body",
+		"metal urn containing the ashes of a hero"
 	};
 
 	// ======================================================================================
@@ -993,7 +1134,7 @@ namespace dnd {
 		                              "If you are able to cast spells, you can't cast them or concentrate on them while raging.\n"
 		                              "Your rage lasts for 1 minute. It ends early if you are knocked unconscious or if your turn ends and you haven't attacked a hostile creature since your last turn or taken damage since then. You can also end your rage on your turn as a bonus action.\n"
 		                              "Once you have raged the number of times shown for your barbarian level in the Rages column of the Barbarian table in the rulebook, you must finish a long rest before you can rage again."),
-	                   Trait("Unarmored Defense.", "While you are not wearing any armor, you Armor Class equals 10 + your Dexterity modifier + your Constitution modifier. You can use a shield and still gain this benefit.")}},
+	                   Trait("Unarmored Defense.", "While you are not wearing any armor, your Armor Class equals 10 + your Dexterity modifier + your Constitution modifier. You can use a shield and still gain this benefit.")}},
 
 		{"Bard", {Trait("Spellcasting Ability.", "Charisma is your spellcasting for your bard spells. Your magic comes from the heart and soul you pour into the performance of your music or oration. You use your Charisma whenever a spell refers to your spellcasting ability. In addition, you can use your Charisma modifier when setting the saving throw DC for a bard spell you cast and when making an attack roll with one."),
 	              Trait("Bardic Inspiration.", "You can inspire others through stirring words or music. To do so, you use a bonus action on your turn to choose one creature other than yourself within 60 feet of you who can hear you. That creature gains one Bardic Inspiration die, a d6.\n"

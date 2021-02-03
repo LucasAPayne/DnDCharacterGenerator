@@ -4,6 +4,7 @@
 
 #include <set>
 #include <string>
+#include <map>
 #include <vector>
 
 namespace dnd
@@ -84,8 +85,12 @@ namespace dnd
 		std::set<std::string> m_ToolProficiencies;
 
 		// Equipment
-		Wealth m_Wealth;
-		std::vector<std::string> m_EquipmentList;
+		std::map<std::string, int> m_Equipment; // the string is the name of the equipment, and the int is how many of that the character has
+		int m_CopperPieces = 0;
+		int m_SilverPieces = 0;
+		int m_ElectrumPieces = 0;
+		int m_GoldPieces = 0;
+		int m_PlatinumPieces = 0;
 
 		// Combat
 		int m_CurrentHitPoints = 0;
