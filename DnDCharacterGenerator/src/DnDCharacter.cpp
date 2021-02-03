@@ -23,7 +23,7 @@ namespace dnd {
 	void SetTraitFromDict(std::string& trait, const std::unordered_map<T, S>& dict, const std::string& criteria)
 	{
 		auto list = dict.at(criteria);
-		trait = list[Random::Int(0, list.size() - 1)];
+		trait = list[Random::Index(0, list.size() - 1)];
 	}
 
 	Character::Character()
@@ -31,10 +31,10 @@ namespace dnd {
 		// Add a proficiency or language that the character does not already have
 		auto addUniqueProficiency = [](std::set<std::string>& characterList, const std::vector<std::string>& proficiencyList)
 		{
-			std::string proficiency = proficiencyList[Random::Int(0, proficiencyList.size() - 1)];
+			std::string proficiency = proficiencyList[Random::Index(0, proficiencyList.size() - 1)];
 
 			while (characterList.insert(proficiency).second == false)
-				proficiency = proficiencyList[Random::Int(0, proficiencyList.size() - 1)];
+				proficiency = proficiencyList[Random::Index(0, proficiencyList.size() - 1)];
 		};
 
 		// Add a list of equipment to the character. If the character already has at least one of a type of equipment, just add the number to that.
@@ -55,8 +55,8 @@ namespace dnd {
 
 		// Independent of race, background, and class
 		{
-			m_Alignment = Alignments[Random::Int(0, Alignments.size() - 1)];
-			m_Gender = Genders[Random::Int(0, Genders.size() - 1)];
+			m_Alignment = Alignments[Random::Index(0, Alignments.size() - 1)];
+			m_Gender = Genders[Random::Index(0, Genders.size() - 1)];
 
 			m_Level = 1; // For now, characters should be locked to level 1 since any effects of leveling up are currently not considered
 			if (m_Level >= 1 && m_Level <= 4)
@@ -117,11 +117,11 @@ namespace dnd {
 
 		// Race
 		{
-			m_Race = Races[Random::Int(0, Races.size() - 1)];
+			m_Race = Races[Random::Index(0, Races.size() - 1)];
 
 			// Humans also have ethnicity (for name)
 			if (m_Race == "Human")
-				m_Ethnicity = Ethnicities[Random::Int(0, Ethnicities.size() - 1)];
+				m_Ethnicity = Ethnicities[Random::Index(0, Ethnicities.size() - 1)];
 
 			// Find the character's major race
 			if (m_Race == "Dwarf" || m_Race == "Elf" || m_Race == "Halfling" || m_Race == "Human")
@@ -167,7 +167,7 @@ namespace dnd {
 
 				// All dwarves get set weapon proficiencies and can choose one set of tools to be proficient with
 				std::vector<std::string> choices = { "smith's tools", "brewer's supplies", "mason's tools" };
-				m_ToolProficiencies.insert(choices[Random::Int(0, choices.size() - 1)]);
+				m_ToolProficiencies.insert(choices[Random::Index(0, choices.size() - 1)]);
 				m_WeaponProficiencies.insert({ "battleaxe", "handaxe", "throwing hammer", "warhammer" });
 
 				if (m_Race == "Hill Dwarf")
@@ -199,7 +199,7 @@ namespace dnd {
 					m_WeaponProficiencies.insert({ "longsword", "shortsword", "shortbow", "longbow" });
 
 					// Choose one additional language
-					m_Languages.insert(Languages[Random::Int(1, Languages.size() - 1)]); // 1 is the minimum number to avoid picking Elvish twice
+					m_Languages.insert(Languages[Random::Index(1, Languages.size() - 1)]); // 1 is the minimum number to avoid picking Elvish twice
 				}
 				else if (m_Race == "Wood Elf")
 				{
@@ -244,14 +244,14 @@ namespace dnd {
 				m_Wisdom.Score++;
 				m_Charisma.Score++;
 
-				m_Languages.insert(Languages[Random::Int(0, Languages.size() - 1)]);
+				m_Languages.insert(Languages[Random::Index(0, Languages.size() - 1)]);
 				// TODO: Add optional variant human trait
 			}
 		}
 
 		// Class
 		{
-			m_Class = Classes[Random::Int(0, Classes.size() - 1)];
+			m_Class = Classes[Random::Index(0, Classes.size() - 1)];
 
 			// Choose a number of skill proficiencies randomly from a given list
 			auto chooseSkillProficiencies = [](int skillsToChoose, std::vector<std::reference_wrapper<Skill>> list)
@@ -280,8 +280,8 @@ namespace dnd {
 				if (startWithEquipment)
 				{
 					// Most classes give certain set starting equipment, and allow the character to choose between a couple options for the rest of the equipment
-					Random::Int(0, 1) ? addEquipment({ {"greataxe", 1} }) : addEquipment({ {MartialMeleeWeapons[Random::Int(0, MartialMeleeWeapons.size() - 1)], 1} });
-					Random::Int(0, 1) ? addEquipment({ {"handaxe", 2} }) : addEquipment({ {AllSimpleWeapons[Random::Int(0, AllSimpleWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {"greataxe", 1} }) : addEquipment({ {MartialMeleeWeapons[Random::Index(0, MartialMeleeWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {"handaxe", 2} }) : addEquipment({ {AllSimpleWeapons[Random::Index(0, AllSimpleWeapons.size() - 1)], 1} });
 					addEquipment({ {"explorer's pack", 1}, {"javelin", 4} });
 				}
 				else m_GoldPieces = 10 * Random::IntSum(1, 4, 2);
@@ -313,10 +313,10 @@ namespace dnd {
 					int choice = Random::Int(0, 2);
 					if (choice == 0) addEquipment({ {"rapier", 1} });
 					else if (choice == 1) addEquipment({ {"longsword", 1} });
-					else if (choice == 2) addEquipment({ {AllSimpleWeapons[Random::Int(0, AllSimpleWeapons.size() - 1)], 1} });
+					else if (choice == 2) addEquipment({ {AllSimpleWeapons[Random::Index(0, AllSimpleWeapons.size() - 1)], 1} });
 
 					Random::Int(0, 1) ? addEquipment({ {"diplomat's pack", 1} }) : addEquipment({ {"entertainer's pack", 1} });
-					Random::Int(0, 1) ? addEquipment({ {"lute", 1} }) : addEquipment({ {MusicalInstruments[Random::Int(0, MusicalInstruments.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {"lute", 1} }) : addEquipment({ {MusicalInstruments[Random::Index(0, MusicalInstruments.size() - 1)], 1} });
 					addEquipment({ {"leather armor", 1}, {"dagger", 1} });
 				}
 				else m_GoldPieces = 10 * Random::IntSum(1, 4, 5);
@@ -334,7 +334,7 @@ namespace dnd {
 				m_FeatsAndTraits.push_back(ClassFeats.at(m_Class)[0]);
 
 				// Pick a cleric domain, one of the 1st level traits after index 0
-				int index = Random::Int(1, ClassFeats.at(m_Class).size() - 1);
+				size_t index = Random::Index(1, ClassFeats.at(m_Class).size() - 1);
 				m_FeatsAndTraits.push_back(ClassFeats.at(m_Class)[index]);
 
 				if (startWithEquipment)
@@ -354,7 +354,7 @@ namespace dnd {
 					else if (choice == 1) addEquipment({ {"leather armor", 1} });
 					else if (choice == 2) addEquipment({ {"chain mail", 1} });
 					
-					Random::Int(0, 1) ? addEquipment({ {"light crossbow", 1}, {"bolt", 20} }) : addEquipment({ {AllSimpleWeapons[Random::Int(0, SimpleMeleeWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {"light crossbow", 1}, {"bolt", 20} }) : addEquipment({ {AllSimpleWeapons[Random::Index(0, SimpleMeleeWeapons.size() - 1)], 1} });
 					Random::Int(0, 1) ? addEquipment({ {"priest's pack", 1} }) : addEquipment({ {"explorer's pack", 1} });
 					addEquipment({ {"shield", 1}, {"holy symbol", 1} });
 				}
@@ -374,8 +374,8 @@ namespace dnd {
 
 				if (startWithEquipment)
 				{
-					Random::Int(0, 1) ? addEquipment({ {"wooden shield", 1} }) : addEquipment({ {AllSimpleWeapons[Random::Int(0, AllSimpleWeapons.size() - 1)], 1} });
-					Random::Int(0, 1) ? addEquipment({ {"scimitar", 1} }) : addEquipment({ {SimpleMeleeWeapons[Random::Int(0, SimpleMeleeWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {"wooden shield", 1} }) : addEquipment({ {AllSimpleWeapons[Random::Index(0, AllSimpleWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {"scimitar", 1} }) : addEquipment({ {SimpleMeleeWeapons[Random::Index(0, SimpleMeleeWeapons.size() - 1)], 1} });
 					addEquipment({ {"leather armor", 1}, {"explorer's pack", 1}, {"druidic focus", 1} });
 				}
 				else m_GoldPieces = 10 * Random::IntSum(1, 4, 2);
@@ -394,14 +394,14 @@ namespace dnd {
 				m_FeatsAndTraits.push_back(ClassFeats.at(m_Class)[0]);
 
 				// Pick a fighting style, one of the 1st level traits after index 0
-				int index = Random::Int(1, ClassFeats.at(m_Class).size() - 1);
+				size_t index = Random::Index(1, ClassFeats.at(m_Class).size() - 1);
 				m_FeatsAndTraits.push_back(ClassFeats.at(m_Class)[index]);
 
 				if (startWithEquipment)
 				{
 					Random::Int(0, 1) ? addEquipment({ {"chain mail", 1} }) : addEquipment({ {"leather armor", 1}, {"longbow", 1}, {"arrow", 20} });
-					Random::Int(0, 1) ? addEquipment({ {AllMartialWeapons[Random::Int(0, AllMartialWeapons.size() - 1)], 1}, {"shield", 1} }) :
-						addEquipment({ {AllMartialWeapons[Random::Int(0, AllMartialWeapons.size() - 1)], 1}, {AllMartialWeapons[Random::Int(0, AllMartialWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {AllMartialWeapons[Random::Index(0, AllMartialWeapons.size() - 1)], 1}, {"shield", 1} }) :
+						addEquipment({ {AllMartialWeapons[Random::Index(0, AllMartialWeapons.size() - 1)], 1}, {AllMartialWeapons[Random::Index(0, AllMartialWeapons.size() - 1)], 1} });
 					Random::Int(0, 1) ? addEquipment({ {"light crossbow", 1}, {"bolt", 20} }) : addEquipment({ {"handaxe", 2} });
 					Random::Int(0, 1) ? addEquipment({ {"dungeoneer's pack", 1} }) : addEquipment({ {"explorer's pack", 1} });
 				}
@@ -415,9 +415,9 @@ namespace dnd {
 				m_WeaponProficiencies.insert("shortsword");
 				// Choose one type of artisan's tools or musical instrument
 				if (Random::Int(0, 1) == 0)
-					m_ToolProficiencies.insert(ArtisanTools[Random::Int(0, ArtisanTools.size() - 1)]);
+					m_ToolProficiencies.insert(ArtisanTools[Random::Index(0, ArtisanTools.size() - 1)]);
 				else
-					m_ToolProficiencies.insert(MusicalInstruments[Random::Int(0, MusicalInstruments.size() - 1)]);
+					m_ToolProficiencies.insert(MusicalInstruments[Random::Index(0, MusicalInstruments.size() - 1)]);
 
 				m_StrengthSave.Proficient = true;
 				m_DexteritySave.Proficient = true;
@@ -426,7 +426,7 @@ namespace dnd {
 
 				if (startWithEquipment)
 				{
-					Random::Int(0, 1) ? addEquipment({ {"shortsword", 1} }) : addEquipment({ {AllSimpleWeapons[Random::Int(0, AllSimpleWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {"shortsword", 1} }) : addEquipment({ {AllSimpleWeapons[Random::Index(0, AllSimpleWeapons.size() - 1)], 1} });
 					Random::Int(0, 1) ? addEquipment({ {"dungeoneer's pack", 1} }) : addEquipment({ {"explorer's pack", 1} });
 					addEquipment({ {"dart", 10} });
 				}
@@ -445,9 +445,9 @@ namespace dnd {
 
 				if (startWithEquipment)
 				{
-					Random::Int(0, 1) ? addEquipment({ {AllMartialWeapons[Random::Int(0, AllMartialWeapons.size() - 1)], 1}, {"shield", 1} }) :
-						addEquipment({ {AllMartialWeapons[Random::Int(0, AllMartialWeapons.size() - 1)], 1}, { AllMartialWeapons[Random::Int(0, AllMartialWeapons.size() - 1)], 1 } });
-					Random::Int(0, 1) ? addEquipment({ {"javeline", 5} }) : addEquipment({ {SimpleMeleeWeapons[Random::Int(0, SimpleMeleeWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {AllMartialWeapons[Random::Index(0, AllMartialWeapons.size() - 1)], 1}, {"shield", 1} }) :
+						addEquipment({ {AllMartialWeapons[Random::Index(0, AllMartialWeapons.size() - 1)], 1}, { AllMartialWeapons[Random::Index(0, AllMartialWeapons.size() - 1)], 1 } });
+					Random::Int(0, 1) ? addEquipment({ {"javeline", 5} }) : addEquipment({ {SimpleMeleeWeapons[Random::Index(0, SimpleMeleeWeapons.size() - 1)], 1} });
 					Random::Int(0, 1) ? addEquipment({ {"priest's pack", 1} }) : addEquipment({ {"explorer's pack", 1} });
 					addEquipment({ {"chain mail", 1}, {"holy symbol", 1} });
 				}
@@ -469,7 +469,7 @@ namespace dnd {
 				{
 					Random::Int(0, 1) ? addEquipment({ {"scale mail", 1} }) : addEquipment({ {"leather armor", 1} });
 					Random::Int(0, 1) ? addEquipment({ {"shortsword", 2} }) :
-						addEquipment({ {SimpleMeleeWeapons[Random::Int(0, SimpleMeleeWeapons.size() - 1)], 1}, {SimpleMeleeWeapons[Random::Int(0, SimpleMeleeWeapons.size() - 1)], 1} });
+						addEquipment({ {SimpleMeleeWeapons[Random::Index(0, SimpleMeleeWeapons.size() - 1)], 1}, {SimpleMeleeWeapons[Random::Index(0, SimpleMeleeWeapons.size() - 1)], 1} });
 					Random::Int(0, 1) ? addEquipment({ {"dungeoneer's pack", 1} }) : addEquipment({ {"explorer's pack", 1} });
 					addEquipment({ {"longbow", 1}, {"arrow", 20} });
 				}
@@ -513,7 +513,7 @@ namespace dnd {
 
 				if (startWithEquipment)
 				{
-					Random::Int(0, 1) ? addEquipment({ {"light crossbow", 1}, {"bolt", 20} }) : addEquipment({ {AllSimpleWeapons[Random::Int(0, AllSimpleWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {"light crossbow", 1}, {"bolt", 20} }) : addEquipment({ {AllSimpleWeapons[Random::Index(0, AllSimpleWeapons.size() - 1)], 1} });
 					Random::Int(0, 1) ? addEquipment({ {"component pouch", 1} }) : addEquipment({ {"arcane focus", 1} });
 					Random::Int(0, 1) ? addEquipment({ {"dungeoneer's pack", 1} }) : addEquipment({ {"explorer's pack", 1} });
 					addEquipment({ {"dagger", 2} });
@@ -532,10 +532,10 @@ namespace dnd {
 
 				if (startWithEquipment)
 				{
-					Random::Int(0, 1) ? addEquipment({ {"light crossbow", 1}, {"bolt", 20} }) : addEquipment({ {AllSimpleWeapons[Random::Int(0, AllSimpleWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {"light crossbow", 1}, {"bolt", 20} }) : addEquipment({ {AllSimpleWeapons[Random::Index(0, AllSimpleWeapons.size() - 1)], 1} });
 					Random::Int(0, 1) ? addEquipment({ {"component pouch", 1} }) : addEquipment({ {"arcane focus", 1} });
 					Random::Int(0, 1) ? addEquipment({ {"scholar's pack", 1} }) : addEquipment({ {"dungeoneer's pack", 1} });
-					addEquipment({ {"leather armor", 1}, {"dagger", 2}, {AllSimpleWeapons[Random::Int(0, AllSimpleWeapons.size() - 1)], 1} });
+					addEquipment({ {"leather armor", 1}, {"dagger", 2}, {AllSimpleWeapons[Random::Index(0, AllSimpleWeapons.size() - 1)], 1} });
 				}
 				else m_GoldPieces = 10 * Random::IntSum(1, 4, 4);
 			}
@@ -561,17 +561,17 @@ namespace dnd {
 
 		// Background
 		{
-			m_Background = Backgrounds[Random::Int(0, Backgrounds.size() - 1)];
+			m_Background = Backgrounds[Random::Index(0, Backgrounds.size() - 1)];
 
 			// Personality Traits
 			// Generate two unique random numbers to ensure personality traits are different
 			std::vector<std::string> personalityList = PersonalityTraits.at(m_Background);
-			int first = Random::Int(0, personalityList.size() - 1);
-			int second = Random::Int(0, personalityList.size() - 1);
+			size_t first = Random::Index(0, personalityList.size() - 1);
+			size_t second = Random::Index(0, personalityList.size() - 1);
 
 			// Ensure two unique traits are chosen
 			while (second == first)
-				second = Random::Int(0, personalityList.size() - 1);
+				second = Random::Index(0, personalityList.size() - 1);
 
 			m_PersonalityTraits = personalityList[first] + " " + personalityList[second];
 
@@ -582,7 +582,7 @@ namespace dnd {
 
 			while (m_Ideals == "")
 			{
-				int index = Random::Int(0, idealsList.size() - 1);
+				size_t index = Random::Index(0, idealsList.size() - 1);
 
 				if (idealsList[index].first == axis1 || idealsList[index].first == axis2 || idealsList[index].first == "Any")
 					m_Ideals = idealsList[index].second;
@@ -596,7 +596,7 @@ namespace dnd {
 
 			// Background feats
 			// Some backgrounds offer variant feats, but a character may only choose one feat from a background.
-			int index = Random::Int(0, BackgroundFeats.at(m_Background).size() - 1);
+			size_t index = Random::Index(0, BackgroundFeats.at(m_Background).size() - 1);
 			m_FeatsAndTraits.push_back(BackgroundFeats.at(m_Background)[index]);
 
 			std::vector<std::reference_wrapper<Skill>> skills = { m_Acrobatics, m_AnimalHandling, m_Arcana, m_Athletics, m_Deception, m_History, m_Insight,
@@ -606,7 +606,7 @@ namespace dnd {
 			auto addSkillProficiency = [skills](std::reference_wrapper<Skill> skill)
 			{
 				while (skill.get().Proficient)
-					skill = skills[Random::Int(0, skills.size() - 1)];
+					skill = skills[Random::Index(0, skills.size() - 1)];
 
 				skill.get().Proficient = true;
 			};
@@ -626,7 +626,7 @@ namespace dnd {
 				{
 					std::vector<std::pair<std::string, int>> flavorItems = { { "prayer book", 1}, {"prayer wheel", 1 } };
 					addEquipment({ {"holy symbol", 1}, {"stick of incense", 5 }, {"vestments", 1}, {"set of common clothes", 1}, {"pouch", 1} });
-					addEquipment({ flavorItems[Random::Int(0, flavorItems.size() - 1)] }); // Add a random flavor item
+					addEquipment({ flavorItems[Random::Index(0, flavorItems.size() - 1)] }); // Add a random flavor item
 					m_GoldPieces += 15; // From the pouch
 				}
 			}
@@ -644,7 +644,7 @@ namespace dnd {
 					std::vector<std::pair<std::string, int>> flavorItems = { {"toppered bottles filled with colored liquid", 10}, {"set of weighted dice", 1 },
 						{"deck of marked cards", 1 }, {"signet ring of an imaginary duke", 1} };
 					addEquipment({ {"set of fine clothes", 1}, {"disguise kit", 1}, {"pouch", 1} });
-					addEquipment({ flavorItems[Random::Int(0, flavorItems.size() - 1)] });
+					addEquipment({ flavorItems[Random::Index(0, flavorItems.size() - 1)] });
 					m_GoldPieces += 15;
 				}
 			}
@@ -673,8 +673,8 @@ namespace dnd {
 				if (startWithEquipment)
 				{
 					std::vector<std::pair<std::string, int>> flavorItems = { {"love letter from an admirer", 1}, {"lock of hair from an admirer", 1}, {"trinket from an admirer", 1} };
-					addEquipment({ {MusicalInstruments[Random::Int(0, MusicalInstruments.size() - 1)], 1}, {"costume", 1}, {"pouch", 1} });
-					addEquipment({ flavorItems[Random::Int(0, flavorItems.size() - 1)] });
+					addEquipment({ {MusicalInstruments[Random::Index(0, MusicalInstruments.size() - 1)], 1}, {"costume", 1}, {"pouch", 1} });
+					addEquipment({ flavorItems[Random::Index(0, flavorItems.size() - 1)] });
 					m_GoldPieces += 15;
 				}
 
@@ -689,7 +689,7 @@ namespace dnd {
 
 				if (startWithEquipment)
 				{
-					addEquipment({ {"set of " + ArtisanTools[Random::Int(0, ArtisanTools.size() - 1)], 1}, {"shovel", 1}, {"iron pot", 1}, {"set of common clothes", 1}, {"pouch", 1} });
+					addEquipment({ {"set of " + ArtisanTools[Random::Index(0, ArtisanTools.size() - 1)], 1}, {"shovel", 1}, {"iron pot", 1}, {"set of common clothes", 1}, {"pouch", 1} });
 					m_GoldPieces += 10;
 				}
 			}
@@ -703,7 +703,7 @@ namespace dnd {
 
 				if (startWithEquipment)
 				{
-					addEquipment({ {"set of " + ArtisanTools[Random::Int(0, ArtisanTools.size() - 1)], 1}, {"set of traveler's clothes", 1}, {"pouch", 1},
+					addEquipment({ {"set of " + ArtisanTools[Random::Index(0, ArtisanTools.size() - 1)], 1}, {"set of traveler's clothes", 1}, {"pouch", 1},
 						{"letter of introduction from your guild", 1} });
 					m_GoldPieces += 15;
 				}
@@ -721,7 +721,7 @@ namespace dnd {
 					std::vector<std::pair<std::string, int>> flavorItems = { {"scroll case stuffed full of notes from your studies", 1},
 						{"scroll case stuffed full of notes from your prayers", 1} };
 					addEquipment({ {"winter blanket", 1}, {"set of common clothes", 1}, {"herbalism kit", 1} });
-					addEquipment({ flavorItems[Random::Int(0, flavorItems.size() - 1)] });
+					addEquipment({ flavorItems[Random::Index(0, flavorItems.size() - 1)] });
 					m_GoldPieces += 5;
 				}
 			}
@@ -783,7 +783,7 @@ namespace dnd {
 				{
 					std::vector<std::pair<std::string, int>> flavorItems = { {"rabbit's foot", 1}, {"small stone with a hole in the center", 1} };
 					addEquipment({ {"belaying pin (club)", 1}, {"50 feet of silk rope", 1}, {"set of common clothes", 1}, {"pouch", 1} });
-					Random::Int(0, 1) ? addEquipment({flavorItems[Random::Int(0, flavorItems.size() - 1)]}) : addEquipment({ {Trinkets[Random::Int(0, Trinkets.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({flavorItems[Random::Index(0, flavorItems.size() - 1)]}) : addEquipment({ {Trinkets[Random::Index(0, Trinkets.size() - 1)], 1} });
 					m_GoldPieces += 10;
 				}
 			}
@@ -798,7 +798,7 @@ namespace dnd {
 				if (startWithEquipment)
 				{
 					std::vector<std::string> choices = { "dagger", "broken blade", "piece of banner" };
-					std::string flavorText = choices[Random::Int(0, choices.size() - 1)] + " taken as a trophy from a fallen enemy";
+					std::string flavorText = choices[Random::Index(0, choices.size() - 1)] + " taken as a trophy from a fallen enemy";
 					addEquipment({ {"insignia of rank", 1}, {"pouch", 1}, {flavorText, 1} });
 					Random::Int(0, 1) ? addEquipment({ {"set of bone dice", 1} }) : addEquipment({ {"deck of cards", 1} });
 					m_GoldPieces += 10;
@@ -945,7 +945,7 @@ namespace dnd {
 				m_PassiveWisdom += m_ProficiencyBonus;
 
 			// Every character can pick one trinket. Make sure it is unique
-			std::string trinket = Trinkets[Random::Int(0, Trinkets.size() - 1)];
+			std::string trinket = Trinkets[Random::Index(0, Trinkets.size() - 1)];
 			if (!m_Equipment.contains(trinket))
 				addEquipment({ {trinket, 1} });
 		}
@@ -1107,7 +1107,7 @@ namespace dnd {
 			};
 
 			// Some items, especially trinkets, are singular but should not have "a" or "an" added before them
-			std::vector<std::string> singularExceptions = { "armor", "half", "mail", "vestments" };
+			std::vector<std::string> singularExceptions = { "armor", "half", "mail", "two", "vestments" };
 
 			auto foundSingularExceptions = [singularExceptions](std::string str) -> bool
 			{
@@ -1117,8 +1117,8 @@ namespace dnd {
 						return true;
 				}
 
-				// "the and two are also exceptions, but only if they start the string
-				if (str.substr(0, 3) == "the" || str.substr(0, 3) == "two")
+				// "the is also an exception, but only if it starts the string
+				if (str.substr(0, 3) == "the")
 					return true;
 
 				return false;
