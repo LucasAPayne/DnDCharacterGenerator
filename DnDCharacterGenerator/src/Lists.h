@@ -78,11 +78,6 @@ namespace dnd {
 		{"plate armor", 18}
 	};
 
-	const std::vector<std::string> AllSimpleWeapons = {
-		"club", "dagger", "greatclub", "handaxe", "javelin", "light hammer", "mace", "quarterstaff", "sickle", "spear", // Simple melee weapons
-		"light crossbow", "dart", "shortbow", "sling" // simple ranged weapons
-	};
-
 	const std::vector<std::string> SimpleMeleeWeapons = {
 		"club", "dagger", "greatclub", "handaxe", "javelin", "light hammer", "mace", "quarterstaff", "sickle", "spear"
 	};
@@ -90,18 +85,64 @@ namespace dnd {
 	const std::vector<std::string> SimpleRangedWeapons = {
 		"light crossbow", "dart", "shortbow", "sling"
 	};
-
-	const std::vector<std::string> AllMartialWeapons = {
-		"battleaxe", "flail", "glaive", "greataxe", "greatsword", "halberd", "lance", "longsword", "maul", "morningstar", "pike", "rapier", "scimitar", "shortsword", "trident", "war pick", "warhammer", "whip", // martial melee weapons
-		"blowgun", "hand crossbow", "heavy crossbow", "longbow", "net" // martial ranged weapons
-	};
-
 	const std::vector<std::string> MartialMeleeWeapons = {
-		"battleaxe", "flail", "glaive", "greataxe", "greatsword", "halberd", "lance", "longsword", "maul", "morningstar", "pike", "rapier", "scimitar", "shortsword", "trident", "war pick", "warhammer", "whip"
+		"battleaxe", "flail", "glaive", "greataxe", "greatsword", "halberd", "lance", "longsword", "maul", "morningstar", "pike",
+		"rapier", "scimitar", "shortsword", "trident", "war pick", "warhammer", "whip"
 	};
 
 	const std::vector<std::string> MartialRangedWeapons = {
 		"blowgun", "hand crossbow", "heavy crossbow", "longbow", "net"
+	};
+
+	const std::vector<std::string> AllSimpleWeapons = { 
+		"club", "dagger", "greatclub", "handaxe", "javelin", "light hammer", "mace", "quarterstaff", "sickle", "spear",
+		"light crossbow", "dart", "shortbow", "sling" 
+	};
+
+	const std::vector<std::string> AllMartialWeapons = {
+		"battleaxe", "flail", "glaive", "greataxe", "greatsword", "halberd", "lance", "longsword", "maul", "morningstar", "pike", 
+		"rapier", "scimitar", "shortsword", "trident", "war pick", "warhammer", "whip",
+		"blowgun", "hand crossbow", "heavy crossbow", "longbow", "net"
+	};
+
+	const std::unordered_map<std::string, std::string> WeaponAttacks = {
+		{"club", "1d4 bludgeoning"},
+		{"dagger", "1d4 piercing"},
+		{"greatclub", "1d8 bludgeoning"},
+		{"handaxe", "1d6 slashing"},
+		{"javelin", "1d6 piercing"},
+		{"light hammer", "1d4 bludgeoning"},
+		{"mace", "1d6 bludgeoning"},
+		{"quarterstaff", "1d6 bludgeoning"},
+		{"sickle", "1d4 slashing"},
+		{"spear", "1d6 piercing"},
+		{"light crossbow", "1d8 piercing"},
+		{"dart", "1d4 piercing"},
+		{"shortbow", "1d6 piercing"},
+		{"sling", "1d4 bludgeoning"},
+		{"battleaxe", "1d8 slashing"},
+		{"flail", "1d8 bludeoning"},
+		{"glaive", "1d10 slashing"},
+		{"greataxe", "1d12 slashing"},
+		{"greatsword", "2d6 slashing"},
+		{"halberd", "1d10 slashing"},
+		{"lance", "1d12 piercing"},
+		{"longsword", "1d8 slashing"},
+		{"maul", "2d6 bludgeoning"},
+		{"morningstar", "1d8 piercing"},
+		{"pike", "1d10 piercing"},
+		{"rapier", "1d8 piercing"},
+		{"scimitar", "1d6 slashing"},
+		{"shortsword", "1d6 piercing"},
+		{"trident", "1d6 piercing"},
+		{"war pick", "1d8 slashing"},
+		{"warhammer", "1d8 bludgeoning"},
+		{"whip", "1d4 slashing"},
+		{"blowgun", "1 piercing"},
+		{"hand crossbow", "1d6 piercing"},
+		{"heavy crossbow", "1d10 piercing"},
+		{"longbow", "1d8 piercing"},
+		{"net", ""}
 	};
 
 	const std::vector<std::string> ArtisanTools = {
