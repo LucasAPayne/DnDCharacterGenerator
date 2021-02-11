@@ -35,9 +35,12 @@ namespace dnd
 	struct Attack
 	{
 		std::string Name;
-		int AtkBonus;
-		std::string Type;
-		std::string Damage; // string b/c it's based on die roll, ex. "1d8 + 2"
+		int AttackBonus;
+		std::string Damage; // string because it's based on die roll, e.g. "1d8+2 bludgeoning"
+
+		Attack(const std::string& name, int attackBonus, const std::string& damage)
+			: Name(name), AttackBonus(attackBonus), Damage(damage)
+		{}
 	};
 
 	// The dice a character's hit points are based on

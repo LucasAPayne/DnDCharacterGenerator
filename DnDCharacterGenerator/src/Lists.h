@@ -78,11 +78,6 @@ namespace dnd {
 		{"plate armor", 18}
 	};
 
-	const std::vector<std::string> AllSimpleWeapons = {
-		"club", "dagger", "greatclub", "handaxe", "javelin", "light hammer", "mace", "quarterstaff", "sickle", "spear", // Simple melee weapons
-		"light crossbow", "dart", "shortbow", "sling" // simple ranged weapons
-	};
-
 	const std::vector<std::string> SimpleMeleeWeapons = {
 		"club", "dagger", "greatclub", "handaxe", "javelin", "light hammer", "mace", "quarterstaff", "sickle", "spear"
 	};
@@ -90,18 +85,64 @@ namespace dnd {
 	const std::vector<std::string> SimpleRangedWeapons = {
 		"light crossbow", "dart", "shortbow", "sling"
 	};
-
-	const std::vector<std::string> AllMartialWeapons = {
-		"battleaxe", "flail", "glaive", "greataxe", "greatsword", "halberd", "lance", "longsword", "maul", "morningstar", "pike", "rapier", "scimitar", "shortsword", "trident", "war pick", "warhammer", "whip", // martial melee weapons
-		"blowgun", "hand crossbow", "heavy crossbow", "longbow", "net" // martial ranged weapons
-	};
-
 	const std::vector<std::string> MartialMeleeWeapons = {
-		"battleaxe", "flail", "glaive", "greataxe", "greatsword", "halberd", "lance", "longsword", "maul", "morningstar", "pike", "rapier", "scimitar", "shortsword", "trident", "war pick", "warhammer", "whip"
+		"battleaxe", "flail", "glaive", "greataxe", "greatsword", "halberd", "lance", "longsword", "maul", "morningstar", "pike",
+		"rapier", "scimitar", "shortsword", "trident", "war pick", "warhammer", "whip"
 	};
 
 	const std::vector<std::string> MartialRangedWeapons = {
 		"blowgun", "hand crossbow", "heavy crossbow", "longbow", "net"
+	};
+
+	const std::vector<std::string> AllSimpleWeapons = { 
+		"club", "dagger", "greatclub", "handaxe", "javelin", "light hammer", "mace", "quarterstaff", "sickle", "spear",
+		"light crossbow", "dart", "shortbow", "sling" 
+	};
+
+	const std::vector<std::string> AllMartialWeapons = {
+		"battleaxe", "flail", "glaive", "greataxe", "greatsword", "halberd", "lance", "longsword", "maul", "morningstar", "pike", 
+		"rapier", "scimitar", "shortsword", "trident", "war pick", "warhammer", "whip",
+		"blowgun", "hand crossbow", "heavy crossbow", "longbow", "net"
+	};
+
+	const std::unordered_map<std::string, std::string> WeaponAttacks = {
+		{"club", "1d4 bludgeoning"},
+		{"dagger", "1d4 piercing"},
+		{"greatclub", "1d8 bludgeoning"},
+		{"handaxe", "1d6 slashing"},
+		{"javelin", "1d6 piercing"},
+		{"light hammer", "1d4 bludgeoning"},
+		{"mace", "1d6 bludgeoning"},
+		{"quarterstaff", "1d6 bludgeoning"},
+		{"sickle", "1d4 slashing"},
+		{"spear", "1d6 piercing"},
+		{"light crossbow", "1d8 piercing"},
+		{"dart", "1d4 piercing"},
+		{"shortbow", "1d6 piercing"},
+		{"sling", "1d4 bludgeoning"},
+		{"battleaxe", "1d8 slashing"},
+		{"flail", "1d8 bludeoning"},
+		{"glaive", "1d10 slashing"},
+		{"greataxe", "1d12 slashing"},
+		{"greatsword", "2d6 slashing"},
+		{"halberd", "1d10 slashing"},
+		{"lance", "1d12 piercing"},
+		{"longsword", "1d8 slashing"},
+		{"maul", "2d6 bludgeoning"},
+		{"morningstar", "1d8 piercing"},
+		{"pike", "1d10 piercing"},
+		{"rapier", "1d8 piercing"},
+		{"scimitar", "1d6 slashing"},
+		{"shortsword", "1d6 piercing"},
+		{"trident", "1d6 piercing"},
+		{"war pick", "1d8 slashing"},
+		{"warhammer", "1d8 bludgeoning"},
+		{"whip", "1d4 slashing"},
+		{"blowgun", "1 piercing"},
+		{"hand crossbow", "1d6 piercing"},
+		{"heavy crossbow", "1d10 piercing"},
+		{"longbow", "1d8 piercing"},
+		{"net", ""}
 	};
 
 	const std::vector<std::string> ArtisanTools = {
@@ -1214,4 +1255,32 @@ namespace dnd {
 						                      "For example, if you're a 4th-level wizard, you can recover up to two levels worth of spell slots. You can recover either a 2nd-level spell slot or two 1st-level spell slots.")}}
 	};
 
+
+	// ======================================================================================
+	// Spell Lists
+	// ======================================================================================
+
+	// Note: not every class has cantrips
+	const std::unordered_map<std::string, std::vector<std::string>> CantripLists = {
+		{"Bard", {"Blade Ward", "Dancing Lights", "Friends", "Light", "Mage Hand", "Mending", "Message", "Minor Illusion", "Prestidigitation", "True Strike", "Vicious Mockery"}},
+		{"Cleric", {"Guidance", "Light", "Mending", "Resistance", "Sacred Flame", "Spare the Dying", "Thaumaturgy"}},
+		{"Druid", {"Druidcraft", "Guidance", "Mending", "Poison Spray", "Produce Flame", "Resistance", "Shillelagh", "Thorn Whip"}},
+		{"Sorcerer", {"Acid Splash", "Blade Ward", "Chill Touch", "Dancing Lights", "Fire Bolt", "Friends", "Light", "Mage Hand", "Mending", "Message", "Minor Illusion", "Poison Spray", "Prestidigitation", "Ray of Frost", "Shocking Grasp", "True Strike"}},
+		{"Warlock", {"Blade Ward", "Chill Touch", "Eldritch Blast", "Friends", "Mage Hand", "Minor Illusion", "Poison Spray", "Prestidigitation", "True Strike"}},
+		{"Wizard", {"Acid Splash", "Blade Ward", "Chill Touch", "Dancing Lights", "Fire Bolt", "Friends", "Light", "Mage Hand", "Mending", "Message", "Minor Illusion", "Poison Spray", "Prestidigitation", "Ray of Frost", "Shocking Grasp", "True Strike"}}
+	};
+	
+	// Note: Only some classes have spellcasting ability
+	// Note: Paladins and rangers do not learn spells until they reach level 2
+	// TODO: Add spells spells higher than 1st-level and separate the spells for each class by level
+	const std::unordered_map<std::string, std::vector<std::string>> SpellLists = {
+		{"Bard", {"Animal Friendship", "Bane", "Charm Person", "Comprehend Languages", "Cure Wounds", "Detect Magic", "Disguise Self", "Dissonant Whispers", "Faerie Fire", "Feather Fall", "Healing Word", "Heroism", "Identify", "Illusory Script", "Longstrider", "Silent Image", "Sleep", "Speak with Animals", "Tahsa's Hideous Laughter", "Thunderwave", "Unseen Servant"}},
+		{"Cleric", {"Bane", "Bless", "Command", "Create or Destroy Water", "Cure Wounds", "Detect Evil and Good", "Detect Magic", "Detect Poison and Disease", "Guiding Bolt", "Healing Word", "Inflict Wounds", "Protection from Evil and Good", "Purify Food and Drink", "Sanctuary", "Shield of Faith"}},
+		{"Druid", {"Animal Friendship", "Charm Person", "Create or Destroy Water", "Cure Wounds", "Detect Magic", "Detect Poison or Disease", "Entangle", "Faeirie Fire", "Fog Cloud", "Goodberry", "Healing Word", "Jump", "Longstrider", "Purify Food and Drink", "Speak with Animals", "Thunderwave"}},
+		{"Paladin", {"Bless", "Command", "Compelled Duel", "Cure Wounds", "Detect Evil and Good", "Detect Magic", "Detect Poison and Disease", "Divine Favor", "Heroism", "Protection from Evil and Good", "Purify Food and Drink", "Searing Smite", "Shield of Faith", "Thunderous Smite", "Wrathful Smite"}},
+		{"Ranger", {"Alarm", "Animal Friendship", "Cure Wounds", "Detect Magic", "Detect Poison and Disease", "Ensnaring Strike", "Fog Cloud", "Goodberry", "Hail of Thorns", "Hunter's Mark", "Jump", "Longstrider", "Speak with Animals"}},
+		{"Sorcerer", {"Burning Hands", "Charm Person", "Chromatic Orb", "Color Spray", "Comprehend Languages", "Detect Magic", "Disguise Self", "Expeditious Retreat", "False Life", "Feather Fall", "Fog Cloud", "Jump", "Mage Armor", "Magic Missile", "Ray of Sickness", "Shield", "Silent Image", "Sleep", "Thunderwave", "Witch Bolt"}},
+		{"Warlock", {"Armor of Agathys", "Arms of Hadar", "Charm Person", "Comprehend Languages", "Expeditious Retreat", "Hellish Rebuke", "Hex", "Illusory Script", "Protection from Evil and Good", "Unseen Servant", "Witch Bolt"}},
+		{"Wizard", {"Alarm", "Burning Hands", "Charm Person", "Chromatic Orb", "Color Spray", "Comprehend Languages", "Detect Magic", "Disguise Self", "Expeditious Retreat", "False Life", "Feather Fall", "Find Familiar", "Fog Cloud", "Grease", "Identify", "Illusory Script", "Jump", "Longstrider", "Mage Armor", "Magic Missile", "Protection from Evil and Good", "Ray of Sickness", "Shield", "Silent Image", "Sleep", "Tasha's Hideous Laughter", "Tenser's Floating Disk", "Thunderwave", "Unseen Servant", "Witch Bolt"}}
+	};
 }

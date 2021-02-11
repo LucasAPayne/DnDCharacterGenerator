@@ -102,6 +102,13 @@ namespace dnd
 		HitDice m_HitDice;
 		DeathSaves m_DeathSaves;
 		std::vector<Attack> m_Attacks;
-		std::vector<Trait> m_SpellcastingTraits;
+
+		// Spellcasting
+		int m_CantripsKnown = 0;
+		int m_SpellsKnown = 0;
+		int m_SpellSlots = 0;
+		int m_SpellsPrepared = 0;
+		std::set<std::string> m_Cantrips;
+		std::set<std::string> m_Spells;
 	};
 }
