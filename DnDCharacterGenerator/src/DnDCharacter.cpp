@@ -308,6 +308,11 @@ namespace dnd {
 
 				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Bard").begin(), ClassFeats.at("Bard").end());
 
+				// TODO: These numbers will be based on level in the future
+				m_CantripsKnown = 2;
+				m_SpellsKnown = 4;
+				m_SpellSlots = 2;
+
 				if (startWithEquipment)
 				{
 					int choice = Random::Int(0, 2);
@@ -332,6 +337,10 @@ namespace dnd {
 
 				// Clerics have a set trait at index 0
 				m_FeatsAndTraits.push_back(ClassFeats.at(m_Class)[0]);
+
+				m_CantripsKnown = 3;
+				m_SpellSlots = 2;
+				m_SpellsPrepared = std::max(1, m_Level + m_Wisdom.Modifier);
 
 				// Pick a cleric domain, one of the 1st level traits after index 0
 				size_t index = Random::Index(1, ClassFeats.at(m_Class).size() - 1);
@@ -371,6 +380,9 @@ namespace dnd {
 				m_WisdomSave.Proficient = true;
 				chooseSkillProficiencies(2, { m_Arcana, m_AnimalHandling, m_Insight, m_Medicine, m_Nature, m_Perception, m_Religion, m_Survival });
 				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Druid").begin(), ClassFeats.at("Druid").end());
+				m_CantripsKnown = 2;
+				m_SpellSlots = 2;
+				m_SpellsPrepared = std::max(1, m_Level + m_Wisdom.Modifier);
 
 				if (startWithEquipment)
 				{
@@ -400,8 +412,8 @@ namespace dnd {
 				if (startWithEquipment)
 				{
 					Random::Int(0, 1) ? addEquipment({ {"chain mail", 1} }) : addEquipment({ {"leather armor", 1}, {"longbow", 1}, {"arrow", 20} });
-					Random::Int(0, 1) ? addEquipment({ {AllMartialWeapons[Random::Index(0, AllMartialWeapons.size() - 1)], 1}, {"shield", 1} }) :
-						addEquipment({ {AllMartialWeapons[Random::Index(0, AllMartialWeapons.size() - 1)], 1}, {AllMartialWeapons[Random::Index(0, AllMartialWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {AllMartialWeapons[Random::Index(0, AllMartialWeapons.size() - 1)], 1}, {"shield", 1} })
+						: addEquipment({ {AllMartialWeapons[Random::Index(0, AllMartialWeapons.size() - 1)], 1}, {AllMartialWeapons[Random::Index(0, AllMartialWeapons.size() - 1)], 1} });
 					Random::Int(0, 1) ? addEquipment({ {"light crossbow", 1}, {"bolt", 20} }) : addEquipment({ {"handaxe", 2} });
 					Random::Int(0, 1) ? addEquipment({ {"dungeoneer's pack", 1} }) : addEquipment({ {"explorer's pack", 1} });
 				}
@@ -414,15 +426,13 @@ namespace dnd {
 				m_WeaponProficiencies.insert(AllSimpleWeapons.begin(), AllSimpleWeapons.end());
 				m_WeaponProficiencies.insert("shortsword");
 				// Choose one type of artisan's tools or musical instrument
-				if (Random::Int(0, 1) == 0)
-					m_ToolProficiencies.insert(ArtisanTools[Random::Index(0, ArtisanTools.size() - 1)]);
-				else
-					m_ToolProficiencies.insert(MusicalInstruments[Random::Index(0, MusicalInstruments.size() - 1)]);
+				Random::Int(0, 1) ? m_ToolProficiencies.insert(ArtisanTools[Random::Index(0, ArtisanTools.size() - 1)]) 
+					: m_ToolProficiencies.insert(MusicalInstruments[Random::Index(0, MusicalInstruments.size() - 1)]);
 
 				m_StrengthSave.Proficient = true;
 				m_DexteritySave.Proficient = true;
-				chooseSkillProficiencies(2, { m_Acrobatics, m_Athletics, m_History, m_Insight, m_Religion, m_Stealth }); \
-					m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Monk").begin(), ClassFeats.at("Monk").end());
+				chooseSkillProficiencies(2, { m_Acrobatics, m_Athletics, m_History, m_Insight, m_Religion, m_Stealth });
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Monk").begin(), ClassFeats.at("Monk").end());
 
 				if (startWithEquipment)
 				{
@@ -445,8 +455,8 @@ namespace dnd {
 
 				if (startWithEquipment)
 				{
-					Random::Int(0, 1) ? addEquipment({ {AllMartialWeapons[Random::Index(0, AllMartialWeapons.size() - 1)], 1}, {"shield", 1} }) :
-						addEquipment({ {AllMartialWeapons[Random::Index(0, AllMartialWeapons.size() - 1)], 1}, { AllMartialWeapons[Random::Index(0, AllMartialWeapons.size() - 1)], 1 } });
+					Random::Int(0, 1) ? addEquipment({ {AllMartialWeapons[Random::Index(0, AllMartialWeapons.size() - 1)], 1}, {"shield", 1} }) 
+						: addEquipment({ {AllMartialWeapons[Random::Index(0, AllMartialWeapons.size() - 1)], 1}, { AllMartialWeapons[Random::Index(0, AllMartialWeapons.size() - 1)], 1 } });
 					Random::Int(0, 1) ? addEquipment({ {"javeline", 5} }) : addEquipment({ {SimpleMeleeWeapons[Random::Index(0, SimpleMeleeWeapons.size() - 1)], 1} });
 					Random::Int(0, 1) ? addEquipment({ {"priest's pack", 1} }) : addEquipment({ {"explorer's pack", 1} });
 					addEquipment({ {"chain mail", 1}, {"holy symbol", 1} });
@@ -468,8 +478,8 @@ namespace dnd {
 				if (startWithEquipment)
 				{
 					Random::Int(0, 1) ? addEquipment({ {"scale mail", 1} }) : addEquipment({ {"leather armor", 1} });
-					Random::Int(0, 1) ? addEquipment({ {"shortsword", 2} }) :
-						addEquipment({ {SimpleMeleeWeapons[Random::Index(0, SimpleMeleeWeapons.size() - 1)], 1}, {SimpleMeleeWeapons[Random::Index(0, SimpleMeleeWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {"shortsword", 2} }) 
+						: addEquipment({ {SimpleMeleeWeapons[Random::Index(0, SimpleMeleeWeapons.size() - 1)], 1}, {SimpleMeleeWeapons[Random::Index(0, SimpleMeleeWeapons.size() - 1)], 1} });
 					Random::Int(0, 1) ? addEquipment({ {"dungeoneer's pack", 1} }) : addEquipment({ {"explorer's pack", 1} });
 					addEquipment({ {"longbow", 1}, {"arrow", 20} });
 				}
@@ -510,6 +520,9 @@ namespace dnd {
 				m_CharismaSave.Proficient = true;
 				chooseSkillProficiencies(2, { m_Arcana, m_Deception, m_Insight, m_Intimidation, m_Persuasion, m_Religion });
 				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Sorcerer").begin(), ClassFeats.at("Sorcerer").end());
+				m_CantripsKnown = 4;
+				m_SpellsKnown = 2;
+				m_SpellSlots = 2;
 
 				if (startWithEquipment)
 				{
@@ -529,6 +542,9 @@ namespace dnd {
 				m_CharismaSave.Proficient = true;
 				chooseSkillProficiencies(2, { m_Arcana, m_Deception, m_History, m_Intimidation, m_Investigation, m_Nature, m_Religion });
 				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Warlock").begin(), ClassFeats.at("Warlock").end());
+				m_CantripsKnown = 2;
+				m_SpellsKnown = 2;
+				m_SpellSlots = 1;
 
 				if (startWithEquipment)
 				{
@@ -547,6 +563,10 @@ namespace dnd {
 				m_WisdomSave.Proficient = true;
 				chooseSkillProficiencies(2, { m_Arcana, m_History, m_Insight, m_Investigation, m_Medicine, m_Religion });
 				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Wizard").begin(), ClassFeats.at("Wizard").end());
+				m_CantripsKnown = 3;
+				m_SpellSlots = 2;
+				m_SpellsPrepared = std::max(1, m_Level + m_Intelligence.Modifier);
+
 
 				if (startWithEquipment)
 				{
@@ -556,6 +576,30 @@ namespace dnd {
 					addEquipment({ {"spellbook", 1} });
 				}
 				else m_GoldPieces = 10 * Random::IntSum(1, 4, 4);
+			}
+
+			// Determine spells and cantrips by picking random cantrips and spells from the class's spell list
+			if (m_CantripsKnown > 0)
+			{
+				for (int i = 0; i < m_CantripsKnown; i++)
+				{
+					std::string cantrip = CantripLists.at(m_Class)[Random::Index(0, CantripLists.at(m_Class).size() - 1)];
+					while (m_Cantrips.contains(cantrip))
+						cantrip = CantripLists.at(m_Class)[Random::Index(0, CantripLists.at(m_Class).size() - 1)];
+
+					m_Cantrips.insert(cantrip);
+				}
+			}
+			if (m_SpellsKnown > 0)
+			{
+				for (int i = 0; i < m_SpellsKnown; i++)
+				{
+					std::string spell = SpellLists.at(m_Class)[Random::Index(0, SpellLists.at(m_Class).size() - 1)];
+					while (m_Spells.contains(spell))
+						spell = SpellLists.at(m_Class)[Random::Index(0, SpellLists.at(m_Class).size() - 1)];
+
+					m_Spells.insert(spell);
+				}
 			}
 		}
 
@@ -911,21 +955,23 @@ namespace dnd {
 					}
 
 					// If the character is proficient with a weapon, they add their proficiency bonus to their attack bonus
-
 					if (m_WeaponProficiencies.contains(it.first))
 						attackBonus += m_ProficiencyBonus;
 
 					// Add to the damage whichever ability modifier applied to the attack bonus
-					size_t pos = damage.find_first_of(' ');
-					std::string str;
-					if (abilityModifier > 0)
-						str = "+" + std::to_string(abilityModifier);
-					else if (abilityModifier < 0)
-						str = std::to_string(abilityModifier);
+					if (damage.length() > 0)
+					{
+						size_t pos = damage.find_first_of(' ');
+						std::string str;
+						if (abilityModifier > 0)
+							str = " + " + std::to_string(abilityModifier);
+						else if (abilityModifier < 0)
+							str = " - " + std::to_string(std::abs(abilityModifier));
 
-					damage.insert(pos, str);
+						damage.insert(pos, str);
 
-					m_Attacks.push_back(Attack(it.first, attackBonus, damage));
+						m_Attacks.push_back(Attack(it.first, attackBonus, damage));
+					}
 				}
 			}
 		}
@@ -1199,6 +1245,63 @@ namespace dnd {
 		}
 		std::cout << "\n";
 
+		if (CantripLists.contains(m_Class))
+		{
+			std::cout << "Cantrips: ";
+			for (const auto& it : m_Cantrips)
+			{
+				std::cout << it;
+				if (it != *m_Cantrips.rbegin())
+					std::cout << ", ";
+			}
+			std::cout << "\n\n";
+		}
+
+		if (SpellLists.contains(m_Class))
+			std::cout << "Spell Slots. You have " << m_SpellSlots << " 1st-level spell slots you can use to cast your spells.\n\n";
+
+		if (m_Class == "Bard" || m_Class == "Sorcerer")
+		{
+			std::cout << "Spells Known: ";
+			for (const auto& it : m_Spells)
+			{
+				std::cout << it;
+				if (it != *m_Spells.rbegin())
+					std::cout << ", ";
+			}
+			std::cout << "\n\n";
+		}
+
+		if (m_Class == "Cleric" || m_Class == "Druid")
+		{
+			std::cout << "Prepared Spells. You prepare " << m_SpellsPrepared << " 1st-level spells to make them available to you to cast, choosing from the "
+				<< m_Class << " spell list in the rulebook.\n\n";
+		}
+		else if (m_Class == "Wizard")
+		{
+			std::cout << "Prepared Spells. You prepare " << m_SpellsPrepared
+				<< " 1st-level spells to make them available to you to cast, choosing from the spells in your spellbook.\n\n";
+			std::set<std::string> spellbook;
+			for (int i = 0; i < 6; i++)
+			{
+				std::string spell = SpellLists.at("Wizard")[Random::Index(0, SpellLists.at("Wizard").size() - 1)];
+				while (spellbook.contains(spell))
+					spell = SpellLists.at("Wizard")[Random::Index(0, SpellLists.at("Wizard").size() - 1)];
+
+				spellbook.insert(spell);
+			}
+
+			std::cout << "Spellbook. You have a spellbook containing these 1st-level spells: ";
+			for (const auto& it : spellbook)
+			{
+				if (it != *spellbook.rbegin())
+					std::cout << it << ", ";
+				else
+					std::cout << " and " << it << ".";
+			}
+			std::cout << "\n\n";
+		}
+
 		std::cout << "=================\n";
 		std::cout << "Features & Traits\n";
 		std::cout << "=================\n";
@@ -1266,6 +1369,6 @@ namespace dnd {
 		std::cout << "SP: " << m_SilverPieces   << "\n";
 		std::cout << "EP: " << m_ElectrumPieces << "\n";
 		std::cout << "GP: " << m_GoldPieces     << "\n";
-		std::cout << "PP: " << m_PlatinumPieces << "\n";
+		std::cout << "PP: " << m_PlatinumPieces << "\n\n";
 	}
 }
