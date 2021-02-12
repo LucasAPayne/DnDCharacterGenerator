@@ -18,7 +18,8 @@ namespace dnd {
 	};
 
 	const std::vector<std::string> Races = {
-		"Hill Dwarf", "Mountain Dwarf", "High Elf", "Wood Elf", "Dark Elf (Drow)", "Lightfoot Halfling", "Stout Halfling", "Human", "Dragonborn"
+		"Hill Dwarf", "Mountain Dwarf", "High Elf", "Wood Elf", "Dark Elf (Drow)", "Lightfoot Halfling", "Stout Halfling", "Human", "Dragonborn",
+		"Forest Gnome", "Rock Gnome"
 	};
 
 	const std::vector<std::string> Ethnicities = {
@@ -303,6 +304,10 @@ namespace dnd {
 		{"Dragonborn", {
 			"Clethtinihiallor", "Daardendrain", "Delmirev", "Drachedandion", "Fenkenkabradon", "Kepeshkmolik", "Kerrhylon", "Kimbatuul", "Linxakasendalor", 
 			"Myastan", "Nemmonis", "Norixius", "Ophinshtalajiir", "Prexijandilin", "Shestendeliath", "Turnuroth", "Verthisathurgiesh", "Yarjerit"
+		}},
+
+		{"Gnome", {
+			"Beren", "Daergel", "Folkor", "Garrick", "Nackle", "Murnig", "Ningel", "Raulnor", "Scheppen", "Timbers", "Turen"
 		}}
 	};
 
@@ -327,6 +332,11 @@ namespace dnd {
 		{"Dragonborn", {
 			"Arjhan", "Balasar", "Bharash", "Donaar", "Ghesh", "Heskan", "Kriv", "Medrash", "Mehen", "Nadarr", "Pandjed", 
 			"Patrin", "Rhogar", "Shamash", "Shedinn", "Tarhun", "Torinn"
+		}},
+
+		{"Gnome", {
+			"Alston", "Alvyn", "Boddynock", "Brocc", "Burgell", "Dimble", "Eldon", "Erky", "Fonkin", "Frug", "Gerbo", "Gimble", 
+			"Glim", "Jebeddo", "Kellen", "Namfoodle", "Orryn", "Roondar", "Seebo", "Sindri", "Warryn", "Wrenn", "Zook"
 		}}
 	};
 
@@ -351,6 +361,11 @@ namespace dnd {
 		{"Dragonborn", {
 			"Akra", "Biri", "Daar", "Farideh", "Harann", "Halivar", "Jheri", "Kava", "Korinn", "Mishann", "Nala", "Perra", 
 			"Raiann", "Sora", "Surina", "Thava", "Uadjit"
+		}},
+
+		{"Gnome", {
+			"Bimpnottin", "Breena", "Caramip", "Carlin", "Donella", "Duvamil", "Ella", "Ellyjobell", "Ellywick", "Lilli", 
+			"Loopmottin", "Lorilla", "Mardnab", "Nissa", "Nyx", "Oda", "Orla", "Roywyn", "Shamil", "Tana", "Waywocket", "Zanna"
 		}}
 	};
 
@@ -1125,6 +1140,10 @@ namespace dnd {
 			Trait("Trance.", "Elves don't need to sleep. Instead, they meditate deeply, remaining semiconscious, for 4 hours a day. (The Common word for such meditation is \"Trance.\") While meditating, you can dream after a fashion; such dreams are actually mental exercises that have become reflexive through years of practice. After resting in this way, you gain the same benefit that a human does from 8 hours of sleep.")
 		}},
 
+		{"High Elf", {
+			Trait("Cantrip.", "You know one cantrip of your choice from the wizard spell list. Intelligence is your spellcasting ability for it.")
+		}},
+
 		{"Wood Elf", {
 			Trait("Mask of the Wild.", "You can attempt to hide even when you are only lightly obscured by foliage, heavy rain, falling snow, mist, and other natural phenomena.")
 		}},
@@ -1155,7 +1174,23 @@ namespace dnd {
 			                        "When you use your breath weapon, each creature in the area of the exhalation must take a saving throw, the type of which is determined by your draconic ancestry. The DC for this saving throw equals 8 + your Constitution modifier + your proficiency bonus. A creature takes 2d6 damage on a failed save, and half as much damage on a successful one. The damage increases to 3d6 at 6th level, 4d6 at 11th level, and 5d6 at 16th level.\n"
 			                        "After you use your breath weapon, you can't use it again until you complete a short rest or a long rest."),
 			Trait("Damage Resistance.", "You have resistance to the damage type associated with your draconic ancestry.")
-}}
+		}},
+
+		{"Gnome", {
+			Trait("Darkvision.", "Accustomed to life underground, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and and in darkness as if it were dim light. You can't discern color in the darkness, only shades of gray."),
+			Trait("Gnome Cunning.", "You have advantage on all Intelligence, Wisdom, and Charisma saving throws against magic.")
+		}},
+
+		{"Forest Gnome", {
+			Trait("Natural Illusionist.", "You know the minor illusion cantrip. Intelligence is your spellcasting ability for it."),
+			Trait("Speak with Small Beasts.", "Through sounds and gestures, you can communicate simple ideas with Small or smaller beasts. Forest gnomes love animals and often keep squirells, badgers, rabbits, moles, woodpeckers, and other creatures as beloved pets")
+		}},
+
+		{"Rock Gnome", {
+			Trait("Artificer's Lore.", "Whenever you make an Intelligence (History) check related to magic items, alchemical objects, or technological devices, you can add twice your proficiency bonus, instead of any proficiency bonus you normally apply"),
+			Trait("Tinker.", "You have proficiency with artisan's tools (tinker's tools). Using those tools, you can spend 1 hour and 10 gp worth of materials to construct a Tiny clockwork device (AC 5, 1 hp). The device ceases to function after 24 hours (unless you spend 1 hour repairing it to keep the device functioning), or when you use your action to dismantle it; at that time, you can reclaim the materials used to create it. You can have up to three such devices active at a time.\n"
+			                 "When you create a device, choose a Clockwork Toy, a Fire Starter, or a Music Box. Descriptions of these devices are found in the rulebook.")
+		}}
 	};
 
 	const std::unordered_map<std::string, const std::vector<Trait>> BackgroundFeats = {

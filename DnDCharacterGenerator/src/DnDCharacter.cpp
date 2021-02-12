@@ -130,6 +130,8 @@ namespace dnd {
 				m_MajorRace = "Elf";
 			else if (m_Race == "Lightfoot Halfling" || m_Race == "Stout Halfling")
 				m_MajorRace = "Halfling";
+			else if (m_Race == "Forest Gnome" || m_Race == "Rock Gnome")
+				m_MajorRace = "Gnome";
 			else
 				m_MajorRace = m_Race;
 
@@ -199,6 +201,8 @@ namespace dnd {
 					// Choose one additional language
 					m_Languages.insert(Languages[Random::Index(1, Languages.size() - 1)]); // 1 is the minimum number to avoid picking Elvish twice
 
+					m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("High Elf").begin(), RacialFeats.at("High Elf").end());
+
 					// High elves get a cantrip from the wizard spell list
 					m_Cantrips.insert(CantripLists.at("Wizard")[Random::Index(0, CantripLists.at("Wizard").size() - 1)]);
 				}
@@ -235,7 +239,7 @@ namespace dnd {
 					m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Stout Halfling").begin(), RacialFeats.at("Stout Halfling").end());
 				}
 			}
-			else if (m_Race == "Human")
+			else if (m_MajorRace == "Human")
 			{
 				m_Speed = 30;
 				m_Strength.Score++;
@@ -248,13 +252,33 @@ namespace dnd {
 				m_Languages.insert(Languages[Random::Index(0, Languages.size() - 1)]);
 				// TODO: Add optional variant human trait
 			}
-			else if (m_Race == "Dragonborn")
+			else if (m_MajorRace == "Dragonborn")
 			{
 				m_Speed = 30;
 				m_Strength.Score += 2;
 				m_Charisma.Score++;
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Dragonborn").begin(), RacialFeats.at("Dragonborn").end());
 				m_Languages.insert("Draconic");
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Dragonborn").begin(), RacialFeats.at("Dragonborn").end());
+			}
+			else if (m_MajorRace == "Gnome")
+			{
+				m_Speed = 25;
+				m_Intelligence.Score += 2;
+				m_Languages.insert("Gnomish");
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Gnome").begin(), RacialFeats.at("Gnome").end());
+
+				if (m_Race == "Forest Gnome")
+				{
+					m_Dexterity.Score++;
+					m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Forest Gnome").begin(), RacialFeats.at("Forest Gnome").end());
+					m_Cantrips.insert("Minor Illusion");
+				}
+				else if (m_Race == "Rock Gnome")
+				{
+					m_Constitution.Score++;
+					m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Rock Gnome").begin(), RacialFeats.at("Rock Gnome").end());
+					m_ToolProficiencies.insert({ "tinker's tools" });
+				}
 			}
 		}
 
@@ -1258,16 +1282,19 @@ namespace dnd {
 		std::cout << "======================\n";
 		std::cout << "Attacks & Spellcasting\n";
 		std::cout << "======================\n";
-		for (size_t i = 0; i < m_Attacks.size(); i++)
+		if (!m_Attacks.empty())
 		{
-			if (m_Attacks[i].AttackBonus >= 0)
-				std::cout << m_Attacks[i].Name << "  +" << m_Attacks[i].AttackBonus << "  " << m_Attacks[i].Damage << "\n";
-			else
-				std::cout << m_Attacks[i].Name << "  " << m_Attacks[i].AttackBonus << "  " << m_Attacks[i].Damage << "\n";
+			for (size_t i = 0; i < m_Attacks.size(); i++)
+			{
+				if (m_Attacks[i].AttackBonus >= 0)
+					std::cout << m_Attacks[i].Name << "  +" << m_Attacks[i].AttackBonus << "  " << m_Attacks[i].Damage << "\n";
+				else
+					std::cout << m_Attacks[i].Name << "  " << m_Attacks[i].AttackBonus << "  " << m_Attacks[i].Damage << "\n";
+			}
+			std::cout << "\n";
 		}
-		std::cout << "\n";
 
-		if (CantripLists.contains(m_Class))
+		if (!m_Cantrips.empty())
 		{
 			std::cout << "Cantrips: ";
 			for (const auto& it : m_Cantrips)
@@ -1279,7 +1306,7 @@ namespace dnd {
 			std::cout << "\n\n";
 		}
 
-		if (SpellLists.contains(m_Class))
+		if (!m_Spells.empty())
 			std::cout << "Spell Slots. You have " << m_SpellSlots << " 1st-level spell slots you can use to cast your spells.\n\n";
 
 		if (m_Class == "Bard" || m_Class == "Sorcerer")
