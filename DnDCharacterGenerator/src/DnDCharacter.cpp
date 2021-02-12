@@ -111,8 +111,8 @@ namespace dnd {
 			m_Wisdom.Modifier = abilities[4].Modifier;
 			m_Charisma.Modifier = abilities[5].Modifier;
 
-			m_Initiative = m_Dexterity.Modifier;
 			// TODO: Add other modifiers
+			m_Initiative = m_Dexterity.Modifier;
 		}
 
 		// Race
@@ -124,14 +124,14 @@ namespace dnd {
 				m_Ethnicity = Ethnicities[Random::Index(0, Ethnicities.size() - 1)];
 
 			// Find the character's major race
-			if (m_Race == "Dwarf" || m_Race == "Elf" || m_Race == "Halfling" || m_Race == "Human")
-				m_MajorRace = m_Race;
-			else if (m_Race == "Mountain Dwarf" || m_Race == "Hill Dwarf")
+			if (m_Race == "Mountain Dwarf" || m_Race == "Hill Dwarf")
 				m_MajorRace = "Dwarf";
 			else if (m_Race == "High Elf" || m_Race == "Wood Elf" || m_Race == "Dark Elf (Drow)")
 				m_MajorRace = "Elf";
 			else if (m_Race == "Lightfoot Halfling" || m_Race == "Stout Halfling")
 				m_MajorRace = "Halfling";
+			else
+				m_MajorRace = m_Race;
 
 			// Generate name
 			if (m_Race == "Human")
@@ -193,13 +193,14 @@ namespace dnd {
 
 				if (m_Race == "High Elf")
 				{
-					// TODO: High elves get a cantrip from the wizard spell list
-
 					m_Intelligence.Score++;
 					m_WeaponProficiencies.insert({ "longsword", "shortsword", "shortbow", "longbow" });
 
 					// Choose one additional language
 					m_Languages.insert(Languages[Random::Index(1, Languages.size() - 1)]); // 1 is the minimum number to avoid picking Elvish twice
+
+					// High elves get a cantrip from the wizard spell list
+					m_Cantrips.insert(CantripLists.at("Wizard")[Random::Index(0, CantripLists.at("Wizard").size() - 1)]);
 				}
 				else if (m_Race == "Wood Elf")
 				{
@@ -246,6 +247,14 @@ namespace dnd {
 
 				m_Languages.insert(Languages[Random::Index(0, Languages.size() - 1)]);
 				// TODO: Add optional variant human trait
+			}
+			else if (m_Race == "Dragonborn")
+			{
+				m_Speed = 30;
+				m_Strength.Score += 2;
+				m_Charisma.Score++;
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Dragonborn").begin(), RacialFeats.at("Dragonborn").end());
+				m_Languages.insert("Draconic");
 			}
 		}
 
@@ -974,6 +983,15 @@ namespace dnd {
 					}
 				}
 			}
+			if (m_Race == "Dragonborn")
+			{
+				std::vector<std::string> dragonTypes = { "black", "blue", "brass", "bronze", "copper", "gold", "green", "red", "silver", "white" };
+				std::string type = dragonTypes[Random::Index(0, dragonTypes.size() - 1)];
+				std::string attackName = "breath weapon (" + type + ")";
+				// TODO: Breath weapon damage increases at certain levels
+				std::string damage = "2d6 " + BreathWeaponTypes.at(type);
+				m_Attacks.push_back(Attack(attackName, 0, damage));
+			}
 		}
 
 		// Determine armor class by finding the armor in the character's equipment that has the highest armor class
@@ -1099,7 +1117,11 @@ namespace dnd {
 	{
 		std::cout << std::boolalpha;
 
-		std::cout << "Name: "   << m_FirstName << " " << m_Surname << "\n";
+		if (m_Race == "Dragonborn")
+			std::cout << "Name: " << m_Surname << " " << m_FirstName << "\n";
+		else
+			std::cout << "Name: "   << m_FirstName << " " << m_Surname << "\n";
+
 		std::cout << "Gender: " << m_Gender    << "\n";
 		std::cout << "Race: "   << m_Race      << "\n";
 

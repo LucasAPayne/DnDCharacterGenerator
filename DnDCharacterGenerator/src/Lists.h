@@ -18,7 +18,7 @@ namespace dnd {
 	};
 
 	const std::vector<std::string> Races = {
-		"Hill Dwarf", "Mountain Dwarf", "High Elf", "Wood Elf", "Dark Elf (Drow)", "Lightfoot Halfling", "Stout Halfling", "Human"
+		"Hill Dwarf", "Mountain Dwarf", "High Elf", "Wood Elf", "Dark Elf (Drow)", "Lightfoot Halfling", "Stout Halfling", "Human", "Dragonborn"
 	};
 
 	const std::vector<std::string> Ethnicities = {
@@ -50,7 +50,9 @@ namespace dnd {
 		 NULL, 0, 300, 900, 2700, 6500, 14000, 23000, 34000, 48000, 64000, 85000, 100000, 120000, 140000, 165000, 195000, 225000, 265000, 305000, 355000
 	};
 
+	// ======================================================================================
 	// Equipment
+	// ======================================================================================
 
 	const std::vector<std::string> ArmorTypes = {
 		"light armor", "medium armor", "heavy armor", "shield"
@@ -143,6 +145,20 @@ namespace dnd {
 		{"heavy crossbow", "1d10 piercing"},
 		{"longbow", "1d8 piercing"},
 		{"net", ""}
+	};
+
+	// Map the types of draconic ancestry for dragonborn to the damage type of the breath weapon
+	const std::unordered_map<std::string, std::string> BreathWeaponTypes = {
+		{"black", "acid"},
+		{"blue", "lightning"},
+		{"brass", "fire"},
+		{"bronze", "lightning"},
+		{"copper", "acid"},
+		{"gold", "fire"},
+		{"green", "poison"},
+		{"red", "fire"},
+		{"silver", "cold"},
+		{"white", "cold"}
 	};
 
 	const std::vector<std::string> ArtisanTools = {
@@ -282,6 +298,11 @@ namespace dnd {
 
 		{"Halfling", {
 			"Brushgather", "Goodbarrel", "Greenbottle", "High-hill", "Hilltopple", "Leagallow", "Tealeaf", "Thorngage", "Tosscobble", "Underbough"
+		}},
+
+		{"Dragonborn", {
+			"Clethtinihiallor", "Daardendrain", "Delmirev", "Drachedandion", "Fenkenkabradon", "Kepeshkmolik", "Kerrhylon", "Kimbatuul", "Linxakasendalor", 
+			"Myastan", "Nemmonis", "Norixius", "Ophinshtalajiir", "Prexijandilin", "Shestendeliath", "Turnuroth", "Verthisathurgiesh", "Yarjerit"
 		}}
 	};
 
@@ -301,6 +322,11 @@ namespace dnd {
 		{"Halfling", {
 			"Alton", "Ander", "Cade", "Corrin", "Eldon", "Errich", "Finnan", "Farret", "Lindal", "Lyle",
 			"Merric", "Milo", "Osborn", "Perrin", "Reed", "Roscoe", "Wellby"
+		}},
+
+		{"Dragonborn", {
+			"Arjhan", "Balasar", "Bharash", "Donaar", "Ghesh", "Heskan", "Kriv", "Medrash", "Mehen", "Nadarr", "Pandjed", 
+			"Patrin", "Rhogar", "Shamash", "Shedinn", "Tarhun", "Torinn"
 		}}
 	};
 
@@ -320,6 +346,11 @@ namespace dnd {
 		{"Halfling", {
 			"Andry", "Bree", "Callie", "Cora", "Euphemia", "Jillian", "Kithri", "Lavania", "Lidda", "Meria",
 			"Nedda", "Paela", "Portia", "Seraphina", "Shaena", "Trym", "Vani", "Verna"
+		}},
+
+		{"Dragonborn", {
+			"Akra", "Biri", "Daar", "Farideh", "Harann", "Halivar", "Jheri", "Kava", "Korinn", "Mishann", "Nala", "Perra", 
+			"Raiann", "Sora", "Surina", "Thava", "Uadjit"
 		}}
 	};
 
@@ -1116,7 +1147,15 @@ namespace dnd {
 
 		{"Stout Halfling", {
 			Trait("Stout Resilience.", "You have advantage on saving throws against poison, and you have resistance against poison damage.")
-		}}
+		}},
+
+		{"Dragonborn", {
+			Trait("Draconic Ancestry.", "You have draconic ancestry. Choose one type of dragon from the Draconic Ancestry table in the rulebook. Your breath weapon and damage resistance are determined by the dragon type, as shown in the table."),
+			Trait("Breath Weapon.", "You can use your action to exhale destructive energy. Your draconic ancestry determines the size, shape, and damage type of the exhalation.\n"
+			                        "When you use your breath weapon, each creature in the area of the exhalation must take a saving throw, the type of which is determined by your draconic ancestry. The DC for this saving throw equals 8 + your Constitution modifier + your proficiency bonus. A creature takes 2d6 damage on a failed save, and half as much damage on a successful one. The damage increases to 3d6 at 6th level, 4d6 at 11th level, and 5d6 at 16th level.\n"
+			                        "After you use your breath weapon, you can't use it again until you complete a short rest or a long rest."),
+			Trait("Damage Resistance.", "You have resistance to the damage type associated with your draconic ancestry.")
+}}
 	};
 
 	const std::unordered_map<std::string, const std::vector<Trait>> BackgroundFeats = {
