@@ -19,7 +19,7 @@ namespace dnd {
 
 	const std::vector<std::string> Races = {
 		"Hill Dwarf", "Mountain Dwarf", "High Elf", "Wood Elf", "Dark Elf (Drow)", "Lightfoot Halfling", "Stout Halfling", "Human", "Dragonborn",
-		"Forest Gnome", "Rock Gnome", "Half-Elf"
+		"Forest Gnome", "Rock Gnome", "Half-Elf", "Half-Orc"
 	};
 
 	const std::vector<std::string> Ethnicities = {
@@ -337,6 +337,10 @@ namespace dnd {
 		{"Gnome", {
 			"Alston", "Alvyn", "Boddynock", "Brocc", "Burgell", "Dimble", "Eldon", "Erky", "Fonkin", "Frug", "Gerbo", "Gimble", 
 			"Glim", "Jebeddo", "Kellen", "Namfoodle", "Orryn", "Roondar", "Seebo", "Sindri", "Warryn", "Wrenn", "Zook"
+		}},
+
+		{"Half-Orc", {
+			"Dench", "Feng", "Gell", "Henk", "Holg", "Imsh", "Keth", "Krusk", "Mhurren", "Ront", "Shump", "Thokk"
 		}}
 	};
 
@@ -366,6 +370,10 @@ namespace dnd {
 		{"Gnome", {
 			"Bimpnottin", "Breena", "Caramip", "Carlin", "Donella", "Duvamil", "Ella", "Ellyjobell", "Ellywick", "Lilli", 
 			"Loopmottin", "Lorilla", "Mardnab", "Nissa", "Nyx", "Oda", "Orla", "Roywyn", "Shamil", "Tana", "Waywocket", "Zanna"
+		}},
+
+		{"Half-Orc", {
+			"Baggi", "Emen", "Engong", "Kansif", "Myev", "Neega", "Ovak", "Ownka", "Shautha", "Sutha", "Vola", "Volen", "Yevelda"
 		}}
 	};
 
@@ -1196,6 +1204,13 @@ namespace dnd {
 			Trait("Darkvision.", "Thanks to your elf blood, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light."),
 			Trait("Fey Ancestry.", "You have advantage on saving throws against being charmed, and magic can't put you to sleep."),
 			Trait("Skill Versatiility.", "You gain proficiency in two skills of your choice.")
+		}},
+
+		{"Half-Orc", {
+			Trait("Darkvision.", "Thanks to your orc blood, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light."),
+			Trait("Menacing.", "You gain proficiency in the Intimidation skill."),
+			Trait("Relentless Endurance.", "When you are reduced to 0 hit points but not killed outright, you can drop to 1 hit point instead. You can't use this feature again until you finish a long rest."),
+			Trait("Savage Attacks.", "When you score a critical hit with a melee weapon attack, you can roll one of the weapon's damage dice one additional time and add it to the extra damage of the critical hit.")
 		}}
 	};
 

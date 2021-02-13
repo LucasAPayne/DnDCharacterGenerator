@@ -110,7 +110,7 @@ namespace dnd {
 			m_Race = Races[Random::Index(0, Races.size() - 1)];
 
 			// Humans also have ethnicity (for name)
-			if (m_Race == "Human" || m_Race == "Half-Elf")
+			if (m_Race == "Human" || m_Race == "Half-Elf" || m_Race == "Half-Orc")
 				m_Ethnicity = Ethnicities[Random::Index(0, Ethnicities.size() - 1)];
 
 			// Find the character's major race
@@ -158,6 +158,27 @@ namespace dnd {
 					SetTraitFromDict(m_Surname, HumanSurnames, m_Ethnicity);
 				}
 			}
+			else if (m_Race == "Half-Orc")
+			{
+				// Half-orcs can choose orc names with no surname, or they can choose a human name
+				bool orcName = Random::Int(0, 1);
+				if (orcName)
+				{
+					if (m_Gender == "Male")
+						SetTraitFromDict(m_FirstName, NonHumanMaleNames, "Half-Orc");
+					else if (m_Gender == "Female")
+						SetTraitFromDict(m_FirstName, NonHumanFemaleNames, "Half-Orc");
+				}
+				else
+				{
+					if (m_Gender == "Male")
+						SetTraitFromDict(m_FirstName, HumanMaleNames, m_Ethnicity);
+					else if (m_Gender == "Female")
+						SetTraitFromDict(m_FirstName, HumanFemaleNames, m_Ethnicity);
+
+					SetTraitFromDict(m_Surname, HumanSurnames, m_Ethnicity);
+				}
+			}
 			else
 			{
 				if (m_Gender == "Male")
@@ -172,9 +193,9 @@ namespace dnd {
 			m_Languages.insert("Common");
 
 			// Most races get racial features, and most subraces get additional features
-			if (RacialFeats.find(m_MajorRace) != RacialFeats.end())
+			if (RacialFeats.count(m_MajorRace) > 0)
 				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at(m_MajorRace).begin(), RacialFeats.at(m_MajorRace).end());
-			if (m_MajorRace != m_Race && RacialFeats.find(m_Race) != RacialFeats.end())
+			if (m_MajorRace != m_Race && RacialFeats.count(m_Race) > 0)
 				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at(m_Race).begin(), RacialFeats.at(m_Race).end());
 
 			// Ability score increases, feats, proficiencies, languages
@@ -306,6 +327,14 @@ namespace dnd {
 				// Half-elves can choose any two skills to be proficient in, from their Skill Versatility trait
 				chooseSkillProficiencies(2, { m_Acrobatics, m_AnimalHandling, m_Arcana, m_Athletics, m_Deception, m_History, m_Insight, m_Intimidation,
 					m_Investigation, m_Medicine, m_Nature, m_Perception, m_Performance, m_Persuasion, m_Religion, m_SleightOfHand, m_Stealth, m_Survival });
+			}
+			else if (m_MajorRace == "Half-Orc")
+			{
+				m_Speed = 30;
+				m_Strength.Score += 2;
+				m_Constitution.Score++;
+				m_Intimidation.Proficient = true;
+				m_Languages.insert("Orc");
 			}
 		}
 
