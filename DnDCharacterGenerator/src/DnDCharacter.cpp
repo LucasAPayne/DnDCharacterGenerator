@@ -103,28 +103,6 @@ namespace dnd {
 			m_Intelligence.Score = totals[3];
 			m_Wisdom.Score = totals[4];
 			m_Charisma.Score = totals[5];
-
-			// Ability score modifiers
-			std::vector<Ability> abilities = { m_Strength, m_Dexterity, m_Constitution, m_Intelligence, m_Wisdom, m_Charisma };
-			for (size_t i = 0; i < abilities.size(); ++i)
-			{
-				// Always round down (toward -inf)
-				int temp = abilities[i].Score - 10;
-
-				if (temp >= 0)
-					abilities[i].Modifier = temp / 2;
-				else
-					abilities[i].Modifier = (temp - 1) / 2;
-			}
-			m_Strength.Modifier = abilities[0].Modifier;
-			m_Dexterity.Modifier = abilities[1].Modifier;
-			m_Constitution.Modifier = abilities[2].Modifier;
-			m_Intelligence.Modifier = abilities[3].Modifier;
-			m_Wisdom.Modifier = abilities[4].Modifier;
-			m_Charisma.Modifier = abilities[5].Modifier;
-
-			// TODO: Add other modifiers
-			m_Initiative = m_Dexterity.Modifier;
 		}
 
 		// Race
@@ -193,6 +171,12 @@ namespace dnd {
 			// All characters can speak, read, and write in the Common tongue
 			m_Languages.insert("Common");
 
+			// Most races get racial features, and most subraces get additional features
+			if (RacialFeats.find(m_MajorRace) != RacialFeats.end())
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at(m_MajorRace).begin(), RacialFeats.at(m_MajorRace).end());
+			if (m_MajorRace != m_Race && RacialFeats.find(m_Race) != RacialFeats.end())
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at(m_Race).begin(), RacialFeats.at(m_Race).end());
+
 			// Ability score increases, feats, proficiencies, languages
 			// Subraces also get parent race benefits
 			if (m_MajorRace == "Dwarf")
@@ -200,7 +184,6 @@ namespace dnd {
 				m_Speed = 25;
 				m_Constitution.Score += 2;
 				m_Languages.insert("Dwarvish");
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Dwarf").begin(), RacialFeats.at("Dwarf").end());
 
 				// All dwarves get set weapon proficiencies and can choose one set of tools to be proficient with
 				std::vector<std::string> choices = { "smith's tools", "brewer's supplies", "mason's tools" };
@@ -211,7 +194,6 @@ namespace dnd {
 				{
 					m_Wisdom.Score++;
 					m_MaxHitPoints += m_Level; // From the Dwarven Toughness feat
-					m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Hill Dwarf").begin(), RacialFeats.at("Hill Dwarf").end());
 				}
 
 				else if (m_Race == "Mountain Dwarf")
@@ -226,7 +208,6 @@ namespace dnd {
 				m_Dexterity.Score += 2;
 				m_Perception.Proficient = true;
 				m_Languages.insert("Elvish");
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Elf").begin(), RacialFeats.at("Elf").end());
 
 				if (m_Race == "High Elf")
 				{
@@ -236,8 +217,6 @@ namespace dnd {
 					// Choose one additional language
 					m_Languages.insert(Languages[Random::Index(1, Languages.size() - 1)]); // 1 is the minimum number to avoid picking Elvish twice
 
-					m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("High Elf").begin(), RacialFeats.at("High Elf").end());
-
 					// High elves get a cantrip from the wizard spell list
 					m_Cantrips.insert(CantripLists.at("Wizard")[Random::Index(0, CantripLists.at("Wizard").size() - 1)]);
 				}
@@ -246,13 +225,11 @@ namespace dnd {
 					m_Speed = 35;
 					m_Wisdom.Score++;
 
-					m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Wood Elf").begin(), RacialFeats.at("Wood Elf").end());
 					m_WeaponProficiencies.insert({ "longsword", "shortsword", "shortbow", "longbow" });
 				}
 				else if (m_Race == "Dark Elf (Drow)")
 				{
 					m_Charisma.Score++;
-					m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Dark Elf (Drow)").begin(), RacialFeats.at("Dark Elf (Drow)").end());
 					m_WeaponProficiencies.insert({ "rapier", "shortsword", "hand crossbow" });
 				}
 			}
@@ -261,17 +238,14 @@ namespace dnd {
 				m_Speed = 25;
 				m_Dexterity.Score += 2;
 				m_Languages.insert("Halfling");
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Halfling").begin(), RacialFeats.at("Halfling").end());
 
 				if (m_Race == "Lightfoot Halfling")
 				{
 					m_Charisma.Score++;
-					m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Lightfoot Halfling").begin(), RacialFeats.at("Lightfoot Halfling").end());
 				}
 				else if (m_Race == "Stout Halfling")
 				{
 					m_Constitution.Score++;
-					m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Stout Halfling").begin(), RacialFeats.at("Stout Halfling").end());
 				}
 			}
 			else if (m_MajorRace == "Human")
@@ -293,25 +267,21 @@ namespace dnd {
 				m_Strength.Score += 2;
 				m_Charisma.Score++;
 				m_Languages.insert("Draconic");
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Dragonborn").begin(), RacialFeats.at("Dragonborn").end());
 			}
 			else if (m_MajorRace == "Gnome")
 			{
 				m_Speed = 25;
 				m_Intelligence.Score += 2;
 				m_Languages.insert("Gnomish");
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Gnome").begin(), RacialFeats.at("Gnome").end());
 
 				if (m_Race == "Forest Gnome")
 				{
 					m_Dexterity.Score++;
-					m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Forest Gnome").begin(), RacialFeats.at("Forest Gnome").end());
 					m_Cantrips.insert("Minor Illusion");
 				}
 				else if (m_Race == "Rock Gnome")
 				{
 					m_Constitution.Score++;
-					m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Rock Gnome").begin(), RacialFeats.at("Rock Gnome").end());
 					m_ToolProficiencies.insert({ "tinker's tools" });
 				}
 			}
@@ -332,8 +302,6 @@ namespace dnd {
 				m_Languages.insert("Elvish");
 				// Choose one additional language
 				m_Languages.insert(Languages[Random::Index(1, Languages.size() - 1)]); // 1 is the minimum number to avoid picking Elvish twice
-
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Half-Elf").begin(), RacialFeats.at("Half-Elf").end());
 
 				// Half-elves can choose any two skills to be proficient in, from their Skill Versatility trait
 				chooseSkillProficiencies(2, { m_Acrobatics, m_AnimalHandling, m_Arcana, m_Athletics, m_Deception, m_History, m_Insight, m_Intimidation,
@@ -946,6 +914,27 @@ namespace dnd {
 
 		// Independent of race, class, and background, but need to be processed after
 		{
+			// Ability score modifiers
+			std::vector<Ability> abilities = { m_Strength, m_Dexterity, m_Constitution, m_Intelligence, m_Wisdom, m_Charisma };
+			for (size_t i = 0; i < abilities.size(); ++i)
+			{
+				// Always round down (toward -inf)
+				int temp = abilities[i].Score - 10;
+
+				if (temp >= 0)
+					abilities[i].Modifier = temp / 2;
+				else
+					abilities[i].Modifier = (temp - 1) / 2;
+			}
+			m_Strength.Modifier = abilities[0].Modifier;
+			m_Dexterity.Modifier = abilities[1].Modifier;
+			m_Constitution.Modifier = abilities[2].Modifier;
+			m_Intelligence.Modifier = abilities[3].Modifier;
+			m_Wisdom.Modifier = abilities[4].Modifier;
+			m_Charisma.Modifier = abilities[5].Modifier;
+
+			// TODO: Add other modifiers
+			m_Initiative = m_Dexterity.Modifier;
 			// Hit dice/points
 			m_HitDice.Number = m_Level;
 			m_MaxHitPoints = m_HitDice.Type + m_Constitution.Modifier;
