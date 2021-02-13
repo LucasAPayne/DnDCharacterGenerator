@@ -49,6 +49,18 @@ namespace dnd {
 			}
 		};
 
+		// Choose a number of skill proficiencies randomly from a given list
+		auto chooseSkillProficiencies = [](int skillsToChoose, std::vector<std::reference_wrapper<Skill>> list)
+		{
+			// Since this uses std::reference_wrapper, when the values in list change, the values in character change also 
+
+			// Randomize the order of entries and pick the first x of them
+			std::shuffle(list.begin(), list.end(), Random::GetEngine());
+
+			for (int i = 0; i < skillsToChoose; ++i)
+				list[i].get().Proficient = true;
+		};
+
 		// A character may choose to start with either equipment or money to buy equipment.
 		// For now, this will be chosen randomly.
 		bool startWithEquipment = Random::Int(0, 1); // true for equipment and false for money
@@ -120,7 +132,7 @@ namespace dnd {
 			m_Race = Races[Random::Index(0, Races.size() - 1)];
 
 			// Humans also have ethnicity (for name)
-			if (m_Race == "Human")
+			if (m_Race == "Human" || m_Race == "Half-Elf")
 				m_Ethnicity = Ethnicities[Random::Index(0, Ethnicities.size() - 1)];
 
 			// Find the character's major race
@@ -145,6 +157,29 @@ namespace dnd {
 
 				SetTraitFromDict(m_Surname, HumanSurnames, m_Ethnicity);
 			}
+			else if (m_Race == "Half-Elf")
+			{
+				// Half-elves can use either the elven or human naming conventions
+				bool elfName = Random::Int(0, 1);
+				if (elfName)
+				{
+					if (m_Gender == "Male")
+						SetTraitFromDict(m_FirstName, NonHumanMaleNames, "Elf");
+					else if (m_Gender == "Female")
+						SetTraitFromDict(m_FirstName, NonHumanFemaleNames, "Elf");
+
+					SetTraitFromDict(m_Surname, NonHumanSurnames, "Elf");
+				}
+				else
+				{
+					if (m_Gender == "Male")
+						SetTraitFromDict(m_FirstName, HumanMaleNames, m_Ethnicity);
+					else if (m_Gender == "Female")
+						SetTraitFromDict(m_FirstName, HumanFemaleNames, m_Ethnicity);
+
+					SetTraitFromDict(m_Surname, HumanSurnames, m_Ethnicity);
+				}
+			}
 			else
 			{
 				if (m_Gender == "Male")
@@ -156,7 +191,7 @@ namespace dnd {
 			}
 
 			// All characters can speak, read, and write in the Common tongue
-			m_Languages.insert("Common"); 
+			m_Languages.insert("Common");
 
 			// Ability score increases, feats, proficiencies, languages
 			// Subraces also get parent race benefits
@@ -215,7 +250,7 @@ namespace dnd {
 					m_WeaponProficiencies.insert({ "longsword", "shortsword", "shortbow", "longbow" });
 				}
 				else if (m_Race == "Dark Elf (Drow)")
-				{ 
+				{
 					m_Charisma.Score++;
 					m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Dark Elf (Drow)").begin(), RacialFeats.at("Dark Elf (Drow)").end());
 					m_WeaponProficiencies.insert({ "rapier", "shortsword", "hand crossbow" });
@@ -280,23 +315,35 @@ namespace dnd {
 					m_ToolProficiencies.insert({ "tinker's tools" });
 				}
 			}
+			else if (m_MajorRace == "Half-Elf")
+			{
+				m_Speed = 30;
+				m_Charisma.Score += 2;
+
+				// Half-elves can choose any other two ability score besides charisma to increase by 1
+				// The same ability cannot receive both +1's
+				std::vector<std::reference_wrapper<Ability>> abilities = { m_Strength, m_Dexterity, m_Constitution, m_Intelligence, m_Wisdom };
+				size_t index = Random::Index(0, abilities.size() - 1);
+				abilities[index].get().Score++;
+				// Remove the ability whose score was just increased and choose anohter
+				abilities.erase(abilities.begin() + index);
+				abilities[Random::Index(0, abilities.size() - 1)].get().Score++;
+
+				m_Languages.insert("Elvish");
+				// Choose one additional language
+				m_Languages.insert(Languages[Random::Index(1, Languages.size() - 1)]); // 1 is the minimum number to avoid picking Elvish twice
+
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Half-Elf").begin(), RacialFeats.at("Half-Elf").end());
+
+				// Half-elves can choose any two skills to be proficient in, from their Skill Versatility trait
+				chooseSkillProficiencies(2, { m_Acrobatics, m_AnimalHandling, m_Arcana, m_Athletics, m_Deception, m_History, m_Insight, m_Intimidation,
+					m_Investigation, m_Medicine, m_Nature, m_Perception, m_Performance, m_Persuasion, m_Religion, m_SleightOfHand, m_Stealth, m_Survival });
+			}
 		}
 
 		// Class
 		{
 			m_Class = Classes[Random::Index(0, Classes.size() - 1)];
-
-			// Choose a number of skill proficiencies randomly from a given list
-			auto chooseSkillProficiencies = [](int skillsToChoose, std::vector<std::reference_wrapper<Skill>> list)
-			{
-				// Since this uses std::reference_wrapper, when the values in list change, the values in character change also 
-
-				// Randomize the order of entries and pick the first x of them
-				std::shuffle(list.begin(), list.end(), Random::GetEngine());
-
-				for (int i = 0; i < skillsToChoose; ++i)
-					list[i].get().Proficient = true;
-			};
 
 			// Hit dice/points, proficiencies, saving throw proficiencies, skill proficiencies
 			if (m_Class == "Barbarian")

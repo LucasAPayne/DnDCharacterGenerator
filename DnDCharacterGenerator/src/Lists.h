@@ -19,7 +19,7 @@ namespace dnd {
 
 	const std::vector<std::string> Races = {
 		"Hill Dwarf", "Mountain Dwarf", "High Elf", "Wood Elf", "Dark Elf (Drow)", "Lightfoot Halfling", "Stout Halfling", "Human", "Dragonborn",
-		"Forest Gnome", "Rock Gnome"
+		"Forest Gnome", "Rock Gnome", "Half-Elf"
 	};
 
 	const std::vector<std::string> Ethnicities = {
@@ -308,7 +308,7 @@ namespace dnd {
 
 		{"Gnome", {
 			"Beren", "Daergel", "Folkor", "Garrick", "Nackle", "Murnig", "Ningel", "Raulnor", "Scheppen", "Timbers", "Turen"
-		}}
+		}},
 	};
 
 	const std::unordered_map<std::string, const std::vector<std::string>> NonHumanMaleNames = {
@@ -1190,6 +1190,12 @@ namespace dnd {
 			Trait("Artificer's Lore.", "Whenever you make an Intelligence (History) check related to magic items, alchemical objects, or technological devices, you can add twice your proficiency bonus, instead of any proficiency bonus you normally apply"),
 			Trait("Tinker.", "You have proficiency with artisan's tools (tinker's tools). Using those tools, you can spend 1 hour and 10 gp worth of materials to construct a Tiny clockwork device (AC 5, 1 hp). The device ceases to function after 24 hours (unless you spend 1 hour repairing it to keep the device functioning), or when you use your action to dismantle it; at that time, you can reclaim the materials used to create it. You can have up to three such devices active at a time.\n"
 			                 "When you create a device, choose a Clockwork Toy, a Fire Starter, or a Music Box. Descriptions of these devices are found in the rulebook.")
+		}},
+
+		{"Half-Elf", {
+			Trait("Darkvision.", "Thanks to your elf blood, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light."),
+			Trait("Fey Ancestry.", "You have advantage on saving throws against being charmed, and magic can't put you to sleep."),
+			Trait("Skill Versatiility.", "You gain proficiency in two skills of your choice.")
 		}}
 	};
 
