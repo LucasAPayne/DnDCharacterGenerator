@@ -19,7 +19,7 @@ namespace dnd {
 
 	const std::vector<std::string> Races = {
 		"Hill Dwarf", "Mountain Dwarf", "High Elf", "Wood Elf", "Dark Elf (Drow)", "Lightfoot Halfling", "Stout Halfling", "Human", "Dragonborn",
-		"Forest Gnome", "Rock Gnome", "Half-Elf", "Half-Orc"
+		"Forest Gnome", "Rock Gnome", "Half-Elf", "Half-Orc", "Tiefling"
 	};
 
 	const std::vector<std::string> Ethnicities = {
@@ -302,7 +302,7 @@ namespace dnd {
 		}},
 
 		{"Dragonborn", {
-			"Clethtinihiallor", "Daardendrain", "Delmirev", "Drachedandion", "Fenkenkabradon", "Kepeshkmolik", "Kerrhylon", "Kimbatuul", "Linxakasendalor", 
+			"Clethtinihiallor", "Daardendrian", "Delmirev", "Drachedandion", "Fenkenkabradon", "Kepeshkmolik", "Kerrhylon", "Kimbatuul", "Linxakasendalor", 
 			"Myastan", "Nemmonis", "Norixius", "Ophinshtalajiir", "Prexijandilin", "Shestendeliath", "Turnuroth", "Verthisathurgiesh", "Yarjerit"
 		}},
 
@@ -341,6 +341,10 @@ namespace dnd {
 
 		{"Half-Orc", {
 			"Dench", "Feng", "Gell", "Henk", "Holg", "Imsh", "Keth", "Krusk", "Mhurren", "Ront", "Shump", "Thokk"
+		}},
+
+		{"Tiefling", {
+			"Akmenos", "Amnon", "Barakas", "Damakos", "Ekemon", "Iados", "Kairon", "Leucis", "Melech", "Mordai", "Morthos", "Pelaios", "Skamos", "Therai"
 		}}
 	};
 
@@ -363,18 +367,27 @@ namespace dnd {
 		}},
 
 		{"Dragonborn", {
-			"Akra", "Biri", "Daar", "Farideh", "Harann", "Halivar", "Jheri", "Kava", "Korinn", "Mishann", "Nala", "Perra", 
+			"Akra", "Biri", "Daar", "Farideh", "Harann", "Halivar", "Jheri", "Kava", "Korinn", "Mishann", "Nala", "Perra",
 			"Raiann", "Sora", "Surina", "Thava", "Uadjit"
 		}},
 
 		{"Gnome", {
-			"Bimpnottin", "Breena", "Caramip", "Carlin", "Donella", "Duvamil", "Ella", "Ellyjobell", "Ellywick", "Lilli", 
+			"Bimpnottin", "Breena", "Caramip", "Carlin", "Donella", "Duvamil", "Ella", "Ellyjobell", "Ellywick", "Lilli",
 			"Loopmottin", "Lorilla", "Mardnab", "Nissa", "Nyx", "Oda", "Orla", "Roywyn", "Shamil", "Tana", "Waywocket", "Zanna"
 		}},
 
 		{"Half-Orc", {
 			"Baggi", "Emen", "Engong", "Kansif", "Myev", "Neega", "Ovak", "Ownka", "Shautha", "Sutha", "Vola", "Volen", "Yevelda"
+		}},
+
+		{"Tiefling", {
+			"Akta", "Anakis", "Bryseis", "Criella", "Damaia", "Ea", "Kallista", "Lerissa", "Makaria", "Nemeia", "Orianna", "Phelaia", "Rieta"
 		}}
+	};
+
+	const std::vector<std::string> VirtueNames = {
+			"Art", "Carrion", "Chant", "Creed", "Despair", "Excellence", "Fear", "Glory", "Hope", "Ideal", "Music", "Nowhere", "Open", "Poetry", 
+			"Quest", "Random", "Reverence", "Sorrow", "Temerity", "Torment", "Weary"
 	};
 
 	// ======================================================================================
@@ -1201,16 +1214,22 @@ namespace dnd {
 		}},
 
 		{"Half-Elf", {
-			Trait("Darkvision.", "Thanks to your elf blood, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light."),
+			Trait("Darkvision.", "Thanks to your elf blood, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can't discern color in the darkness, only shades of gray."),
 			Trait("Fey Ancestry.", "You have advantage on saving throws against being charmed, and magic can't put you to sleep."),
 			Trait("Skill Versatiility.", "You gain proficiency in two skills of your choice.")
 		}},
 
 		{"Half-Orc", {
-			Trait("Darkvision.", "Thanks to your orc blood, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light."),
+			Trait("Darkvision.", "Thanks to your orc blood, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can't discern color in the darkness, only shades of gray."),
 			Trait("Menacing.", "You gain proficiency in the Intimidation skill."),
 			Trait("Relentless Endurance.", "When you are reduced to 0 hit points but not killed outright, you can drop to 1 hit point instead. You can't use this feature again until you finish a long rest."),
 			Trait("Savage Attacks.", "When you score a critical hit with a melee weapon attack, you can roll one of the weapon's damage dice one additional time and add it to the extra damage of the critical hit.")
+		}},
+
+		{"Tiefling", {
+			Trait("Darkvision.", "Thanks to your Infernal heritage, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can't discern color in the darkness, only shades of gray."),
+			Trait("Hellish Resisitance.", "You have resistance to fire damage."),
+			Trait("Infernal Legacy.", "You know the thaumaturgy cantrip. Once you reach 3rd level, you can cast the hellish rebuke spell once per day as a 2nd-level spell. Once you reach 5th level, you can also cast the darkness spell once per day. Charisma is your spellcasting ability for these spells.")
 		}}
 	};
 

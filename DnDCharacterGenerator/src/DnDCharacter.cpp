@@ -179,6 +179,47 @@ namespace dnd {
 					SetTraitFromDict(m_Surname, HumanSurnames, m_Ethnicity);
 				}
 			}
+			else if (m_Race == "Tiefling")
+			{
+				// Tieflings can choose to use a name that signifies a virtue, one derived from the Infernal language, or one from whatever culture they were raised in, human or nonhuman
+				int nameType = Random::Int(0, 3);
+				if (nameType == 0) // Virtue Name
+				{
+					m_FirstName = VirtueNames[Random::Index(0, VirtueNames.size() - 1)];
+				}
+				else if (nameType == 1) // Infernal name
+				{
+					if (m_Gender == "Male")
+						SetTraitFromDict(m_FirstName, NonHumanMaleNames, "Tiefling");
+					else if (m_Gender == "Female")
+						SetTraitFromDict(m_FirstName, NonHumanFemaleNames, "Tiefling");
+				}
+				else if (nameType == 2) // Human name
+				{
+					m_Ethnicity = Ethnicities[Random::Index(0, Ethnicities.size() - 1)];
+
+					if (m_Gender == "Male")
+						SetTraitFromDict(m_FirstName, HumanMaleNames, m_Ethnicity);
+					else if (m_Gender == "Female")
+						SetTraitFromDict(m_FirstName, HumanFemaleNames, m_Ethnicity);
+
+					SetTraitFromDict(m_Surname, HumanSurnames, m_Ethnicity);
+				}
+				else if (nameType == 3) // Non-human name
+				{
+					std::vector<std::string> cultures = {"Dwarf", "Elf", "Halfling", "Dragonborn", "Gnome", "Half-Orc"};
+					std::string culture = cultures[Random::Index(0, cultures.size() - 1)];
+
+					if (m_Gender == "Male")
+						SetTraitFromDict(m_FirstName, NonHumanMaleNames, culture);
+					else if (m_Gender == "Female")
+						SetTraitFromDict(m_FirstName, NonHumanFemaleNames, culture);
+
+					// Some races do not have surnames
+					if (NonHumanSurnames.contains(culture))
+						SetTraitFromDict(m_Surname, NonHumanSurnames, culture);
+				}
+			}
 			else
 			{
 				if (m_Gender == "Male")
@@ -335,6 +376,14 @@ namespace dnd {
 				m_Constitution.Score++;
 				m_Intimidation.Proficient = true;
 				m_Languages.insert("Orc");
+			}
+			else if (m_MajorRace == "Tiefling")
+			{
+				m_Speed = 30;
+				m_Intelligence.Score++;
+				m_Charisma.Score += 2;
+				m_Languages.insert("Infernal");
+				m_Cantrips.insert("Thaumaturgy");
 			}
 		}
 
