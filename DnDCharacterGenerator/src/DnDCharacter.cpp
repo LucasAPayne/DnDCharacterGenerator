@@ -49,6 +49,18 @@ namespace dnd {
 			}
 		};
 
+		// Choose a number of skill proficiencies randomly from a given list
+		auto chooseSkillProficiencies = [](int skillsToChoose, std::vector<std::reference_wrapper<Skill>> list)
+		{
+			// Since this uses std::reference_wrapper, when the values in list change, the values in character change also 
+
+			// Randomize the order of entries and pick the first x of them
+			std::shuffle(list.begin(), list.end(), Random::GetEngine());
+
+			for (int i = 0; i < skillsToChoose; ++i)
+				list[i].get().Proficient = true;
+		};
+
 		// A character may choose to start with either equipment or money to buy equipment.
 		// For now, this will be chosen randomly.
 		bool startWithEquipment = Random::Int(0, 1); // true for equipment and false for money
@@ -91,28 +103,6 @@ namespace dnd {
 			m_Intelligence.Score = totals[3];
 			m_Wisdom.Score = totals[4];
 			m_Charisma.Score = totals[5];
-
-			// Ability score modifiers
-			std::vector<Ability> abilities = { m_Strength, m_Dexterity, m_Constitution, m_Intelligence, m_Wisdom, m_Charisma };
-			for (size_t i = 0; i < abilities.size(); ++i)
-			{
-				// Always round down (toward -inf)
-				int temp = abilities[i].Score - 10;
-
-				if (temp >= 0)
-					abilities[i].Modifier = temp / 2;
-				else
-					abilities[i].Modifier = (temp - 1) / 2;
-			}
-			m_Strength.Modifier = abilities[0].Modifier;
-			m_Dexterity.Modifier = abilities[1].Modifier;
-			m_Constitution.Modifier = abilities[2].Modifier;
-			m_Intelligence.Modifier = abilities[3].Modifier;
-			m_Wisdom.Modifier = abilities[4].Modifier;
-			m_Charisma.Modifier = abilities[5].Modifier;
-
-			m_Initiative = m_Dexterity.Modifier;
-			// TODO: Add other modifiers
 		}
 
 		// Race
@@ -120,18 +110,20 @@ namespace dnd {
 			m_Race = Races[Random::Index(0, Races.size() - 1)];
 
 			// Humans also have ethnicity (for name)
-			if (m_Race == "Human")
+			if (m_Race == "Human" || m_Race == "Half-Elf" || m_Race == "Half-Orc")
 				m_Ethnicity = Ethnicities[Random::Index(0, Ethnicities.size() - 1)];
 
 			// Find the character's major race
-			if (m_Race == "Dwarf" || m_Race == "Elf" || m_Race == "Halfling" || m_Race == "Human")
-				m_MajorRace = m_Race;
-			else if (m_Race == "Mountain Dwarf" || m_Race == "Hill Dwarf")
+			if (m_Race == "Mountain Dwarf" || m_Race == "Hill Dwarf")
 				m_MajorRace = "Dwarf";
 			else if (m_Race == "High Elf" || m_Race == "Wood Elf" || m_Race == "Dark Elf (Drow)")
 				m_MajorRace = "Elf";
 			else if (m_Race == "Lightfoot Halfling" || m_Race == "Stout Halfling")
 				m_MajorRace = "Halfling";
+			else if (m_Race == "Forest Gnome" || m_Race == "Rock Gnome")
+				m_MajorRace = "Gnome";
+			else
+				m_MajorRace = m_Race;
 
 			// Generate name
 			if (m_Race == "Human")
@@ -142,6 +134,91 @@ namespace dnd {
 					SetTraitFromDict(m_FirstName, HumanFemaleNames, m_Ethnicity);
 
 				SetTraitFromDict(m_Surname, HumanSurnames, m_Ethnicity);
+			}
+			else if (m_Race == "Half-Elf")
+			{
+				// Half-elves can use either the elven or human naming conventions
+				bool elfName = Random::Int(0, 1);
+				if (elfName)
+				{
+					if (m_Gender == "Male")
+						SetTraitFromDict(m_FirstName, NonHumanMaleNames, "Elf");
+					else if (m_Gender == "Female")
+						SetTraitFromDict(m_FirstName, NonHumanFemaleNames, "Elf");
+
+					SetTraitFromDict(m_Surname, NonHumanSurnames, "Elf");
+				}
+				else
+				{
+					if (m_Gender == "Male")
+						SetTraitFromDict(m_FirstName, HumanMaleNames, m_Ethnicity);
+					else if (m_Gender == "Female")
+						SetTraitFromDict(m_FirstName, HumanFemaleNames, m_Ethnicity);
+
+					SetTraitFromDict(m_Surname, HumanSurnames, m_Ethnicity);
+				}
+			}
+			else if (m_Race == "Half-Orc")
+			{
+				// Half-orcs can choose orc names with no surname, or they can choose a human name
+				bool orcName = Random::Int(0, 1);
+				if (orcName)
+				{
+					if (m_Gender == "Male")
+						SetTraitFromDict(m_FirstName, NonHumanMaleNames, "Half-Orc");
+					else if (m_Gender == "Female")
+						SetTraitFromDict(m_FirstName, NonHumanFemaleNames, "Half-Orc");
+				}
+				else
+				{
+					if (m_Gender == "Male")
+						SetTraitFromDict(m_FirstName, HumanMaleNames, m_Ethnicity);
+					else if (m_Gender == "Female")
+						SetTraitFromDict(m_FirstName, HumanFemaleNames, m_Ethnicity);
+
+					SetTraitFromDict(m_Surname, HumanSurnames, m_Ethnicity);
+				}
+			}
+			else if (m_Race == "Tiefling")
+			{
+				// Tieflings can choose to use a name that signifies a virtue, one derived from the Infernal language, or one from whatever culture they were raised in, human or nonhuman
+				int nameType = Random::Int(0, 3);
+				if (nameType == 0) // Virtue Name
+				{
+					m_FirstName = VirtueNames[Random::Index(0, VirtueNames.size() - 1)];
+				}
+				else if (nameType == 1) // Infernal name
+				{
+					if (m_Gender == "Male")
+						SetTraitFromDict(m_FirstName, NonHumanMaleNames, "Tiefling");
+					else if (m_Gender == "Female")
+						SetTraitFromDict(m_FirstName, NonHumanFemaleNames, "Tiefling");
+				}
+				else if (nameType == 2) // Human name
+				{
+					m_Ethnicity = Ethnicities[Random::Index(0, Ethnicities.size() - 1)];
+
+					if (m_Gender == "Male")
+						SetTraitFromDict(m_FirstName, HumanMaleNames, m_Ethnicity);
+					else if (m_Gender == "Female")
+						SetTraitFromDict(m_FirstName, HumanFemaleNames, m_Ethnicity);
+
+					SetTraitFromDict(m_Surname, HumanSurnames, m_Ethnicity);
+				}
+				else if (nameType == 3) // Non-human name
+				{
+					std::vector<std::string> cultures = {"Dwarf", "Elf", "Halfling", "Dragonborn", "Gnome", "Half-Orc"};
+					std::string culture = cultures[Random::Index(0, cultures.size() - 1)];
+
+					if (m_Gender == "Male")
+						SetTraitFromDict(m_FirstName, NonHumanMaleNames, culture);
+					else if (m_Gender == "Female")
+						SetTraitFromDict(m_FirstName, NonHumanFemaleNames, culture);
+
+					// Some races do not have surnames
+					if (NonHumanSurnames.contains(culture))
+						SetTraitFromDict(m_Surname, NonHumanSurnames, culture);
+				}
 			}
 			else
 			{
@@ -154,7 +231,13 @@ namespace dnd {
 			}
 
 			// All characters can speak, read, and write in the Common tongue
-			m_Languages.insert("Common"); 
+			m_Languages.insert("Common");
+
+			// Most races get racial features, and most subraces get additional features
+			if (RacialFeats.count(m_MajorRace) > 0)
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at(m_MajorRace).begin(), RacialFeats.at(m_MajorRace).end());
+			if (m_MajorRace != m_Race && RacialFeats.count(m_Race) > 0)
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at(m_Race).begin(), RacialFeats.at(m_Race).end());
 
 			// Ability score increases, feats, proficiencies, languages
 			// Subraces also get parent race benefits
@@ -163,7 +246,6 @@ namespace dnd {
 				m_Speed = 25;
 				m_Constitution.Score += 2;
 				m_Languages.insert("Dwarvish");
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Dwarf").begin(), RacialFeats.at("Dwarf").end());
 
 				// All dwarves get set weapon proficiencies and can choose one set of tools to be proficient with
 				std::vector<std::string> choices = { "smith's tools", "brewer's supplies", "mason's tools" };
@@ -174,7 +256,6 @@ namespace dnd {
 				{
 					m_Wisdom.Score++;
 					m_MaxHitPoints += m_Level; // From the Dwarven Toughness feat
-					m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Hill Dwarf").begin(), RacialFeats.at("Hill Dwarf").end());
 				}
 
 				else if (m_Race == "Mountain Dwarf")
@@ -189,30 +270,28 @@ namespace dnd {
 				m_Dexterity.Score += 2;
 				m_Perception.Proficient = true;
 				m_Languages.insert("Elvish");
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Elf").begin(), RacialFeats.at("Elf").end());
 
 				if (m_Race == "High Elf")
 				{
-					// TODO: High elves get a cantrip from the wizard spell list
-
 					m_Intelligence.Score++;
 					m_WeaponProficiencies.insert({ "longsword", "shortsword", "shortbow", "longbow" });
 
 					// Choose one additional language
 					m_Languages.insert(Languages[Random::Index(1, Languages.size() - 1)]); // 1 is the minimum number to avoid picking Elvish twice
+
+					// High elves get a cantrip from the wizard spell list
+					m_Cantrips.insert(CantripLists.at("Wizard")[Random::Index(0, CantripLists.at("Wizard").size() - 1)]);
 				}
 				else if (m_Race == "Wood Elf")
 				{
 					m_Speed = 35;
 					m_Wisdom.Score++;
 
-					m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Wood Elf").begin(), RacialFeats.at("Wood Elf").end());
 					m_WeaponProficiencies.insert({ "longsword", "shortsword", "shortbow", "longbow" });
 				}
 				else if (m_Race == "Dark Elf (Drow)")
-				{ 
+				{
 					m_Charisma.Score++;
-					m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Dark Elf (Drow)").begin(), RacialFeats.at("Dark Elf (Drow)").end());
 					m_WeaponProficiencies.insert({ "rapier", "shortsword", "hand crossbow" });
 				}
 			}
@@ -221,20 +300,17 @@ namespace dnd {
 				m_Speed = 25;
 				m_Dexterity.Score += 2;
 				m_Languages.insert("Halfling");
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Halfling").begin(), RacialFeats.at("Halfling").end());
 
 				if (m_Race == "Lightfoot Halfling")
 				{
 					m_Charisma.Score++;
-					m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Lightfoot Halfling").begin(), RacialFeats.at("Lightfoot Halfling").end());
 				}
 				else if (m_Race == "Stout Halfling")
 				{
 					m_Constitution.Score++;
-					m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at("Stout Halfling").begin(), RacialFeats.at("Stout Halfling").end());
 				}
 			}
-			else if (m_Race == "Human")
+			else if (m_MajorRace == "Human")
 			{
 				m_Speed = 30;
 				m_Strength.Score++;
@@ -247,23 +323,73 @@ namespace dnd {
 				m_Languages.insert(Languages[Random::Index(0, Languages.size() - 1)]);
 				// TODO: Add optional variant human trait
 			}
+			else if (m_MajorRace == "Dragonborn")
+			{
+				m_Speed = 30;
+				m_Strength.Score += 2;
+				m_Charisma.Score++;
+				m_Languages.insert("Draconic");
+			}
+			else if (m_MajorRace == "Gnome")
+			{
+				m_Speed = 25;
+				m_Intelligence.Score += 2;
+				m_Languages.insert("Gnomish");
+
+				if (m_Race == "Forest Gnome")
+				{
+					m_Dexterity.Score++;
+					m_Cantrips.insert("Minor Illusion");
+				}
+				else if (m_Race == "Rock Gnome")
+				{
+					m_Constitution.Score++;
+					m_ToolProficiencies.insert({ "tinker's tools" });
+				}
+			}
+			else if (m_MajorRace == "Half-Elf")
+			{
+				m_Speed = 30;
+				m_Charisma.Score += 2;
+
+				// Half-elves can choose any other two ability score besides charisma to increase by 1
+				// The same ability cannot receive both +1's
+				std::vector<std::reference_wrapper<Ability>> abilities = { m_Strength, m_Dexterity, m_Constitution, m_Intelligence, m_Wisdom };
+				size_t index = Random::Index(0, abilities.size() - 1);
+				abilities[index].get().Score++;
+				// Remove the ability whose score was just increased and choose anohter
+				abilities.erase(abilities.begin() + index);
+				abilities[Random::Index(0, abilities.size() - 1)].get().Score++;
+
+				m_Languages.insert("Elvish");
+				// Choose one additional language
+				m_Languages.insert(Languages[Random::Index(1, Languages.size() - 1)]); // 1 is the minimum number to avoid picking Elvish twice
+
+				// Half-elves can choose any two skills to be proficient in, from their Skill Versatility trait
+				chooseSkillProficiencies(2, { m_Acrobatics, m_AnimalHandling, m_Arcana, m_Athletics, m_Deception, m_History, m_Insight, m_Intimidation,
+					m_Investigation, m_Medicine, m_Nature, m_Perception, m_Performance, m_Persuasion, m_Religion, m_SleightOfHand, m_Stealth, m_Survival });
+			}
+			else if (m_MajorRace == "Half-Orc")
+			{
+				m_Speed = 30;
+				m_Strength.Score += 2;
+				m_Constitution.Score++;
+				m_Intimidation.Proficient = true;
+				m_Languages.insert("Orc");
+			}
+			else if (m_MajorRace == "Tiefling")
+			{
+				m_Speed = 30;
+				m_Intelligence.Score++;
+				m_Charisma.Score += 2;
+				m_Languages.insert("Infernal");
+				m_Cantrips.insert("Thaumaturgy");
+			}
 		}
 
 		// Class
 		{
 			m_Class = Classes[Random::Index(0, Classes.size() - 1)];
-
-			// Choose a number of skill proficiencies randomly from a given list
-			auto chooseSkillProficiencies = [](int skillsToChoose, std::vector<std::reference_wrapper<Skill>> list)
-			{
-				// Since this uses std::reference_wrapper, when the values in list change, the values in character change also 
-
-				// Randomize the order of entries and pick the first x of them
-				std::shuffle(list.begin(), list.end(), Random::GetEngine());
-
-				for (int i = 0; i < skillsToChoose; ++i)
-					list[i].get().Proficient = true;
-			};
 
 			// Hit dice/points, proficiencies, saving throw proficiencies, skill proficiencies
 			if (m_Class == "Barbarian")
@@ -866,6 +992,27 @@ namespace dnd {
 
 		// Independent of race, class, and background, but need to be processed after
 		{
+			// Ability score modifiers
+			std::vector<Ability> abilities = { m_Strength, m_Dexterity, m_Constitution, m_Intelligence, m_Wisdom, m_Charisma };
+			for (size_t i = 0; i < abilities.size(); ++i)
+			{
+				// Always round down (toward -inf)
+				int temp = abilities[i].Score - 10;
+
+				if (temp >= 0)
+					abilities[i].Modifier = temp / 2;
+				else
+					abilities[i].Modifier = (temp - 1) / 2;
+			}
+			m_Strength.Modifier = abilities[0].Modifier;
+			m_Dexterity.Modifier = abilities[1].Modifier;
+			m_Constitution.Modifier = abilities[2].Modifier;
+			m_Intelligence.Modifier = abilities[3].Modifier;
+			m_Wisdom.Modifier = abilities[4].Modifier;
+			m_Charisma.Modifier = abilities[5].Modifier;
+
+			// TODO: Add other modifiers
+			m_Initiative = m_Dexterity.Modifier;
 			// Hit dice/points
 			m_HitDice.Number = m_Level;
 			m_MaxHitPoints = m_HitDice.Type + m_Constitution.Modifier;
@@ -973,6 +1120,15 @@ namespace dnd {
 						m_Attacks.push_back(Attack(it.first, attackBonus, damage));
 					}
 				}
+			}
+			if (m_Race == "Dragonborn")
+			{
+				std::vector<std::string> dragonTypes = { "black", "blue", "brass", "bronze", "copper", "gold", "green", "red", "silver", "white" };
+				std::string type = dragonTypes[Random::Index(0, dragonTypes.size() - 1)];
+				std::string attackName = "breath weapon (" + type + ")";
+				// TODO: Breath weapon damage increases at certain levels
+				std::string damage = "2d6 " + BreathWeaponTypes.at(type);
+				m_Attacks.push_back(Attack(attackName, 0, damage));
 			}
 		}
 
@@ -1099,7 +1255,11 @@ namespace dnd {
 	{
 		std::cout << std::boolalpha;
 
-		std::cout << "Name: "   << m_FirstName << " " << m_Surname << "\n";
+		if (m_Race == "Dragonborn")
+			std::cout << "Name: " << m_Surname << " " << m_FirstName << "\n";
+		else
+			std::cout << "Name: "   << m_FirstName << " " << m_Surname << "\n";
+
 		std::cout << "Gender: " << m_Gender    << "\n";
 		std::cout << "Race: "   << m_Race      << "\n";
 
@@ -1236,16 +1396,19 @@ namespace dnd {
 		std::cout << "======================\n";
 		std::cout << "Attacks & Spellcasting\n";
 		std::cout << "======================\n";
-		for (size_t i = 0; i < m_Attacks.size(); i++)
+		if (!m_Attacks.empty())
 		{
-			if (m_Attacks[i].AttackBonus >= 0)
-				std::cout << m_Attacks[i].Name << "  +" << m_Attacks[i].AttackBonus << "  " << m_Attacks[i].Damage << "\n";
-			else
-				std::cout << m_Attacks[i].Name << "  " << m_Attacks[i].AttackBonus << "  " << m_Attacks[i].Damage << "\n";
+			for (size_t i = 0; i < m_Attacks.size(); i++)
+			{
+				if (m_Attacks[i].AttackBonus >= 0)
+					std::cout << m_Attacks[i].Name << "  +" << m_Attacks[i].AttackBonus << "  " << m_Attacks[i].Damage << "\n";
+				else
+					std::cout << m_Attacks[i].Name << "  " << m_Attacks[i].AttackBonus << "  " << m_Attacks[i].Damage << "\n";
+			}
+			std::cout << "\n";
 		}
-		std::cout << "\n";
 
-		if (CantripLists.contains(m_Class))
+		if (!m_Cantrips.empty())
 		{
 			std::cout << "Cantrips: ";
 			for (const auto& it : m_Cantrips)
@@ -1257,7 +1420,7 @@ namespace dnd {
 			std::cout << "\n\n";
 		}
 
-		if (SpellLists.contains(m_Class))
+		if (!m_Spells.empty())
 			std::cout << "Spell Slots. You have " << m_SpellSlots << " 1st-level spell slots you can use to cast your spells.\n\n";
 
 		if (m_Class == "Bard" || m_Class == "Sorcerer")
