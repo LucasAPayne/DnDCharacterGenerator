@@ -645,10 +645,34 @@ namespace dnd {
 				m_ConstitutionSave.Proficient = true;
 				m_CharismaSave.Proficient = true;
 				chooseSkillProficiencies(2, { m_Arcana, m_Deception, m_Insight, m_Intimidation, m_Persuasion, m_Religion });
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Sorcerer").begin(), ClassFeats.at("Sorcerer").end());
 				m_CantripsKnown = 4;
 				m_SpellsKnown = 2;
 				m_SpellSlots = 2;
+
+				std::vector<std::string> origins = { "Draconic Bloodline", "Wild Magic" };
+				std::string sorcerousOrigin = origins[Random::Index(0, origins.size() - 1)];
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), Trait("Sorcerous Origin.", sorcerousOrigin));
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Sorcerer").begin(), ClassFeats.at("Sorcerer").end());
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at(sorcerousOrigin).begin(), ClassFeats.at(sorcerousOrigin).end());
+
+				if (sorcerousOrigin == "Draconic Bloodline")
+				{
+					std::vector<std::string> dragonTypes = { "black", "blue", "brass", "bronze", "copper", "gold", "green", "red", "silver", "white" };
+					std::string draconicAncestry = dragonTypes[Random::Index(0, dragonTypes.size() - 1)];
+
+					m_FeatsAndTraits.insert(m_FeatsAndTraits.end(),
+						Trait("Dragon Ancestor.", "You have a " + draconicAncestry +
+							"dragon as your ancestor. You can speak, read, and write Draconic. "
+							"Additionally, whenever you make a Charisma check when interacting with dragons, "
+							"your proficiency bonus is doubled if it applies to the check."));
+
+					// The Dragon Ancestor feat lets the character understand Draconic
+					if (!m_Languages.contains("Draconic"))
+						m_Languages.insert("Draconic");
+					else
+						addUniqueProficiency(m_Languages, Languages);
+				}
+
 
 				if (startWithEquipment)
 				{
@@ -1197,6 +1221,18 @@ namespace dnd {
 
 					// Monks cannot benefit use a shield and still benefit from their Unarmored Defense trait
 					if (m_Equipment.contains("shield")) m_ArmorClass -= 2;
+				}
+				if (m_Class == "Sorcerer")
+				{
+					for (const auto& it : m_FeatsAndTraits)
+					{
+
+						if (it.Name == "Draconic Resilience.")
+						{
+							m_ArmorClass = 13 + m_Dexterity.Modifier;
+							break;
+						}
+					}
 				}
 			}
 
