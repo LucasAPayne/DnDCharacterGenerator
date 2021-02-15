@@ -1065,10 +1065,34 @@ namespace dnd {
 			if (m_Perception.Proficient)
 				m_PassiveWisdom += m_ProficiencyBonus;
 
-			// Every character can pick one trinket. Make sure it is unique
-			std::string trinket = Trinkets[Random::Index(0, Trinkets.size() - 1)];
-			if (!m_Equipment.contains(trinket))
-				addEquipment({ {trinket, 1} });
+			{
+				// Every character can pick one trinket. Make sure it is unique
+				std::string trinket = Trinkets[Random::Index(0, Trinkets.size() - 1)];
+				if (!m_Equipment.contains(trinket))
+					addEquipment({ {trinket, 1} });
+
+				// Some trinkets allow the player to pick certian aspects of them
+				for (const auto& it : TrinketChoices)
+				{
+					if (m_Equipment.contains(it.first))
+					{
+						std::string trinketCopy = it.first;
+						// Choose a random item from the vector of choices to customize the trinket
+						std::string choice = " " + TrinketChoices.at(trinketCopy)[Random::Index(0, TrinketChoices.at(trinketCopy).size() - 1)];
+
+						// The choice comes after "mechanical in this trinket
+						if (trinketCopy == "tiny mechanical that moves about when it's no longer being observed")
+							trinketCopy.insert(15, choice);
+						// Choices in other trinkets are at the end
+						else
+							trinketCopy = trinketCopy + choice;
+
+						// Replace the trinket that was in the character's inventory with the modified version
+						m_Equipment.erase(it.first);
+						m_Equipment.insert({ trinketCopy, 1 });
+					}
+				}
+			}
 
 			// Attacks
 			for (const auto& it : WeaponAttacks)

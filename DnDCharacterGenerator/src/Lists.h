@@ -226,7 +226,7 @@ namespace dnd {
 		"mechanical canary inside a gnomish lamp",
 		"tiny chest carved to look like it has numerous feet on the bottom",
 		"dead sprite inside a clear glass bottle",
-		"metal can that has no opening but sounds as if it is filled with liquid, sand, spiders, or broken glass (your choice)",
+		"metal can that has no opening but sounds as if it is filled with",
 		"glass orb filled with water, in which swims a clockwork goldfish",
 		"silver spoon with an M engraved on the handle",
 		"whistle made from gold-colored wood",
@@ -261,7 +261,7 @@ namespace dnd {
 		"invitation to a party where a murder happened",
 		"bronze pentacle with an etching of a rat's head in its center",
 		"purple handkerchief embroidered with the name of a powerful archmage",
-		"half of a floorplan for a temple, castle, or some other structure",
+		"half of a floorplan for a",
 		"bit of folded cloth that, when unfolded, turns into a stylish cap",
 		"receipt of deposit at a bank in a far-flung city",
 		"diary with seven missing pages",
@@ -276,10 +276,27 @@ namespace dnd {
 		"mosaic tile with a multicolored, glazed surface",
 		"petrified mouse",
 		"black pirate flag adorned with a dragon's skull and crossbones",
-		"tiny mechanical crab or spider that moves about when it's no longer being observed",
+		"tiny mechanical that moves about when it's no longer being observed",
 		"glass jar containing lard with a label that reads, \"Griffon Grease\"",
 		"wooden box with a ceramic bottom that holds a living worm with a head on each end of its body",
 		"metal urn containing the ashes of a hero"
+	};
+
+	// Map trinkets that allow customization to the different options for them
+	// The first entry in each vector should be the first choice in the trinket string
+	const std::unordered_map<std::string, std::vector<std::string>> TrinketChoices =
+	{
+		{"metal can that has no opening but sounds as if it is filled with", {
+			"liquid", "sand", "spiders", "broken glass"
+		}},
+
+		{"half of a floorplan for a", {
+			"temple", "castle", "mysterious structure"
+		}},
+
+		{"tiny mechanical that moves about when it's no longer being observed", {
+			"crab", "spider"
+		}}
 	};
 
 	// ======================================================================================
@@ -459,7 +476,7 @@ namespace dnd {
 
 		{"Criminal", {
 			"I always have a plan for what to do when things go wrong.",
-			"I am always calm, no matter what the situation.I never raise my voice or let my emotions control me.",
+			"I am always calm, no matter what the situation. I never raise my voice or let my emotions control me.",
 			"The first thing I do in a new place is note the locations of everything valuable--or where such things could be hidden.",
 			"I would rather make a new friend than a new enemy.",
 			"I am incredibly slow to trust. Those who seem the fairest often have the most to hide.",
@@ -470,7 +487,7 @@ namespace dnd {
 
 		{"Spy", {
 			"I always have a plan for what to do when things go wrong.",
-			"I am always calm, no matter what the situation.I never raise my voice or let my emotions control me.",
+			"I am always calm, no matter what the situation. I never raise my voice or let my emotions control me.",
 			"The first thing I do in a new place is note the locations of everything valuable--or where such things could be hidden.",
 			"I would rather make a new friend than a new enemy.",
 			"I am incredibly slow to trust. Those who seem the fairest often have the most to hide.",
@@ -644,7 +661,7 @@ namespace dnd {
 			{"Good",    "Charity. I always try to help those in need, no matter what the personal cost."},
 			{"Chaotic", "Change. We must help bring about the changes the gods are constantly working in the world."},
 			{"Lawful",  "Power. I hope to one day rise to the top of my faith's religious hierarchy."},
-			{"Lawful",  "Faith. I trust that my deity will guide my actions.I have faith that if I work hard, things will go well."},
+			{"Lawful",  "Faith. I trust that my deity will guide my actions. I have faith that if I work hard, things will go well."},
 			{"Any",     "Aspiration. I seek to prove myself worthy of my god's favor by matching my actions against his or her teachings."}
 		}},
 
@@ -653,7 +670,7 @@ namespace dnd {
 			{"Good",    "Charity. I always try to help those in need, no matter what the personal cost."},
 			{"Chaotic", "Change. We must help bring about the changes the gods are constantly working in the world."},
 			{"Lawful",  "Power. I hope to one day rise to the top of my faith's religious hierarchy."},
-			{"Lawful",  "Faith. I trust that my deity will guide my actions.I have faith that if I work hard, things will go well."},
+			{"Lawful",  "Faith. I trust that my deity will guide my actions. I have faith that if I work hard, things will go well."},
 			{"Any",     "Aspiration. I seek to prove myself worthy of my god's favor by matching my actions against his or her teachings."}
 		}},
 
