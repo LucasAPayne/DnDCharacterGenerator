@@ -26,6 +26,16 @@ namespace dnd {
 		trait = list[Random::Index(0, list.size() - 1)];
 	}
 
+	auto foundException = [](const std::string& str, const std::vector<std::string>& exceptionList) -> bool
+	{
+		for (size_t i = 0; i < exceptionList.size(); i++)
+		{
+			if (str.find(exceptionList[i]) != std::string::npos)
+				return true;
+		}
+		return false;
+	};
+
 	Character::Character()
 	{
 		// Add a proficiency or language that the character does not already have
@@ -58,7 +68,16 @@ namespace dnd {
 			std::shuffle(list.begin(), list.end(), Random::GetEngine());
 
 			for (int i = 0; i < skillsToChoose; ++i)
-				list[i].get().Proficient = true;
+			{
+				if (!list[i].get().Proficient)
+					list[i].get().Proficient = true;
+				else
+				{
+					// If the character is already proficient in the skill, increase skillsToChoose to skip that one and look at another
+					if (skillsToChoose != list.size())
+						skillsToChoose++;
+				}
+			}
 		};
 
 		// A character may choose to start with either equipment or money to buy equipment.
@@ -339,12 +358,12 @@ namespace dnd {
 				if (m_Race == "Forest Gnome")
 				{
 					m_Dexterity.Score++;
-					m_Cantrips.insert("Minor Illusion");
+					m_Cantrips.insert("minor illusion");
 				}
 				else if (m_Race == "Rock Gnome")
 				{
 					m_Constitution.Score++;
-					m_ToolProficiencies.insert({ "tinker's tools" });
+					m_ToolProficiencies.insert({ "set of tinker's tools" });
 				}
 			}
 			else if (m_MajorRace == "Half-Elf")
@@ -383,7 +402,7 @@ namespace dnd {
 				m_Intelligence.Score++;
 				m_Charisma.Score += 2;
 				m_Languages.insert("Infernal");
-				m_Cantrips.insert("Thaumaturgy");
+				m_Cantrips.insert("thaumaturgy");
 			}
 		}
 
@@ -460,17 +479,48 @@ namespace dnd {
 				m_WisdomSave.Proficient = true;
 				m_CharismaSave.Proficient = true;
 				chooseSkillProficiencies(2, { m_History, m_Insight, m_Medicine, m_Persuasion, m_Religion });
-
-				// Clerics have a set trait at index 0
-				m_FeatsAndTraits.push_back(ClassFeats.at(m_Class)[0]);
-
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Cleric").begin(), ClassFeats.at("Cleric").end());
 				m_CantripsKnown = 3;
 				m_SpellSlots = 2;
 				m_SpellsPrepared = std::max(1, m_Level + m_Wisdom.Modifier);
 
-				// Pick a cleric domain, one of the 1st level traits after index 0
-				size_t index = Random::Index(1, ClassFeats.at(m_Class).size() - 1);
-				m_FeatsAndTraits.push_back(ClassFeats.at(m_Class)[index]);
+				// Pick a cleric domain
+				std::vector<std::string> domains = { "Knowledge Domain", "Life Domain", "Light Domain", "Nature Domain", "Tempest Domain", "Trickery Domain", "War Domain" };
+				std::string domain = domains[Random::Index(0, domains.size() - 1)];
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at(domain).begin(), ClassFeats.at(domain).end());
+				m_Spells.insert(DomainSpells.at(domain).begin(), DomainSpells.at(domain).end());
+				std::cout << domain << "\n\n";
+
+				// Note: The Trickery Domain doesn't get anything extra at 1st level that goes on the character sheet
+				if (domain == "Knowledge Domain")
+				{
+					// From the Blessings of Knowledge Feat
+					for (int i = 0; i < 2; i++)
+						addUniqueProficiency(m_Languages, Languages);
+
+					chooseSkillProficiencies(2, { m_Arcana, m_History, m_Nature, m_Religion });
+				}
+				else if (domain == "Life Domain")
+				{
+					m_ArmorProficiencies.insert("heavy armor");
+				}
+				else if (domain == "Light Domain")
+				{
+					m_Cantrips.insert("light");
+				}
+				else if (domain == "Nature Domain")
+				{
+					// From the Acolyte of Nature Feat, pick a cantrip from the Druid list
+					m_Cantrips.insert(CantripLists.at("Druid")[Random::Index(0, CantripLists.at("Druid").size() - 1)]);
+					chooseSkillProficiencies(1, { m_AnimalHandling, m_Nature, m_Survival });
+					m_ArmorProficiencies.insert("heavy armor");
+				}
+				else if (domain == "Tempest Domain" || domain == "War Domain")
+				{
+					// Note: These cases will probably need to be separate when higher levels are considered
+					m_ArmorProficiencies.insert("heavy armor");
+					m_WeaponProficiencies.insert(AllMartialWeapons.begin(), AllMartialWeapons.end());
+				}
 
 				if (startWithEquipment)
 				{
@@ -651,7 +701,7 @@ namespace dnd {
 
 				std::vector<std::string> origins = { "Draconic Bloodline", "Wild Magic" };
 				std::string sorcerousOrigin = origins[Random::Index(0, origins.size() - 1)];
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), Trait("Sorcerous Origin.", sorcerousOrigin));
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), Trait("Sorcerous Origin", sorcerousOrigin));
 				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Sorcerer").begin(), ClassFeats.at("Sorcerer").end());
 				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at(sorcerousOrigin).begin(), ClassFeats.at(sorcerousOrigin).end());
 
@@ -661,7 +711,7 @@ namespace dnd {
 					std::string draconicAncestry = dragonTypes[Random::Index(0, dragonTypes.size() - 1)];
 
 					m_FeatsAndTraits.insert(m_FeatsAndTraits.end(),
-						Trait("Dragon Ancestor.", "You have a " + draconicAncestry +
+						Trait("Dragon Ancestor", "You have a " + draconicAncestry +
 							"dragon as your ancestor. You can speak, read, and write Draconic. "
 							"Additionally, whenever you make a Charisma check when interacting with dragons, "
 							"your proficiency bonus is doubled if it applies to the check."));
@@ -1227,7 +1277,7 @@ namespace dnd {
 					for (const auto& it : m_FeatsAndTraits)
 					{
 
-						if (it.Name == "Draconic Resilience.")
+						if (it.Name == "Draconic Resilience")
 						{
 							m_ArmorClass = 13 + m_Dexterity.Modifier;
 							break;
@@ -1280,7 +1330,6 @@ namespace dnd {
 
 			// All proficiencies should be plural
 			// Some words like armor, tools, supplies, and vehicles are already plural
-
 			{
 				auto it = m_WeaponProficiencies.begin();
 				while (it != m_WeaponProficiencies.end())
@@ -1300,7 +1349,7 @@ namespace dnd {
 			while (it != m_ToolProficiencies.end())
 			{
 				std::string item = *it;
-				if (item.find("bagpipes") == std::string::npos && item.find("supplies") && std::string::npos && item.find("tools") == std::string::npos && item.find("vehicles") == std::string::npos)
+				if (foundException(item, exceptions))
 				{
 					it = m_ToolProficiencies.erase(it);
 					m_ToolProficiencies.insert(item + "s");
@@ -1480,7 +1529,7 @@ namespace dnd {
 			std::cout << "\n\n";
 		}
 
-		if (!m_Spells.empty())
+		if (m_SpellSlots > 0)
 			std::cout << "Spell Slots. You have " << m_SpellSlots << " 1st-level spell slots you can use to cast your spells.\n\n";
 
 		if (m_Class == "Bard" || m_Class == "Sorcerer")
@@ -1495,10 +1544,24 @@ namespace dnd {
 			std::cout << "\n\n";
 		}
 
-		if (m_Class == "Cleric" || m_Class == "Druid")
+		if (m_Class == "Cleric")
 		{
 			std::cout << "Prepared Spells. You prepare " << m_SpellsPrepared << " 1st-level spells to make them available to you to cast, choosing from the "
-				<< m_Class << " spell list in the rulebook.\n\n";
+				      << m_Class << " spell list in the rulebook. In addition, you always have " << m_Spells.size() << " domain spells prepared: ";
+			for (const auto& it : m_Spells)
+			{
+				std::cout << it;
+				if (it != *m_Spells.rbegin())
+					std::cout << ", ";
+				else 
+					std::cout << ".";
+			}
+			std::cout << "\n\n";
+		}
+		else if (m_Class == "Druid")
+		{
+			std::cout << "Prepared Spells. You prepare " << m_SpellsPrepared << " 1st-level spells to make them available to you to cast, choosing from the "
+				      << m_Class << " spell list in the rulebook.\n\n";
 		}
 		else if (m_Class == "Wizard")
 		{
@@ -1529,7 +1592,7 @@ namespace dnd {
 		std::cout << "Features & Traits\n";
 		std::cout << "=================\n";
 		for (size_t i = 0; i < m_FeatsAndTraits.size(); i++)
-			std::cout << m_FeatsAndTraits[i].Name + " " + m_FeatsAndTraits[i].Description + "\n\n";
+			std::cout << m_FeatsAndTraits[i].Name + ". " + m_FeatsAndTraits[i].Description + "\n\n";
 
 		std::cout << "=========\n";
 		std::cout << "Equipment\n";
@@ -1544,28 +1607,13 @@ namespace dnd {
 
 			// Some items, especially trinkets, are singular but should not have "a" or "an" added before them
 			std::vector<std::string> singularExceptions = { "armor", "half", "mail", "two", "vestments" };
-
-			auto foundSingularExceptions = [singularExceptions](std::string str) -> bool
-			{
-				for (size_t i = 0; i < singularExceptions.size(); i++)
-				{
-					if (str.find(singularExceptions[i]) != std::string::npos)
-						return true;
-				}
-
-				// "the is also an exception, but only if it starts the string
-				if (str.substr(0, 3) == "the")
-					return true;
-
-				return false;
-			};
-
 			for (const auto& it : m_Equipment)
 			{
 				// If the character has only one of a particular item
 				if (it.second == 1)
 				{
-					if (foundSingularExceptions(it.first))
+					// "the is also an exception, but only if it starts the string
+					if (foundException(it.first, singularExceptions) || it.first.substr(0, 3) == "the")
 						std::cout << it.first;
 					else if (isVowel(it.first.substr(0, 1)) || it.first == "herbalism kit")
 						std::cout << "an " << it.first;
@@ -1578,6 +1626,8 @@ namespace dnd {
 						std::cout << it.second << " " << it.first.substr(0, 3) << "s " << it.first.substr(4);
 					else if (it.first.substr(0, 5) == "stick")
 						std::cout << it.second << " " << it.first.substr(0, 5) << "s " << it.first.substr(6);
+					else if (it.first.ends_with("supplies"))
+						std::cout << it.second << " " << it.first;
 					else
 						std::cout << it.second << " " << it.first << "s";
 				}
