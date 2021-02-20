@@ -410,6 +410,8 @@ namespace dnd {
 		{
 			m_Class = Classes[Random::Index(0, Classes.size() - 1)];
 
+			m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at(m_Class).begin(), ClassFeats.at(m_Class).end());
+
 			// Hit dice/points, proficiencies, saving throw proficiencies, skill proficiencies
 			if (m_Class == "Barbarian")
 			{
@@ -420,7 +422,6 @@ namespace dnd {
 				m_StrengthSave.Proficient = true;
 				m_ConstitutionSave.Proficient = true;
 				chooseSkillProficiencies(2, { m_AnimalHandling, m_Athletics, m_Intimidation, m_Nature, m_Perception, m_Survival });
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Barbarian").begin(), ClassFeats.at("Barbarian").end());
 				
 				if (startWithEquipment)
 				{
@@ -451,8 +452,6 @@ namespace dnd {
 					m_Intimidation, m_Investigation, m_Medicine, m_Nature, m_Perception, m_Performance, m_Persuasion, m_Religion,
 					m_SleightOfHand, m_Stealth, m_Survival });
 
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Bard").begin(), ClassFeats.at("Bard").end());
-
 				// TODO: These numbers will be based on level in the future
 				m_CantripsKnown = 2;
 				m_SpellsKnown = 4;
@@ -479,7 +478,6 @@ namespace dnd {
 				m_WisdomSave.Proficient = true;
 				m_CharismaSave.Proficient = true;
 				chooseSkillProficiencies(2, { m_History, m_Insight, m_Medicine, m_Persuasion, m_Religion });
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Cleric").begin(), ClassFeats.at("Cleric").end());
 				m_CantripsKnown = 3;
 				m_SpellSlots = 2;
 				m_SpellsPrepared = std::max(1, m_Level + m_Wisdom.Modifier);
@@ -487,7 +485,7 @@ namespace dnd {
 				// Pick a cleric domain
 				std::vector<std::string> domains = { "Knowledge Domain", "Life Domain", "Light Domain", "Nature Domain", "Tempest Domain", "Trickery Domain", "War Domain" };
 				std::string domain = domains[Random::Index(0, domains.size() - 1)];
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at(domain).begin(), ClassFeats.at(domain).end());
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClericDomainFeats.at(domain).begin(), ClericDomainFeats.at(domain).end());
 				m_Spells.insert(DomainSpells.at(domain).begin(), DomainSpells.at(domain).end());
 				std::cout << domain << "\n\n";
 
@@ -555,7 +553,6 @@ namespace dnd {
 				m_IntelligenceSave.Proficient = true;
 				m_WisdomSave.Proficient = true;
 				chooseSkillProficiencies(2, { m_Arcana, m_AnimalHandling, m_Insight, m_Medicine, m_Nature, m_Perception, m_Religion, m_Survival });
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Druid").begin(), ClassFeats.at("Druid").end());
 				m_CantripsKnown = 2;
 				m_SpellSlots = 2;
 				m_SpellsPrepared = std::max(1, m_Level + m_Wisdom.Modifier);
@@ -578,12 +575,8 @@ namespace dnd {
 				m_ConstitutionSave.Proficient = true;
 				chooseSkillProficiencies(2, { m_Acrobatics, m_AnimalHandling, m_Athletics, m_History, m_Insight, m_Intimidation, m_Perception, m_Survival });
 
-				// Fighters have a set trait at index 0
-				m_FeatsAndTraits.push_back(ClassFeats.at(m_Class)[0]);
-
-				// Pick a fighting style, one of the 1st level traits after index 0
-				size_t index = Random::Index(1, ClassFeats.at(m_Class).size() - 1);
-				m_FeatsAndTraits.push_back(ClassFeats.at(m_Class)[index]);
+				// Pick a fighting style
+				m_FeatsAndTraits.push_back(FightingStyles[Random::Index(0, FightingStyles.size() - 1)]);
 
 				if (startWithEquipment)
 				{
@@ -608,7 +601,6 @@ namespace dnd {
 				m_StrengthSave.Proficient = true;
 				m_DexteritySave.Proficient = true;
 				chooseSkillProficiencies(2, { m_Acrobatics, m_Athletics, m_History, m_Insight, m_Religion, m_Stealth });
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Monk").begin(), ClassFeats.at("Monk").end());
 
 				if (startWithEquipment)
 				{
@@ -627,7 +619,6 @@ namespace dnd {
 				m_WisdomSave.Proficient = true;
 				m_CharismaSave.Proficient = true;
 				chooseSkillProficiencies(2, { m_Athletics, m_Insight, m_Intimidation, m_Medicine, m_Persuasion, m_Religion });
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Paladin").begin(), ClassFeats.at("Paladin").end());
 
 				if (startWithEquipment)
 				{
@@ -648,8 +639,6 @@ namespace dnd {
 				m_StrengthSave.Proficient = true;
 				m_DexteritySave.Proficient = true;
 				chooseSkillProficiencies(3, { m_AnimalHandling, m_Athletics, m_Insight, m_Investigation, m_Nature, m_Perception, m_Stealth, m_Survival });
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Ranger").begin(), ClassFeats.at("Ranger").end());
-				// TODO: Some classes have choices within the set traits, such as Favored Enemy for Rangers
 
 				if (startWithEquipment)
 				{
@@ -672,7 +661,6 @@ namespace dnd {
 				m_DexteritySave.Proficient = true;
 				m_IntelligenceSave.Proficient = true;
 				chooseSkillProficiencies(4, { m_Acrobatics, m_Athletics, m_Deception, m_Insight, m_Intimidation, m_Investigation, m_Perception, m_Performance, m_Persuasion, m_SleightOfHand, m_Stealth });
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Rogue").begin(), ClassFeats.at("Rogue").end());
 
 				if (startWithEquipment)
 				{
@@ -701,9 +689,7 @@ namespace dnd {
 
 				std::vector<std::string> origins = { "Draconic Bloodline", "Wild Magic" };
 				std::string sorcerousOrigin = origins[Random::Index(0, origins.size() - 1)];
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), Trait("Sorcerous Origin", sorcerousOrigin));
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Sorcerer").begin(), ClassFeats.at("Sorcerer").end());
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at(sorcerousOrigin).begin(), ClassFeats.at(sorcerousOrigin).end());
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), SorcerousOriginFeats.at(sorcerousOrigin).begin(), SorcerousOriginFeats.at(sorcerousOrigin).end());
 
 				if (sorcerousOrigin == "Draconic Bloodline")
 				{
@@ -741,10 +727,15 @@ namespace dnd {
 				m_WisdomSave.Proficient = true;
 				m_CharismaSave.Proficient = true;
 				chooseSkillProficiencies(2, { m_Arcana, m_Deception, m_History, m_Intimidation, m_Investigation, m_Nature, m_Religion });
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Warlock").begin(), ClassFeats.at("Warlock").end());
 				m_CantripsKnown = 2;
 				m_SpellsKnown = 2;
 				m_SpellSlots = 1;
+
+				std::vector<std::string> otherworldlyPatrons = { "The Archfey", "The Fiend", "The Great Old One" };
+				std::string patron = otherworldlyPatrons[Random::Index(0, otherworldlyPatrons.size() - 1)];
+
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), OtherworldlyPatronFeats.at(patron).begin(), OtherworldlyPatronFeats.at(patron).end());
+				SpellLists.at("Warlock").insert(SpellLists.at("Warlock").end(), PatronSpells.at(patron).begin(), PatronSpells.at(patron).end());
 
 				if (startWithEquipment)
 				{
@@ -762,7 +753,6 @@ namespace dnd {
 				m_IntelligenceSave.Proficient = true;
 				m_WisdomSave.Proficient = true;
 				chooseSkillProficiencies(2, { m_Arcana, m_History, m_Insight, m_Investigation, m_Medicine, m_Religion });
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at("Wizard").begin(), ClassFeats.at("Wizard").end());
 				m_CantripsKnown = 3;
 				m_SpellSlots = 2;
 				m_SpellsPrepared = std::max(1, m_Level + m_Intelligence.Modifier);
@@ -1532,7 +1522,7 @@ namespace dnd {
 		if (m_SpellSlots > 0)
 			std::cout << "Spell Slots. You have " << m_SpellSlots << " 1st-level spell slots you can use to cast your spells.\n\n";
 
-		if (m_Class == "Bard" || m_Class == "Sorcerer")
+		if (m_Class == "Bard" || m_Class == "Sorcerer" || m_Class == "Warlock")
 		{
 			std::cout << "Spells Known: ";
 			for (const auto& it : m_Spells)

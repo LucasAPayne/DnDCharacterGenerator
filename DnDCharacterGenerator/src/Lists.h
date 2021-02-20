@@ -1358,39 +1358,6 @@ namespace dnd {
 			Trait("Spellcasting Ability", "Wisdom is your spellcasting ability for your cleric spells. The power of your spells comes from your devotion to your deity. You use your Wisdom whenever a cleric spell refers to your spellcasting ability. In addition, you use your Wisdom modifier when setting the saving throw DC for a cleric spell you cast and when making an attack roll with one.")
 		}},
 
-		// Cleric Domains
-		{"Knowledge Domain", {
-			Trait("Blessings of Knowledge", "You learn two languages of your choice. You also become proficient in your choice of the following skills: Arcana, History, Nature, or Religion.\n"
-			                                "Your proficiency bonus is doubled for any ability check you make that uses either of those skills.")
-		}},
-
-		{"Life Domain", {
-			Trait("Disciple of Life", "Your healing spells are more effective. Whenever you use a spell of 1st level or higher to restore hit points to a creature, the creature regains additional hit points equal to 2 + the spell's level.")
-		}},
-
-		{"Light Domain", {
-			Trait("Warding Flare", "You can interpose divine light between yourself and an attacking enemy. When you are attacked by a creature within 30 feet of you that you can see, you can use your reaction to impose disadvantage on the attack roll, causing a light to flare before the attacker before it hits or misses. An attacker that can't be blinded is immune to this feature.\n"
-								   "You can use this feature a number of times equal to your Wisdom modifier (a minimum of once). You regain all expended uses when you finish a long rest.")
-		}},
-
-		{"Nature Domain", {
-			Trait("Acoltye of Nature", "You learn one druid cantrip of your choice. You also gain proficiency in one of the following skills of your choice: Animal Handling, Nature, or Survival.")
-		}},
-
-		{"Tempest Domain", {
-			Trait("Wrath of the Storm", "You can thunderously rebuke attackers. When a creature within 5 feet of you that you can see hits you with an attack, you can use your reaction to cause the creature to make a Dexterity saving throw. The creature takes 2d8 lightning or thunder damage (your choice) on a failed saving throw, and half as much damage on a successful one.\n"
-										"You can use this feature a number of times equal to your Wisdom modifier (a minimum of once). You regain all expended uses when you finish a long rest.")
-		}},
-
-		{"Trickery Domain", {
-			Trait("Blessing of the Trickster", "You can use your action to touch a willing creature other than yourself to give it an advantage on Dexterity (Stealth) checks. This blessing lasts for 1 hour or until you use this feature again.")
-		}},
-
-		{"War Domain", {
-			Trait("War Priest", "Your god delivers bolts of inspiration to you while you are engaged in battle. When you use the Attack action, you can make one weapon attack as a bonus action.\n"
-							    "You can use this feature a number of times equal to your Wisdom modifier (a minimum of once). You regain all expended uses when you finish a long rest.")
-		}},
-
 		{"Druid", {
 			Trait("Druidic", "You know Druidic, the secret language of druids. You can speak the language and use it to leave hidden messages. You and others who know this language automatically spot such a message. Others spot the message's presence with a successful DC 15 Wisdom (Perception) check but can't decipher it without magic."),
 			Trait("Spellcasting Ability", "Wisdom is your spellcasting ability for your druid spells, since your magic draws upon your devotion and attunement to nature. You use your Wisdom whenever a spell refers to your spellcasting ability. In addition, you use your Wisdom modifier when setting the saving throw DC for a druid spell you cast and when making an attack roll with one.")
@@ -1399,12 +1366,6 @@ namespace dnd {
 		{"Fighter", {
 			Trait("Second Wind", "You have a limited well of stamina that you can draw on to protect yourself from harm. On your turn, you can use a bonus reaction to regain hit points equal to 1d10 + your fighter level.\n"
 								 "Once you use this feature, you must finish a short or long rest before you can use it again."),
-			Trait("Archery", "You gain a +2 bonus to attack rolls you make with ranged weapons."),
-	        Trait("Defense", "While you are wearing armor, you gain a +1 bonus to AC"),
-	        Trait("Dueling", "When you are wielding a melee weapon in one hand and no other weapons, you gain a +2 bonus to damage rolls with that weapon."),
-	        Trait("Great Weapon Fighting", "When you roll a 1 or 2 on a damage die for an attack you make with a melee weapon that you are wielding with two hands, you can reroll the die and must use the new roll, even if the new roll is a 1 or a 2. The weapon must have the two-handed or versatile property for you to gain this benefit."),
-	        Trait("Protection", "When a creature you can see attacks a target other than you that is within 5 feet of you, you can use your reaction to impose disadvantage on the attack roll. You must be wielding a shield."),
-	        Trait("Two-Weapon Fighting", "When you engage in two-weapon fighting, you can add your ability modifier to the damage of the second attack.")
 		}},
 
 		{"Monk", {
@@ -1457,7 +1418,62 @@ namespace dnd {
 			Trait("Spellcasting Ability", "Charisma is your spellcasting ability for your sorcerer spells, since the power of your magic relies on your ability to project your will into the world. You use your Charisma whenever a spell refers to your spellcasting ability. In addition, you use your Charisma modifier when setting the saving throw DC for a sorcerer spell you cast and when making an attack roll with one.")
 		}},
 
-		// Sorcerous Origins
+		{"Warlock", {
+	        Trait("Pact Magic", "Your arcane research and the magic bestowed on your by your patron have given you facility with spells.")
+		}},
+
+		{"Wizard", {
+			Trait("Spellcasting Ability", "Intelligence is your spellcasting ability for your wizard spells, since you learn your spells through dedicated study and memorization. You use your Intelligence whenever a spell refers to your spellcasting ability. In addition, you use your Intelligence modifier when setting the saving throw DC for a wizard spell you cast and when making an attack roll with one."),
+	        Trait("Arcane Recovery", "You have learned to regain some of your magical energy by studying your spellbook. Once per day when you finish a short rest, you can choose expended spell slots to recover. The spell slots can have a combined level that is equal to or less than half your wizard level (rounded up), and none of the slots can be 6th level or higher.\n"
+						             "For example, if you're a 4th-level wizard, you can recover up to two levels worth of spell slots. You can recover either a 2nd-level spell slot or two 1st-level spell slots.")
+		}}
+	};
+
+	// Figthing styles for the fighter class to choose between. Fighting styles do not provide branching sets of traits for fighters like domains do for clerics
+	const std::vector<Trait> FightingStyles = {
+		Trait("Archery", "You gain a +2 bonus to attack rolls you make with ranged weapons."),
+		Trait("Defense", "While you are wearing armor, you gain a +1 bonus to AC"),
+		Trait("Dueling", "When you are wielding a melee weapon in one hand and no other weapons, you gain a +2 bonus to damage rolls with that weapon."),
+		Trait("Great Weapon Fighting", "When you roll a 1 or 2 on a damage die for an attack you make with a melee weapon that you are wielding with two hands, you can reroll the die and must use the new roll, even if the new roll is a 1 or a 2. The weapon must have the two-handed or versatile property for you to gain this benefit."),
+		Trait("Protection", "When a creature you can see attacks a target other than you that is within 5 feet of you, you can use your reaction to impose disadvantage on the attack roll. You must be wielding a shield."),
+		Trait("Two-Weapon Fighting", "When you engage in two-weapon fighting, you can add your ability modifier to the damage of the second attack.")
+	};
+
+	const std::unordered_map<std::string, std::vector<Trait>> ClericDomainFeats = {
+		{"Knowledge Domain", {
+			Trait("Blessings of Knowledge", "You learn two languages of your choice. You also become proficient in your choice of the following skills: Arcana, History, Nature, or Religion.\n"
+											"Your proficiency bonus is doubled for any ability check you make that uses either of those skills.")
+		}},
+
+		{"Life Domain", {
+			Trait("Disciple of Life", "Your healing spells are more effective. Whenever you use a spell of 1st level or higher to restore hit points to a creature, the creature regains additional hit points equal to 2 + the spell's level.")
+		}},
+
+		{"Light Domain", {
+			Trait("Warding Flare", "You can interpose divine light between yourself and an attacking enemy. When you are attacked by a creature within 30 feet of you that you can see, you can use your reaction to impose disadvantage on the attack roll, causing a light to flare before the attacker before it hits or misses. An attacker that can't be blinded is immune to this feature.\n"
+								   "You can use this feature a number of times equal to your Wisdom modifier (a minimum of once). You regain all expended uses when you finish a long rest.")
+		}},
+
+		{"Nature Domain", {
+			Trait("Acoltye of Nature", "You learn one druid cantrip of your choice. You also gain proficiency in one of the following skills of your choice: Animal Handling, Nature, or Survival.")
+		}},
+
+		{"Tempest Domain", {
+			Trait("Wrath of the Storm", "You can thunderously rebuke attackers. When a creature within 5 feet of you that you can see hits you with an attack, you can use your reaction to cause the creature to make a Dexterity saving throw. The creature takes 2d8 lightning or thunder damage (your choice) on a failed saving throw, and half as much damage on a successful one.\n"
+										"You can use this feature a number of times equal to your Wisdom modifier (a minimum of once). You regain all expended uses when you finish a long rest.")
+		}},
+
+		{"Trickery Domain", {
+			Trait("Blessing of the Trickster", "You can use your action to touch a willing creature other than yourself to give it an advantage on Dexterity (Stealth) checks. This blessing lasts for 1 hour or until you use this feature again.")
+		}},
+
+		{"War Domain", {
+			Trait("War Priest", "Your god delivers bolts of inspiration to you while you are engaged in battle. When you use the Attack action, you can make one weapon attack as a bonus action.\n"
+								"You can use this feature a number of times equal to your Wisdom modifier (a minimum of once). You regain all expended uses when you finish a long rest.")
+		}}
+	};
+
+	const std::unordered_map<std::string, std::vector<Trait>> SorcerousOriginFeats = {
 		{"Draconic Bloodline", {
 			Trait("Draconic Resilience", "As magic flows through your body, it causes physical traits of your dragon ancestors to emerge. At 1st level, your hit point maximum increases by 1 and increases by 1 again whenever you gain a level in this class.\n"
 										 "Additionally, parts of your skin are covered by a thin sheen of dragon-like scales. When you aren't wearing armor, your AC equals 13 + your dexterity modifier.")
@@ -1467,17 +1483,24 @@ namespace dnd {
 			Trait("Wild Magic Surge", "Your spellcasting can unleash surges of untamed magic. Immediately after you cast a sorcerer spell of 1st level or higher, the DM can have you roll a d20. If you roll a 1, roll on the Wild Magic Surge table to create a random magical effect."),
 			Trait("Tides of Chaos", "You can manipulate the forces of chance and chaos to gain advantage on one attack roll, ability check, or saving throw. Once you do so, you must finish a long rest before you can use this feature again.\n"
 									"Any time before you regain the use of this feature, the DM can have you roll on the Wild Magic Surge table immediately after you cast a sorcerer spell of 1st level or higher. You then regain the use of this feature.")
+		}}
+	};
+
+	const std::unordered_map<std::string, std::vector<Trait>> OtherworldlyPatronFeats = {
+		{"The Archfey", {
+			Trait("Expanded Spell List", "The Archfey lets you choose from an expanded list of spells when you learn a warlock spell. The additional spells are found in the rulebook."),
+			Trait("Fey Presence", "Your patron bestows upon you the ability to project the beguiling and fearsome presence of the fey. As an action, you can cause each creature in a 10-foot cube originating from you to make a Wisdom saving throw against your warlock spell save DC. The creatures that fail their saving throws are all charmed or frightened by you (your choice) until the end of your next turn.\n"
+			                      "Once you use this feature, you can't use it again until you finish a short or long rest.")
 		}},
 
-		{"Warlock", {
-			Trait("Otherworldly Patron", "You have struck a bargain with an otherwordly being of your choice: the Archfey, the Fiend, or the Great Old One, each of which is detailed at the end of the class description. Your choice grants you features at 1st level and again at 6th, 10th, and 14th level."),
-	        Trait("Pact Magic", "Your arcane research and the magic bestowed on your by your patron have given you facility with spells. See the rulebook for rules on casting your spells.")
+		{"The Fiend", {
+			Trait("Expanded Spell List", "The Fiend lets you choose from an expanded list of spells when you learn a warlock spell. The additional spells are found in the rulebook."),
+			Trait("Dark One's Blessing", "When you reduce a hostile creature to 0 hit points, you gain temporary hit points equal to your Charisma modifier + your warlock level (minimum of 1)")
 		}},
 
-		{"Wizard", {
-			Trait("Spellcasting Ability", "Intelligence is your spellcasting ability for your wizard spells, since you learn your spells through dedicated study and memorization. You use your Intelligence whenever a spell refers to your spellcasting ability. In addition, you use your Intelligence modifier when setting the saving throw DC for a wizard spell you cast and when making an attack roll with one."),
-	        Trait("Arcane Recovery", "You have learned to regain some of your magical energy by studying your spellbook. Once per day when you finish a short rest, you can choose expended spell slots to recover. The spell slots can have a combined level that is equal to or less than half your wizard level (rounded up), and none of the slots can be 6th level or higher.\n"
-						             "For example, if you're a 4th-level wizard, you can recover up to two levels worth of spell slots. You can recover either a 2nd-level spell slot or two 1st-level spell slots.")
+		{"The Great Old One", {
+			Trait("Expanded Spell List", "The Great Old One lets you choose from an expanded list of spells when you learn a warlock spell. The additional spells are found in the rulebook."),
+			Trait("Awakened Mind", "Your alien knowledge gives you the ability to touch the minds of other creatures. You can communicate telepathically with any creature you can see within 30 feet of you. You don't need to share a language with the creature for it to understand your telepathic utterances, but the creature must be able to understand at least one language.")
 		}}
 	};
 
@@ -1499,7 +1522,7 @@ namespace dnd {
 	// Note: Only some classes have spellcasting ability
 	// Note: Paladins and rangers do not learn spells until they reach level 2
 	// TODO: Add spells spells higher than 1st-level and separate the spells for each class by level
-	const std::unordered_map<std::string, std::vector<std::string>> SpellLists = {
+	std::unordered_map<std::string, std::vector<std::string>> SpellLists = {
 		{"Bard",     {"animal friendship", "bane", "charm person", "comprehend languages", "cure wounds", "detect magic", "disguise self", "dissonant whispers", "faerie fire", "feather fall", "healing word", "heroism", "identify", "illusory script", "longstrider", "silent image", "sleep", "speak with animals", "Tahsa's hideous laughter", "thunderwave", "unseen servant"}},
 		{"Cleric",   {"bane", "bless", "command", "create or destroy water", "cure wounds", "detect evil and good", "detect magic", "detect poison and disease", "guiding bolt", "healing word", "inflict wounds", "protection from evil and good", "purify food and drink", "sanctuary", "shield of faith"}},
 		{"Druid",    {"animal friendship", "charm person", "create or destroy water", "cure wounds", "detect magic", "detect poison or disease", "entangle", "faeirie fire", "fog cloud", "goodberry", "healing word", "jump", "longstrider", "purify food and drink", "speak with animals", "thunderwave"}},
@@ -1519,5 +1542,12 @@ namespace dnd {
 		{"Tempest Domain",   {"fog cloud", "thunderwave"}},
 		{"Trickery Domain",  {"charm person", "disguise self"}},
 		{"War Domain",       {"divine favor", "shield of faith"}}
+	};
+
+	// Each otherworldly patron for warlocks provides additional choices for spells (which are added to the normal warlock spell list)
+	const std::unordered_map<std::string, std::vector<std::string>> PatronSpells = {
+		{"The Archfey", {"faerie fire", "sleep"}},
+		{"The Fiend",   {"burning hands", "command"}},
+		{"The Great Old One", {"disonant whisphers", "Tasha's hideous laughter"}}
 	};
 }
