@@ -1376,25 +1376,25 @@ namespace dnd {
 
 	// Note: not every class has cantrips
 	const std::unordered_map<std::string, std::vector<std::string>> CantripLists = {
-		{"Bard", {"Blade Ward", "Dancing Lights", "Friends", "Light", "Mage Hand", "Mending", "Message", "Minor Illusion", "Prestidigitation", "True Strike", "Vicious Mockery"}},
-		{"Cleric", {"Guidance", "Light", "Mending", "Resistance", "Sacred Flame", "Spare the Dying", "Thaumaturgy"}},
-		{"Druid", {"Druidcraft", "Guidance", "Mending", "Poison Spray", "Produce Flame", "Resistance", "Shillelagh", "Thorn Whip"}},
-		{"Sorcerer", {"Acid Splash", "Blade Ward", "Chill Touch", "Dancing Lights", "Fire Bolt", "Friends", "Light", "Mage Hand", "Mending", "Message", "Minor Illusion", "Poison Spray", "Prestidigitation", "Ray of Frost", "Shocking Grasp", "True Strike"}},
-		{"Warlock", {"Blade Ward", "Chill Touch", "Eldritch Blast", "Friends", "Mage Hand", "Minor Illusion", "Poison Spray", "Prestidigitation", "True Strike"}},
-		{"Wizard", {"Acid Splash", "Blade Ward", "Chill Touch", "Dancing Lights", "Fire Bolt", "Friends", "Light", "Mage Hand", "Mending", "Message", "Minor Illusion", "Poison Spray", "Prestidigitation", "Ray of Frost", "Shocking Grasp", "True Strike"}}
+		{"Bard", {"blade ward", "dancing lights", "friends", "light", "mage hand", "mending", "message", "minor illusion", "prestidigitation", "true strike", "vicious mockery"}},
+		{"Cleric", {"guidance", "light", "mending", "resistance", "sacred flame", "spare the dying", "thaumaturgy"}},
+		{"Druid", {"druidcraft", "guidance", "mending", "poison spray", "produce flame", "resistance", "shillelagh", "thorn whip"}},
+		{"Sorcerer", {"acid splash", "blade ward", "chill touch", "dancing lights", "fire bolt", "friends", "light", "mage hand", "mending", "message", "minor illusion", "poison spray", "prestidigitation", "ray of frost", "shocking grasp", "true strike"}},
+		{"Warlock", {"blade ward", "chill touch", "eldritch blast", "friends", "mage hand", "minor illusion", "poison spray", "prestidigitation", "true strike"}},
+		{"Wizard", {"acid splash", "blade ward", "chill touch", "dancing lights", "fire bolt", "friends", "light", "mage hand", "mending", "message", "minor illusion", "poison spray", "prestidigitation", "ray of frost", "shocking grasp", "true strike"}}
 	};
 	
 	// Note: Only some classes have spellcasting ability
 	// Note: Paladins and rangers do not learn spells until they reach level 2
 	// TODO: Add spells spells higher than 1st-level and separate the spells for each class by level
 	const std::unordered_map<std::string, std::vector<std::string>> SpellLists = {
-		{"Bard", {"Animal Friendship", "Bane", "Charm Person", "Comprehend Languages", "Cure Wounds", "Detect Magic", "Disguise Self", "Dissonant Whispers", "Faerie Fire", "Feather Fall", "Healing Word", "Heroism", "Identify", "Illusory Script", "Longstrider", "Silent Image", "Sleep", "Speak with Animals", "Tahsa's Hideous Laughter", "Thunderwave", "Unseen Servant"}},
-		{"Cleric", {"Bane", "Bless", "Command", "Create or Destroy Water", "Cure Wounds", "Detect Evil and Good", "Detect Magic", "Detect Poison and Disease", "Guiding Bolt", "Healing Word", "Inflict Wounds", "Protection from Evil and Good", "Purify Food and Drink", "Sanctuary", "Shield of Faith"}},
-		{"Druid", {"Animal Friendship", "Charm Person", "Create or Destroy Water", "Cure Wounds", "Detect Magic", "Detect Poison or Disease", "Entangle", "Faeirie Fire", "Fog Cloud", "Goodberry", "Healing Word", "Jump", "Longstrider", "Purify Food and Drink", "Speak with Animals", "Thunderwave"}},
-		{"Paladin", {"Bless", "Command", "Compelled Duel", "Cure Wounds", "Detect Evil and Good", "Detect Magic", "Detect Poison and Disease", "Divine Favor", "Heroism", "Protection from Evil and Good", "Purify Food and Drink", "Searing Smite", "Shield of Faith", "Thunderous Smite", "Wrathful Smite"}},
-		{"Ranger", {"Alarm", "Animal Friendship", "Cure Wounds", "Detect Magic", "Detect Poison and Disease", "Ensnaring Strike", "Fog Cloud", "Goodberry", "Hail of Thorns", "Hunter's Mark", "Jump", "Longstrider", "Speak with Animals"}},
-		{"Sorcerer", {"Burning Hands", "Charm Person", "Chromatic Orb", "Color Spray", "Comprehend Languages", "Detect Magic", "Disguise Self", "Expeditious Retreat", "False Life", "Feather Fall", "Fog Cloud", "Jump", "Mage Armor", "Magic Missile", "Ray of Sickness", "Shield", "Silent Image", "Sleep", "Thunderwave", "Witch Bolt"}},
-		{"Warlock", {"Armor of Agathys", "Arms of Hadar", "Charm Person", "Comprehend Languages", "Expeditious Retreat", "Hellish Rebuke", "Hex", "Illusory Script", "Protection from Evil and Good", "Unseen Servant", "Witch Bolt"}},
-		{"Wizard", {"Alarm", "Burning Hands", "Charm Person", "Chromatic Orb", "Color Spray", "Comprehend Languages", "Detect Magic", "Disguise Self", "Expeditious Retreat", "False Life", "Feather Fall", "Find Familiar", "Fog Cloud", "Grease", "Identify", "Illusory Script", "Jump", "Longstrider", "Mage Armor", "Magic Missile", "Protection from Evil and Good", "Ray of Sickness", "Shield", "Silent Image", "Sleep", "Tasha's Hideous Laughter", "Tenser's Floating Disk", "Thunderwave", "Unseen Servant", "Witch Bolt"}}
+		{"Bard", {"animal friendship", "bane", "charm person", "comprehend languages", "cure wounds", "detect magic", "disguise self", "dissonant whispers", "faerie fire", "feather fall", "healing word", "heroism", "identify", "illusory script", "longstrider", "silent image", "sleep", "speak with animals", "Tahsa's hideous laughter", "thunderwave", "unseen servant"}},
+		{"Cleric", {"bane", "bless", "command", "create or destroy water", "cure wounds", "detect evil and good", "detect magic", "detect poison and disease", "guiding bolt", "healing word", "inflict wounds", "protection from evil and good", "purify food and drink", "sanctuary", "shield of faith"}},
+		{"Druid", {"animal friendship", "charm person", "create or destroy water", "cure wounds", "detect magic", "detect poison or disease", "entangle", "faeirie fire", "fog cloud", "goodberry", "healing word", "jump", "longstrider", "purify food and drink", "speak with animals", "thunderwave"}},
+		{"Paladin", {"bless", "command", "compelled duel", "cure wounds", "detect evil and good", "detect magic", "detect poison and disease", "divine favor", "heroism", "protection from evil and good", "purify food and drink", "searing smite", "shield of faith", "thunderous smite", "wrathful smite"}},
+		{"Ranger", {"alarm", "animal friendship", "cure wounds", "detect magic", "detect poison and disease", "ensnaring strike", "fog cloud", "goodberry", "hail of thorns", "hunter's mark", "jump", "longstrider", "speak with animals"}},
+		{"Sorcerer", {"burning hands", "charm person", "chromatic orb", "color spray", "comprehend languages", "detect magic", "disguise self", "expeditious retreat", "false life", "feather fall", "fog cloud", "jump", "mage armor", "magic missile", "ray of sickness", "shield", "silent image", "sleep", "thunderwave", "witch bolt"}},
+		{"Warlock", {"armor of Agathys", "arms of Hadar", "charm person", "comprehend languages", "expeditious retreat", "hellish rebuke", "hex", "illusory script", "protection from evil and good", "unseen servant", "witch bolt"}},
+		{"Wizard", {"alarm", "burning hands", "charm person", "chromatic orb", "color spray", "comprehend languages", "detect magic", "disguise self", "expeditious retreat", "false life", "feather fall", "find familiar", "fog cloud", "grease", "identify", "illusory script", "jump", "longstrider", "mage armor", "magic missile", "protection from evil and good", "ray of sickness", "shield", "silent image", "sleep", "Tasha's hideous laughter", "Tenser's floating disk", "thunderwave", "unseen servant", "witch bolt"}}
 	};
 }

@@ -339,7 +339,7 @@ namespace dnd {
 				if (m_Race == "Forest Gnome")
 				{
 					m_Dexterity.Score++;
-					m_Cantrips.insert("Minor Illusion");
+					m_Cantrips.insert("minor illusion");
 				}
 				else if (m_Race == "Rock Gnome")
 				{
@@ -383,7 +383,7 @@ namespace dnd {
 				m_Intelligence.Score++;
 				m_Charisma.Score += 2;
 				m_Languages.insert("Infernal");
-				m_Cantrips.insert("Thaumaturgy");
+				m_Cantrips.insert("thaumaturgy");
 			}
 		}
 
@@ -1086,7 +1086,7 @@ namespace dnd {
 						if (it.first == "dagger" || it.first == "rapier" || it.first == "scimitar" || it.first == "shortsword" || it.first == "whip")
 						{
 							attackBonus += abilityModifier = std::max(m_Dexterity.Modifier, m_Strength.Modifier);
-							
+
 						}
 						else
 							attackBonus += abilityModifier = m_Strength.Modifier;
@@ -1129,6 +1129,17 @@ namespace dnd {
 				// TODO: Breath weapon damage increases at certain levels
 				std::string damage = "2d6 " + BreathWeaponTypes.at(type);
 				m_Attacks.push_back(Attack(attackName, 0, damage));
+			}
+
+			// Format attacks so that the first letter of each word is capitalized
+			for(size_t i = 0; i < m_Attacks.size(); i++)
+			{
+				m_Attacks[i].Name[0] = std::toupper(m_Attacks[i].Name[0]);
+				for (size_t j = 1; j < m_Attacks[i].Name.length(); j++)
+				{
+					if (m_Attacks[i].Name[j] == ' ' || m_Attacks[i].Name[j] == '(')
+						m_Attacks[i].Name[j + 1] = std::toupper(m_Attacks[i].Name[j + 1]);
+				}
 			}
 		}
 
@@ -1460,7 +1471,7 @@ namespace dnd {
 				if (it != *spellbook.rbegin())
 					std::cout << it << ", ";
 				else
-					std::cout << " and " << it << ".";
+					std::cout << "and " << it << ".";
 			}
 			std::cout << "\n\n";
 		}
