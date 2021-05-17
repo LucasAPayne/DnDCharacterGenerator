@@ -116,7 +116,7 @@ namespace dnd {
 			// Find the character's major race
 			if (m_Race == "Mountain Dwarf" || m_Race == "Hill Dwarf")
 				m_MajorRace = "Dwarf";
-			else if (m_Race == "High Elf" || m_Race == "Wood Elf" || m_Race == "Dark Elf (Drow)")
+			else if (m_Race == "High Elf" || m_Race == "Wood Elf" || m_Race == "Dark Elf (Drow)" || m_Race == "Half-Elf")
 				m_MajorRace = "Elf";
 			else if (m_Race == "Lightfoot Halfling" || m_Race == "Stout Halfling")
 				m_MajorRace = "Halfling";
@@ -125,59 +125,45 @@ namespace dnd {
 			else
 				m_MajorRace = m_Race;
 
-			// Generate name
-			if (m_Race == "Human")
+			// Generate Name
+
+			auto generateHumanName = [this]()
 			{
+				if (m_Race != "Human")
+					m_Ethnicity = Ethnicities[Random::Index(0, Ethnicities.size() - 1)];
+
 				if (m_Gender == "Male")
 					SetTraitFromDict(m_FirstName, HumanMaleNames, m_Ethnicity);
 				else if (m_Gender == "Female")
 					SetTraitFromDict(m_FirstName, HumanFemaleNames, m_Ethnicity);
 
 				SetTraitFromDict(m_Surname, HumanSurnames, m_Ethnicity);
-			}
-			else if (m_Race == "Half-Elf")
+			};
+			
+			auto generateNonHumanName = [this]()
 			{
-				// Half-elves can use either the elven or human naming conventions
-				bool elfName = Random::Int(0, 1);
-				if (elfName)
-				{
-					if (m_Gender == "Male")
-						SetTraitFromDict(m_FirstName, NonHumanMaleNames, "Elf");
-					else if (m_Gender == "Female")
-						SetTraitFromDict(m_FirstName, NonHumanFemaleNames, "Elf");
+				if (m_Gender == "Male")
+					SetTraitFromDict(m_FirstName, NonHumanMaleNames, m_MajorRace);
+				else if (m_Gender == "Female")
+					SetTraitFromDict(m_FirstName, NonHumanFemaleNames, m_MajorRace);
 
-					SetTraitFromDict(m_Surname, NonHumanSurnames, "Elf");
-				}
-				else
-				{
-					if (m_Gender == "Male")
-						SetTraitFromDict(m_FirstName, HumanMaleNames, m_Ethnicity);
-					else if (m_Gender == "Female")
-						SetTraitFromDict(m_FirstName, HumanFemaleNames, m_Ethnicity);
+				if (m_Race != "Half-Orc" && m_Race != "Tiefling")
+					SetTraitFromDict(m_Surname, NonHumanSurnames, m_MajorRace);
+			};
 
-					SetTraitFromDict(m_Surname, HumanSurnames, m_Ethnicity);
-				}
-			}
-			else if (m_Race == "Half-Orc")
+			
+			if (m_Race == "Human")
 			{
-				// Half-orcs can choose orc names with no surname, or they can choose a human name
-				bool orcName = Random::Int(0, 1);
-				if (orcName)
-				{
-					if (m_Gender == "Male")
-						SetTraitFromDict(m_FirstName, NonHumanMaleNames, "Half-Orc");
-					else if (m_Gender == "Female")
-						SetTraitFromDict(m_FirstName, NonHumanFemaleNames, "Half-Orc");
-				}
+				generateHumanName();
+			}
+			else if (m_Race == "Half-Elf" || m_Race == "Half-Orc")
+			{
+				// Half-elves and half-orcs can use either their traditional or human naming conventions
+				bool traditionalName = Random::Int(0, 1);
+				if (traditionalName)
+					generateNonHumanName();
 				else
-				{
-					if (m_Gender == "Male")
-						SetTraitFromDict(m_FirstName, HumanMaleNames, m_Ethnicity);
-					else if (m_Gender == "Female")
-						SetTraitFromDict(m_FirstName, HumanFemaleNames, m_Ethnicity);
-
-					SetTraitFromDict(m_Surname, HumanSurnames, m_Ethnicity);
-				}
+					generateHumanName();
 			}
 			else if (m_Race == "Tiefling")
 			{
@@ -189,25 +175,15 @@ namespace dnd {
 				}
 				else if (nameType == 1) // Infernal name
 				{
-					if (m_Gender == "Male")
-						SetTraitFromDict(m_FirstName, NonHumanMaleNames, "Tiefling");
-					else if (m_Gender == "Female")
-						SetTraitFromDict(m_FirstName, NonHumanFemaleNames, "Tiefling");
+					generateNonHumanName();
 				}
 				else if (nameType == 2) // Human name
 				{
-					m_Ethnicity = Ethnicities[Random::Index(0, Ethnicities.size() - 1)];
-
-					if (m_Gender == "Male")
-						SetTraitFromDict(m_FirstName, HumanMaleNames, m_Ethnicity);
-					else if (m_Gender == "Female")
-						SetTraitFromDict(m_FirstName, HumanFemaleNames, m_Ethnicity);
-
-					SetTraitFromDict(m_Surname, HumanSurnames, m_Ethnicity);
+					generateHumanName();
 				}
 				else if (nameType == 3) // Non-human name
 				{
-					std::vector<std::string> cultures = {"Dwarf", "Elf", "Halfling", "Dragonborn", "Gnome", "Half-Orc"};
+					std::vector<std::string> cultures = { "Dwarf", "Elf", "Halfling", "Dragonborn", "Gnome", "Half-Orc" };
 					std::string culture = cultures[Random::Index(0, cultures.size() - 1)];
 
 					if (m_Gender == "Male")
@@ -222,12 +198,7 @@ namespace dnd {
 			}
 			else
 			{
-				if (m_Gender == "Male")
-					SetTraitFromDict(m_FirstName, NonHumanMaleNames, m_MajorRace);
-				else if (m_Gender == "Female")
-					SetTraitFromDict(m_FirstName, NonHumanFemaleNames, m_MajorRace);
-
-				SetTraitFromDict(m_Surname, NonHumanSurnames, m_MajorRace);
+				generateNonHumanName(); // For nonhuman races that do not have special naming rules
 			}
 
 			// All characters can speak, read, and write in the Common tongue
