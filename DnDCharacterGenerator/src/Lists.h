@@ -288,7 +288,7 @@ namespace dnd {
 		// Non-human Names
 		// ======================================================================================
 
-		const std::unordered_map<std::string, const std::vector<std::string>> NonHumanSurnames = {
+		const std::unordered_map<std::string, std::vector<std::string>> NonHumanSurnames = {
 			{"Dwarf", {
 				"Balderk", "Battlehammer", "Brawnanvil", "Dankil", "Fireforge", "Frostbeard", "Forunn", "Holderhek", "Ironfist", "Loderr",
 				"Lutgehr", "Rumnaheim", "Strakein", "Torunn", "Ungart"
@@ -313,7 +313,7 @@ namespace dnd {
 			}},
 		};
 
-		const std::unordered_map<std::string, const std::vector<std::string>> NonHumanMaleNames = {
+		const std::unordered_map<std::string, std::vector<std::string>> NonHumanMaleNames = {
 			{"Dwarf", {
 				"Adrik", "Alberich", "Baern", "Barendd", "Brotto", "Bruenor", "Dain", "Darrak", "Delg", "Eberk",
 				"Einkill", "Fargrim", "Flint", "Gardain", "Harbek", "Kildrak", "Morgran", "Orsik", "Oskar", "Rangrim",
@@ -350,7 +350,7 @@ namespace dnd {
 			}}
 		};
 
-		const std::unordered_map<std::string, const std::vector<std::string>> NonHumanFemaleNames = {
+		const std::unordered_map<std::string, std::vector<std::string>> NonHumanFemaleNames = {
 			{"Dwarf", {
 				"Amber", "Artin", "Audhild", "Bardryn", "Dagnal", "Diesa", "Eldeth", "Falkrunn", "Finellen", "Gunnolda",
 				"Gurdis", "Helja", "Hlin", "Kathra", "Kristryd", "Ilde", "Liftrasa", "Mandred", "Riswynn", "Sannl",
@@ -396,7 +396,7 @@ namespace dnd {
 		// Human Names
 		// ======================================================================================
 
-		const std::unordered_map<std::string, const std::vector<std::string>> HumanSurnames = {
+		const std::unordered_map<std::string, std::vector<std::string>> HumanSurnames = {
 			{"Calishite",  {"Basha", "Dumein", "Hassan", "Khalid", "Mostana", "Pashar", "Rein"}},
 			{"Chondathan", {"Amblecrown", "Buckman", "Dundragon", "Evenwood", "Greycastle", "Tallstag"}},
 			{"Tethyrian",  {"Amblecrown", "Buckman", "Dundragon", "Evenwood", "Greycastle", "Tallstag"}},
@@ -408,7 +408,7 @@ namespace dnd {
 			{"Turami",     {"Agosto", "Astorio", "Calabra", "Domine", "Falone", "Marivaldi", "Pisacar", "Ramondo"}}
 		};
 
-		const std::unordered_map<std::string, const std::vector<std::string>> HumanMaleNames = {
+		const std::unordered_map<std::string, std::vector<std::string>> HumanMaleNames = {
 			{"Calishite",  {"Aseir", "Bardeid", "Haseid", "Khemed", "Mehmen", "Sudeiman", "Zasheir"}},
 			{"Chondathan", {"Darvin", "Dorn", "Evendur", "Gorstag", "Grim", "Helm", "Malark", "Morn", "Randal", "Stedd"}},
 			{"Tethyrian",  {"Darvin", "Dorn", "Evendur", "Gorstag", "Grim", "Helm", "Malark", "Morn", "Randal", "Stedd"}},
@@ -420,7 +420,7 @@ namespace dnd {
 			{"Turami",     {"Anton", "Diero", "Marcon", "Pieron", "Rimardo", "Romero", "Salazar", "Umbero"}}
 		};
 
-		const std::unordered_map<std::string, const std::vector<std::string>> HumanFemaleNames = {
+		const std::unordered_map<std::string, std::vector<std::string>> HumanFemaleNames = {
 			{"Calishite",  {"Atala", "Ceidil", "Hama", "Jasmal", "Meilil", "Seipora", "Yasheria", "Zasheida"}},
 			{"Chondathan", {"Arveene", "Esvele", "Jhessail", "Kerri", "Lureene", "Mirir", "Rowan", "Shandri", "Tessele"}},
 			{"Tethyrian",  {"Arveene", "Esvele", "Jhessail", "Kerri", "Lureene", "Mirir", "Rowan", "Shandri", "Tessele"}},
@@ -640,7 +640,7 @@ namespace dnd {
 		// Ideals
 		// ======================================================================================
 
-		const std::unordered_map<std::string, const std::vector<std::pair<std::string, std::string>>> Ideals = {
+		const std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> Ideals = {
 			{"Acolyte", {
 				{"Lawful",  "Tradition. The ancient traditions of worship and sacrifice must be preserved and upheld."},
 				{"Good",    "Charity. I always try to help those in need, no matter what the personal cost."},
@@ -808,7 +808,7 @@ namespace dnd {
 		// Bonds
 		// ======================================================================================
 
-		const std::unordered_map<std::string, const std::vector<std::string>> Bonds = {
+		const std::unordered_map<std::string, std::vector<std::string>> Bonds = {
 			{"Acolyte", {
 				"I would die to recover an ancient relic of my faith that was lost long ago.",
 				"I will someday get revenge on the corrupt temple hierarchy who branded me a heretic.",
@@ -976,7 +976,7 @@ namespace dnd {
 		// Flaws
 		// ======================================================================================
 
-		const std::unordered_map<std::string, const std::vector<std::string>> Flaws = {
+		const std::unordered_map<std::string, std::vector<std::string>> Flaws = {
 			{"Acolyte", {
 				"I judge others harshly, and myself even more severely.",
 				"I put too much trust in those who wield power within my temple's hierarchy.",
@@ -1146,7 +1146,7 @@ namespace dnd {
 
 		// Note: Starting a newline in the Trait constructor signifies a new paragraph.
 
-		const std::unordered_map<std::string, const std::vector<Trait>> RacialFeats = {
+		const std::unordered_map<std::string, std::vector<Trait>> RacialFeats = {
 			{"Dwarf", {
 				Trait("Darkvision.", "Accustomed to life underground, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can't discern color in darkness, only shades of gray."),
 				Trait("Dwarven Resilience.", "You have advantage on saving throws against poison, and you have resistance against poison damage."),
@@ -1235,7 +1235,7 @@ namespace dnd {
 			}}
 		};
 
-		const std::unordered_map<std::string, const std::vector<Trait>> BackgroundFeats = {
+		const std::unordered_map<std::string, std::vector<Trait>> BackgroundFeats = {
 			{"Acolyte", {Trait("Shelter of the Faithful.", "As an acolyte, you command the respect of those who share your faith, and you can perform the religious ceremonies of your deity. You and your adventuring companions can expect to receive free healing and care at a temple, shrine, or other established presence of your faith, though you must provide any material components needed for spells. Those who share your religion will support you (but only you) at a modest lifestyle.\n"
 														   "You might also have ties to a specific temple dedicated to your chosen deity or pantheon, and you have a residence there. This could be the temple where you used to serve, if you remain on good terms with it, or a temple where you have found a new home. While near your temple, you can call upon the priests for assistance, provided the assistance you ask for is not hazardous and you remain in good standing with your temple.")}},
 
@@ -1282,7 +1282,7 @@ namespace dnd {
 		};
 
 		// TODO: Add the feats that are gained after the first level, and separate the feats gained at each level
-		const std::unordered_map<std::string, const std::vector<Trait>> ClassFeats = {
+		const std::unordered_map<std::string, std::vector<Trait>> ClassFeats = {
 			{"Barbarian", {Trait("Rage.", "In battle, you fight with primal ferocity. On your turn, you can enter a rage as a bonus action.\n"
 										  "While raging, you gain the following benefits if you aren't wearing heavy armor:\n"
 										  "- You have advantage on Strength checks and Strength saving throws.\n"
