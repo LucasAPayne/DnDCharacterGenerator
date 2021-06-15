@@ -86,8 +86,8 @@ namespace dnd {
 
 		// Independent of race, background, and class
 		{
-			m_Alignment = Alignments[Random::Index(0, Alignments.size() - 1)];
-			m_Gender = Genders[Random::Index(0, Genders.size() - 1)];
+			m_Alignment = lists::Alignments[Random::Index(0, lists::Alignments.size() - 1)];
+			m_Gender = lists::Genders[Random::Index(0, lists::Genders.size() - 1)];
 
 			m_Level = 1; // For now, characters should be locked to level 1 since any effects of leveling up are currently not considered
 			if (m_Level >= 1 && m_Level <= 4)
@@ -126,16 +126,16 @@ namespace dnd {
 
 		// Race
 		{
-			m_Race = Races[Random::Index(0, Races.size() - 1)];
+			m_Race = lists::Races[Random::Index(0, lists::Races.size() - 1)];
 
 			// Humans also have ethnicity (for name)
 			if (m_Race == "Human" || m_Race == "Half-Elf" || m_Race == "Half-Orc")
-				m_Ethnicity = Ethnicities[Random::Index(0, Ethnicities.size() - 1)];
+				m_Ethnicity = lists::Ethnicities[Random::Index(0, lists::Ethnicities.size() - 1)];
 
 			// Find the character's major race
 			if (m_Race == "Mountain Dwarf" || m_Race == "Hill Dwarf")
 				m_MajorRace = "Dwarf";
-			else if (m_Race == "High Elf" || m_Race == "Wood Elf" || m_Race == "Dark Elf (Drow)")
+			else if (m_Race == "High Elf" || m_Race == "Wood Elf" || m_Race == "Dark Elf (Drow)" || m_Race == "Half-Elf")
 				m_MajorRace = "Elf";
 			else if (m_Race == "Lightfoot Halfling" || m_Race == "Stout Halfling")
 				m_MajorRace = "Halfling";
@@ -144,59 +144,45 @@ namespace dnd {
 			else
 				m_MajorRace = m_Race;
 
-			// Generate name
-			if (m_Race == "Human")
+			// Generate Name
+
+			auto generateHumanName = [this]()
+			{
+				if (m_Race != "Human")
+					m_Ethnicity = lists::Ethnicities[Random::Index(0, lists::Ethnicities.size() - 1)];
+
+				if (m_Gender == "Male")
+					SetTraitFromDict(m_FirstName, lists::HumanMaleNames, m_Ethnicity);
+				else if (m_Gender == "Female")
+					SetTraitFromDict(m_FirstName, lists::HumanFemaleNames, m_Ethnicity);
+
+				SetTraitFromDict(m_Surname, lists::HumanSurnames, m_Ethnicity);
+			};
+			
+			auto generateNonHumanName = [this]()
 			{
 				if (m_Gender == "Male")
-					SetTraitFromDict(m_FirstName, HumanMaleNames, m_Ethnicity);
+					SetTraitFromDict(m_FirstName, lists::NonHumanMaleNames, m_MajorRace);
 				else if (m_Gender == "Female")
-					SetTraitFromDict(m_FirstName, HumanFemaleNames, m_Ethnicity);
+					SetTraitFromDict(m_FirstName, lists::NonHumanFemaleNames, m_MajorRace);
 
-				SetTraitFromDict(m_Surname, HumanSurnames, m_Ethnicity);
-			}
-			else if (m_Race == "Half-Elf")
+				if (m_Race != "Half-Orc" && m_Race != "Tiefling")
+					SetTraitFromDict(m_Surname, lists::NonHumanSurnames, m_MajorRace);
+			};
+
+			
+			if (m_Race == "Human")
 			{
-				// Half-elves can use either the elven or human naming conventions
-				bool elfName = Random::Int(0, 1);
-				if (elfName)
-				{
-					if (m_Gender == "Male")
-						SetTraitFromDict(m_FirstName, NonHumanMaleNames, "Elf");
-					else if (m_Gender == "Female")
-						SetTraitFromDict(m_FirstName, NonHumanFemaleNames, "Elf");
-
-					SetTraitFromDict(m_Surname, NonHumanSurnames, "Elf");
-				}
-				else
-				{
-					if (m_Gender == "Male")
-						SetTraitFromDict(m_FirstName, HumanMaleNames, m_Ethnicity);
-					else if (m_Gender == "Female")
-						SetTraitFromDict(m_FirstName, HumanFemaleNames, m_Ethnicity);
-
-					SetTraitFromDict(m_Surname, HumanSurnames, m_Ethnicity);
-				}
+				generateHumanName();
 			}
-			else if (m_Race == "Half-Orc")
+			else if (m_Race == "Half-Elf" || m_Race == "Half-Orc")
 			{
-				// Half-orcs can choose orc names with no surname, or they can choose a human name
-				bool orcName = Random::Int(0, 1);
-				if (orcName)
-				{
-					if (m_Gender == "Male")
-						SetTraitFromDict(m_FirstName, NonHumanMaleNames, "Half-Orc");
-					else if (m_Gender == "Female")
-						SetTraitFromDict(m_FirstName, NonHumanFemaleNames, "Half-Orc");
-				}
+				// Half-elves and half-orcs can use either their traditional or human naming conventions
+				bool traditionalName = Random::Int(0, 1);
+				if (traditionalName)
+					generateNonHumanName();
 				else
-				{
-					if (m_Gender == "Male")
-						SetTraitFromDict(m_FirstName, HumanMaleNames, m_Ethnicity);
-					else if (m_Gender == "Female")
-						SetTraitFromDict(m_FirstName, HumanFemaleNames, m_Ethnicity);
-
-					SetTraitFromDict(m_Surname, HumanSurnames, m_Ethnicity);
-				}
+					generateHumanName();
 			}
 			else if (m_Race == "Tiefling")
 			{
@@ -204,59 +190,44 @@ namespace dnd {
 				int nameType = Random::Int(0, 3);
 				if (nameType == 0) // Virtue Name
 				{
-					m_FirstName = VirtueNames[Random::Index(0, VirtueNames.size() - 1)];
+					m_FirstName = lists::VirtueNames[Random::Index(0, lists::VirtueNames.size() - 1)];
 				}
 				else if (nameType == 1) // Infernal name
 				{
-					if (m_Gender == "Male")
-						SetTraitFromDict(m_FirstName, NonHumanMaleNames, "Tiefling");
-					else if (m_Gender == "Female")
-						SetTraitFromDict(m_FirstName, NonHumanFemaleNames, "Tiefling");
+					generateNonHumanName();
 				}
 				else if (nameType == 2) // Human name
 				{
-					m_Ethnicity = Ethnicities[Random::Index(0, Ethnicities.size() - 1)];
-
-					if (m_Gender == "Male")
-						SetTraitFromDict(m_FirstName, HumanMaleNames, m_Ethnicity);
-					else if (m_Gender == "Female")
-						SetTraitFromDict(m_FirstName, HumanFemaleNames, m_Ethnicity);
-
-					SetTraitFromDict(m_Surname, HumanSurnames, m_Ethnicity);
+					generateHumanName();
 				}
 				else if (nameType == 3) // Non-human name
 				{
-					std::vector<std::string> cultures = {"Dwarf", "Elf", "Halfling", "Dragonborn", "Gnome", "Half-Orc"};
+					std::vector<std::string> cultures = { "Dwarf", "Elf", "Halfling", "Dragonborn", "Gnome", "Half-Orc" };
 					std::string culture = cultures[Random::Index(0, cultures.size() - 1)];
 
 					if (m_Gender == "Male")
-						SetTraitFromDict(m_FirstName, NonHumanMaleNames, culture);
+						SetTraitFromDict(m_FirstName, lists::NonHumanMaleNames, culture);
 					else if (m_Gender == "Female")
-						SetTraitFromDict(m_FirstName, NonHumanFemaleNames, culture);
+						SetTraitFromDict(m_FirstName, lists::NonHumanFemaleNames, culture);
 
 					// Some races do not have surnames
-					if (NonHumanSurnames.contains(culture))
-						SetTraitFromDict(m_Surname, NonHumanSurnames, culture);
+					if (lists::NonHumanSurnames.contains(culture))
+						SetTraitFromDict(m_Surname, lists::NonHumanSurnames, culture);
 				}
 			}
 			else
 			{
-				if (m_Gender == "Male")
-					SetTraitFromDict(m_FirstName, NonHumanMaleNames, m_MajorRace);
-				else if (m_Gender == "Female")
-					SetTraitFromDict(m_FirstName, NonHumanFemaleNames, m_MajorRace);
-
-				SetTraitFromDict(m_Surname, NonHumanSurnames, m_MajorRace);
+				generateNonHumanName(); // For nonhuman races that do not have special naming rules
 			}
 
 			// All characters can speak, read, and write in the Common tongue
 			m_Languages.insert("Common");
 
 			// Most races get racial features, and most subraces get additional features
-			if (RacialFeats.count(m_MajorRace) > 0)
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at(m_MajorRace).begin(), RacialFeats.at(m_MajorRace).end());
-			if (m_MajorRace != m_Race && RacialFeats.count(m_Race) > 0)
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), RacialFeats.at(m_Race).begin(), RacialFeats.at(m_Race).end());
+			if (lists::RacialFeats.count(m_MajorRace) > 0)
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), lists::RacialFeats.at(m_MajorRace).begin(), lists::RacialFeats.at(m_MajorRace).end());
+			if (m_MajorRace != m_Race && lists::RacialFeats.count(m_Race) > 0)
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), lists::RacialFeats.at(m_Race).begin(), lists::RacialFeats.at(m_Race).end());
 
 			// Ability score increases, feats, proficiencies, languages
 			// Subraces also get parent race benefits
@@ -296,10 +267,10 @@ namespace dnd {
 					m_WeaponProficiencies.insert({ "longsword", "shortsword", "shortbow", "longbow" });
 
 					// Choose one additional language
-					m_Languages.insert(Languages[Random::Index(1, Languages.size() - 1)]); // 1 is the minimum number to avoid picking Elvish twice
+					m_Languages.insert(lists::Languages[Random::Index(1, lists::Languages.size() - 1)]); // 1 is the minimum number to avoid picking Elvish twice
 
 					// High elves get a cantrip from the wizard spell list
-					m_Cantrips.insert(CantripLists.at("Wizard")[Random::Index(0, CantripLists.at("Wizard").size() - 1)]);
+					m_Cantrips.insert(lists::CantripLists.at("Wizard")[Random::Index(0, lists::CantripLists.at("Wizard").size() - 1)]);
 				}
 				else if (m_Race == "Wood Elf")
 				{
@@ -339,86 +310,24 @@ namespace dnd {
 				m_Wisdom.Score++;
 				m_Charisma.Score++;
 
-				m_Languages.insert(Languages[Random::Index(0, Languages.size() - 1)]);
+				m_Languages.insert(lists::Languages[Random::Index(0, lists::Languages.size() - 1)]);
 				// TODO: Add optional variant human trait
-			}
-			else if (m_MajorRace == "Dragonborn")
-			{
-				m_Speed = 30;
-				m_Strength.Score += 2;
-				m_Charisma.Score++;
-				m_Languages.insert("Draconic");
-			}
-			else if (m_MajorRace == "Gnome")
-			{
-				m_Speed = 25;
-				m_Intelligence.Score += 2;
-				m_Languages.insert("Gnomish");
-
-				if (m_Race == "Forest Gnome")
-				{
-					m_Dexterity.Score++;
-					m_Cantrips.insert("minor illusion");
-				}
-				else if (m_Race == "Rock Gnome")
-				{
-					m_Constitution.Score++;
-					m_ToolProficiencies.insert({ "set of tinker's tools" });
-				}
-			}
-			else if (m_MajorRace == "Half-Elf")
-			{
-				m_Speed = 30;
-				m_Charisma.Score += 2;
-
-				// Half-elves can choose any other two ability score besides charisma to increase by 1
-				// The same ability cannot receive both +1's
-				std::vector<std::reference_wrapper<Ability>> abilities = { m_Strength, m_Dexterity, m_Constitution, m_Intelligence, m_Wisdom };
-				size_t index = Random::Index(0, abilities.size() - 1);
-				abilities[index].get().Score++;
-				// Remove the ability whose score was just increased and choose anohter
-				abilities.erase(abilities.begin() + index);
-				abilities[Random::Index(0, abilities.size() - 1)].get().Score++;
-
-				m_Languages.insert("Elvish");
-				// Choose one additional language
-				m_Languages.insert(Languages[Random::Index(1, Languages.size() - 1)]); // 1 is the minimum number to avoid picking Elvish twice
-
-				// Half-elves can choose any two skills to be proficient in, from their Skill Versatility trait
-				chooseSkillProficiencies(2, { m_Acrobatics, m_AnimalHandling, m_Arcana, m_Athletics, m_Deception, m_History, m_Insight, m_Intimidation,
-					m_Investigation, m_Medicine, m_Nature, m_Perception, m_Performance, m_Persuasion, m_Religion, m_SleightOfHand, m_Stealth, m_Survival });
-			}
-			else if (m_MajorRace == "Half-Orc")
-			{
-				m_Speed = 30;
-				m_Strength.Score += 2;
-				m_Constitution.Score++;
-				m_Intimidation.Proficient = true;
-				m_Languages.insert("Orc");
-			}
-			else if (m_MajorRace == "Tiefling")
-			{
-				m_Speed = 30;
-				m_Intelligence.Score++;
-				m_Charisma.Score += 2;
-				m_Languages.insert("Infernal");
-				m_Cantrips.insert("thaumaturgy");
 			}
 		}
 
 		// Class
 		{
-			m_Class = Classes[Random::Index(0, Classes.size() - 1)];
+			m_Class = lists::Classes[Random::Index(0, lists::Classes.size() - 1)];
 
-			m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClassFeats.at(m_Class).begin(), ClassFeats.at(m_Class).end());
+			m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), lists::ClassFeats.at(m_Class).begin(), lists::ClassFeats.at(m_Class).end());
 
 			// Hit dice/points, proficiencies, saving throw proficiencies, skill proficiencies
 			if (m_Class == "Barbarian")
 			{
 				m_HitDice.Type = 12;
 				m_ArmorProficiencies.insert({ "light armor", "medium armor", "shields" });
-				m_WeaponProficiencies.insert(AllSimpleWeapons.begin(), AllSimpleWeapons.end());
-				m_WeaponProficiencies.insert(AllMartialWeapons.begin(), AllMartialWeapons.end());
+				m_WeaponProficiencies.insert(lists::AllSimpleWeapons.begin(), lists::AllSimpleWeapons.end());
+				m_WeaponProficiencies.insert(lists::AllMartialWeapons.begin(), lists::AllMartialWeapons.end());
 				m_StrengthSave.Proficient = true;
 				m_ConstitutionSave.Proficient = true;
 				chooseSkillProficiencies(2, { m_AnimalHandling, m_Athletics, m_Intimidation, m_Nature, m_Perception, m_Survival });
@@ -426,8 +335,8 @@ namespace dnd {
 				if (startWithEquipment)
 				{
 					// Most classes give certain set starting equipment, and allow the character to choose between a couple options for the rest of the equipment
-					Random::Int(0, 1) ? addEquipment({ {"greataxe", 1} }) : addEquipment({ {MartialMeleeWeapons[Random::Index(0, MartialMeleeWeapons.size() - 1)], 1} });
-					Random::Int(0, 1) ? addEquipment({ {"handaxe", 2} }) : addEquipment({ {AllSimpleWeapons[Random::Index(0, AllSimpleWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {"greataxe", 1} }) : addEquipment({ {lists::MartialMeleeWeapons[Random::Index(0,lists::MartialMeleeWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {"handaxe", 2} }) : addEquipment({ {lists::AllSimpleWeapons[Random::Index(0, lists::AllSimpleWeapons.size() - 1)], 1} });
 					addEquipment({ {"explorer's pack", 1}, {"javelin", 4} });
 				}
 				else m_GoldPieces = 10 * Random::IntSum(1, 4, 2);
@@ -438,10 +347,10 @@ namespace dnd {
 
 				// Pick three musical instruments to be proficient with
 				for (int i = 0; i < 3; i++)
-					addUniqueProficiency(m_ToolProficiencies, MusicalInstruments);
+					addUniqueProficiency(m_ToolProficiencies, lists::MusicalInstruments);
 
 				m_ArmorProficiencies.insert("light armor");
-				m_WeaponProficiencies.insert(AllSimpleWeapons.begin(), AllSimpleWeapons.end());
+				m_WeaponProficiencies.insert(lists::AllSimpleWeapons.begin(), lists::AllSimpleWeapons.end());
 				m_WeaponProficiencies.insert({ "hand crossbow", "longsword", "rapier", "shortsword" });
 
 				m_DexteritySave.Proficient = true;
@@ -462,10 +371,10 @@ namespace dnd {
 					int choice = Random::Int(0, 2);
 					if (choice == 0) addEquipment({ {"rapier", 1} });
 					else if (choice == 1) addEquipment({ {"longsword", 1} });
-					else if (choice == 2) addEquipment({ {AllSimpleWeapons[Random::Index(0, AllSimpleWeapons.size() - 1)], 1} });
+					else if (choice == 2) addEquipment({ {lists::AllSimpleWeapons[Random::Index(0, lists::AllSimpleWeapons.size() - 1)], 1} });
 
 					Random::Int(0, 1) ? addEquipment({ {"diplomat's pack", 1} }) : addEquipment({ {"entertainer's pack", 1} });
-					Random::Int(0, 1) ? addEquipment({ {"lute", 1} }) : addEquipment({ {MusicalInstruments[Random::Index(0, MusicalInstruments.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {"lute", 1} }) : addEquipment({ {lists::MusicalInstruments[Random::Index(0, lists::MusicalInstruments.size() - 1)], 1} });
 					addEquipment({ {"leather armor", 1}, {"dagger", 1} });
 				}
 				else m_GoldPieces = 10 * Random::IntSum(1, 4, 5);
@@ -474,7 +383,7 @@ namespace dnd {
 			{
 				m_HitDice.Type = 8;
 				m_ArmorProficiencies.insert({ "light armor", "medium armor", "shields" });
-				m_WeaponProficiencies.insert(AllSimpleWeapons.begin(), AllSimpleWeapons.end());
+				m_WeaponProficiencies.insert(lists::AllSimpleWeapons.begin(), lists::AllSimpleWeapons.end());
 				m_WisdomSave.Proficient = true;
 				m_CharismaSave.Proficient = true;
 				chooseSkillProficiencies(2, { m_History, m_Insight, m_Medicine, m_Persuasion, m_Religion });
@@ -485,16 +394,15 @@ namespace dnd {
 				// Pick a cleric domain
 				std::vector<std::string> domains = { "Knowledge Domain", "Life Domain", "Light Domain", "Nature Domain", "Tempest Domain", "Trickery Domain", "War Domain" };
 				std::string domain = domains[Random::Index(0, domains.size() - 1)];
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), ClericDomainFeats.at(domain).begin(), ClericDomainFeats.at(domain).end());
-				m_Spells.insert(DomainSpells.at(domain).begin(), DomainSpells.at(domain).end());
-				std::cout << domain << "\n\n";
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), lists::ClericDomainFeats.at(domain).begin(), lists::ClericDomainFeats.at(domain).end());
+				m_Spells.insert(lists::DomainSpells.at(domain).begin(), lists::DomainSpells.at(domain).end());
 
 				// Note: The Trickery Domain doesn't get anything extra at 1st level that goes on the character sheet
 				if (domain == "Knowledge Domain")
 				{
 					// From the Blessings of Knowledge Feat
 					for (int i = 0; i < 2; i++)
-						addUniqueProficiency(m_Languages, Languages);
+						addUniqueProficiency(m_Languages, lists::Languages);
 
 					chooseSkillProficiencies(2, { m_Arcana, m_History, m_Nature, m_Religion });
 				}
@@ -509,7 +417,7 @@ namespace dnd {
 				else if (domain == "Nature Domain")
 				{
 					// From the Acolyte of Nature Feat, pick a cantrip from the Druid list
-					m_Cantrips.insert(CantripLists.at("Druid")[Random::Index(0, CantripLists.at("Druid").size() - 1)]);
+					m_Cantrips.insert(lists::CantripLists.at("Druid")[Random::Index(0, lists::CantripLists.at("Druid").size() - 1)]);
 					chooseSkillProficiencies(1, { m_AnimalHandling, m_Nature, m_Survival });
 					m_ArmorProficiencies.insert("heavy armor");
 				}
@@ -517,7 +425,7 @@ namespace dnd {
 				{
 					// Note: These cases will probably need to be separate when higher levels are considered
 					m_ArmorProficiencies.insert("heavy armor");
-					m_WeaponProficiencies.insert(AllMartialWeapons.begin(), AllMartialWeapons.end());
+					m_WeaponProficiencies.insert(lists::AllMartialWeapons.begin(), lists::AllMartialWeapons.end());
 				}
 
 				if (startWithEquipment)
@@ -537,7 +445,7 @@ namespace dnd {
 					else if (choice == 1) addEquipment({ {"leather armor", 1} });
 					else if (choice == 2) addEquipment({ {"chain mail", 1} });
 					
-					Random::Int(0, 1) ? addEquipment({ {"light crossbow", 1}, {"bolt", 20} }) : addEquipment({ {AllSimpleWeapons[Random::Index(0, SimpleMeleeWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {"light crossbow", 1}, {"bolt", 20} }) : addEquipment({ {lists::AllSimpleWeapons[Random::Index(0, lists::AllSimpleWeapons.size() - 1)], 1} });
 					Random::Int(0, 1) ? addEquipment({ {"priest's pack", 1} }) : addEquipment({ {"explorer's pack", 1} });
 					addEquipment({ {"shield", 1}, {"holy symbol", 1} });
 				}
@@ -559,8 +467,8 @@ namespace dnd {
 
 				if (startWithEquipment)
 				{
-					Random::Int(0, 1) ? addEquipment({ {"wooden shield", 1} }) : addEquipment({ {AllSimpleWeapons[Random::Index(0, AllSimpleWeapons.size() - 1)], 1} });
-					Random::Int(0, 1) ? addEquipment({ {"scimitar", 1} }) : addEquipment({ {SimpleMeleeWeapons[Random::Index(0, SimpleMeleeWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {"wooden shield", 1} }) : addEquipment({ {lists::AllSimpleWeapons[Random::Index(0, lists::AllSimpleWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {"scimitar", 1} }) : addEquipment({ {lists::SimpleMeleeWeapons[Random::Index(0, lists::SimpleMeleeWeapons.size() - 1)], 1} });
 					addEquipment({ {"leather armor", 1}, {"explorer's pack", 1}, {"druidic focus", 1} });
 				}
 				else m_GoldPieces = 10 * Random::IntSum(1, 4, 2);
@@ -569,20 +477,20 @@ namespace dnd {
 			{
 				m_HitDice.Type = 10;
 				m_ArmorProficiencies.insert({ "light armor", "medium armor", "heavy armor", "shields" });
-				m_WeaponProficiencies.insert(AllSimpleWeapons.begin(), AllSimpleWeapons.end());
-				m_WeaponProficiencies.insert(AllMartialWeapons.begin(), AllMartialWeapons.end());
+				m_WeaponProficiencies.insert(lists::AllSimpleWeapons.begin(), lists::AllSimpleWeapons.end());
+				m_WeaponProficiencies.insert(lists::AllMartialWeapons.begin(), lists::AllMartialWeapons.end());
 				m_StrengthSave.Proficient = true;
 				m_ConstitutionSave.Proficient = true;
 				chooseSkillProficiencies(2, { m_Acrobatics, m_AnimalHandling, m_Athletics, m_History, m_Insight, m_Intimidation, m_Perception, m_Survival });
 
 				// Pick a fighting style
-				m_FeatsAndTraits.push_back(FightingStyles[Random::Index(0, FightingStyles.size() - 1)]);
+				m_FeatsAndTraits.push_back(lists::FightingStyles[Random::Index(0, lists::FightingStyles.size() - 1)]);
 
 				if (startWithEquipment)
 				{
 					Random::Int(0, 1) ? addEquipment({ {"chain mail", 1} }) : addEquipment({ {"leather armor", 1}, {"longbow", 1}, {"arrow", 20} });
-					Random::Int(0, 1) ? addEquipment({ {AllMartialWeapons[Random::Index(0, AllMartialWeapons.size() - 1)], 1}, {"shield", 1} })
-						: addEquipment({ {AllMartialWeapons[Random::Index(0, AllMartialWeapons.size() - 1)], 1}, {AllMartialWeapons[Random::Index(0, AllMartialWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {lists::AllMartialWeapons[Random::Index(0, lists::AllMartialWeapons.size() - 1)], 1}, {"shield", 1} })
+						: addEquipment({ {lists::AllMartialWeapons[Random::Index(0, lists::AllMartialWeapons.size() - 1)], 1}, {lists::AllMartialWeapons[Random::Index(0, lists::AllMartialWeapons.size() - 1)], 1} });
 					Random::Int(0, 1) ? addEquipment({ {"light crossbow", 1}, {"bolt", 20} }) : addEquipment({ {"handaxe", 2} });
 					Random::Int(0, 1) ? addEquipment({ {"dungeoneer's pack", 1} }) : addEquipment({ {"explorer's pack", 1} });
 				}
@@ -592,11 +500,11 @@ namespace dnd {
 			{
 				m_HitDice.Type = 8;
 
-				m_WeaponProficiencies.insert(AllSimpleWeapons.begin(), AllSimpleWeapons.end());
+				m_WeaponProficiencies.insert(lists::AllSimpleWeapons.begin(), lists::AllSimpleWeapons.end());
 				m_WeaponProficiencies.insert("shortsword");
 				// Choose one type of artisan's tools or musical instrument
-				Random::Int(0, 1) ? m_ToolProficiencies.insert(ArtisanTools[Random::Index(0, ArtisanTools.size() - 1)]) 
-					: m_ToolProficiencies.insert(MusicalInstruments[Random::Index(0, MusicalInstruments.size() - 1)]);
+				Random::Int(0, 1) ? m_ToolProficiencies.insert(lists::ArtisanTools[Random::Index(0, lists::ArtisanTools.size() - 1)])
+					: m_ToolProficiencies.insert(lists::MusicalInstruments[Random::Index(0, lists::MusicalInstruments.size() - 1)]);
 
 				m_StrengthSave.Proficient = true;
 				m_DexteritySave.Proficient = true;
@@ -604,7 +512,7 @@ namespace dnd {
 
 				if (startWithEquipment)
 				{
-					Random::Int(0, 1) ? addEquipment({ {"shortsword", 1} }) : addEquipment({ {AllSimpleWeapons[Random::Index(0, AllSimpleWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {"shortsword", 1} }) : addEquipment({ {lists::AllSimpleWeapons[Random::Index(0, lists::AllSimpleWeapons.size() - 1)], 1} });
 					Random::Int(0, 1) ? addEquipment({ {"dungeoneer's pack", 1} }) : addEquipment({ {"explorer's pack", 1} });
 					addEquipment({ {"dart", 10} });
 				}
@@ -614,17 +522,17 @@ namespace dnd {
 			{
 				m_HitDice.Type = 10;
 				m_ArmorProficiencies.insert({ "light armor", "medium armor", "heavy armor", "shields" });
-				m_WeaponProficiencies.insert(AllSimpleWeapons.begin(), AllSimpleWeapons.end());
-				m_WeaponProficiencies.insert(AllMartialWeapons.begin(), AllMartialWeapons.end());
+				m_WeaponProficiencies.insert(lists::AllSimpleWeapons.begin(), lists::AllSimpleWeapons.end());
+				m_WeaponProficiencies.insert(lists::AllMartialWeapons.begin(), lists::AllMartialWeapons.end());
 				m_WisdomSave.Proficient = true;
 				m_CharismaSave.Proficient = true;
 				chooseSkillProficiencies(2, { m_Athletics, m_Insight, m_Intimidation, m_Medicine, m_Persuasion, m_Religion });
 
 				if (startWithEquipment)
 				{
-					Random::Int(0, 1) ? addEquipment({ {AllMartialWeapons[Random::Index(0, AllMartialWeapons.size() - 1)], 1}, {"shield", 1} }) 
-						: addEquipment({ {AllMartialWeapons[Random::Index(0, AllMartialWeapons.size() - 1)], 1}, { AllMartialWeapons[Random::Index(0, AllMartialWeapons.size() - 1)], 1 } });
-					Random::Int(0, 1) ? addEquipment({ {"javeline", 5} }) : addEquipment({ {SimpleMeleeWeapons[Random::Index(0, SimpleMeleeWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {lists::AllMartialWeapons[Random::Index(0, lists::AllMartialWeapons.size() - 1)], 1}, {"shield", 1} })
+						: addEquipment({ {lists::AllMartialWeapons[Random::Index(0, lists::AllMartialWeapons.size() - 1)], 1}, { lists::AllMartialWeapons[Random::Index(0, lists::AllMartialWeapons.size() - 1)], 1 } });
+					Random::Int(0, 1) ? addEquipment({ {"javeline", 5} }) : addEquipment({ {lists::SimpleMeleeWeapons[Random::Index(0, lists::SimpleMeleeWeapons.size() - 1)], 1} });
 					Random::Int(0, 1) ? addEquipment({ {"priest's pack", 1} }) : addEquipment({ {"explorer's pack", 1} });
 					addEquipment({ {"chain mail", 1}, {"holy symbol", 1} });
 				}
@@ -634,8 +542,8 @@ namespace dnd {
 			{
 				m_HitDice.Type = 10;
 				m_ArmorProficiencies.insert({ "light armor", "medium armor", "shields" });
-				m_WeaponProficiencies.insert(AllSimpleWeapons.begin(), AllSimpleWeapons.end());
-				m_WeaponProficiencies.insert(AllMartialWeapons.begin(), AllMartialWeapons.end());
+				m_WeaponProficiencies.insert(lists::AllSimpleWeapons.begin(), lists::AllSimpleWeapons.end());
+				m_WeaponProficiencies.insert(lists::AllMartialWeapons.begin(), lists::AllMartialWeapons.end());
 				m_StrengthSave.Proficient = true;
 				m_DexteritySave.Proficient = true;
 				chooseSkillProficiencies(3, { m_AnimalHandling, m_Athletics, m_Insight, m_Investigation, m_Nature, m_Perception, m_Stealth, m_Survival });
@@ -644,7 +552,7 @@ namespace dnd {
 				{
 					Random::Int(0, 1) ? addEquipment({ {"scale mail", 1} }) : addEquipment({ {"leather armor", 1} });
 					Random::Int(0, 1) ? addEquipment({ {"shortsword", 2} }) 
-						: addEquipment({ {SimpleMeleeWeapons[Random::Index(0, SimpleMeleeWeapons.size() - 1)], 1}, {SimpleMeleeWeapons[Random::Index(0, SimpleMeleeWeapons.size() - 1)], 1} });
+						: addEquipment({ {lists::SimpleMeleeWeapons[Random::Index(0, lists::SimpleMeleeWeapons.size() - 1)], 1}, {lists::SimpleMeleeWeapons[Random::Index(0, lists::SimpleMeleeWeapons.size() - 1)], 1} });
 					Random::Int(0, 1) ? addEquipment({ {"dungeoneer's pack", 1} }) : addEquipment({ {"explorer's pack", 1} });
 					addEquipment({ {"longbow", 1}, {"arrow", 20} });
 				}
@@ -655,7 +563,7 @@ namespace dnd {
 				m_HitDice.Type = 8;
 				m_Languages.insert("Thieves' Cant"); // From Thieves' Cant class feat
 				m_ArmorProficiencies.insert("light armor");
-				m_WeaponProficiencies.insert(AllSimpleWeapons.begin(), AllSimpleWeapons.end());
+				m_WeaponProficiencies.insert(lists::AllSimpleWeapons.begin(), lists::AllSimpleWeapons.end());
 				m_WeaponProficiencies.insert({ "hand crossbow", "longsword", "rapier", "shortsword" });
 				m_ToolProficiencies.insert("thieves' tools");
 				m_DexteritySave.Proficient = true;
@@ -689,7 +597,7 @@ namespace dnd {
 
 				std::vector<std::string> origins = { "Draconic Bloodline", "Wild Magic" };
 				std::string sorcerousOrigin = origins[Random::Index(0, origins.size() - 1)];
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), SorcerousOriginFeats.at(sorcerousOrigin).begin(), SorcerousOriginFeats.at(sorcerousOrigin).end());
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), lists::SorcerousOriginFeats.at(sorcerousOrigin).begin(), lists::SorcerousOriginFeats.at(sorcerousOrigin).end());
 
 				if (sorcerousOrigin == "Draconic Bloodline")
 				{
@@ -706,13 +614,13 @@ namespace dnd {
 					if (!m_Languages.contains("Draconic"))
 						m_Languages.insert("Draconic");
 					else
-						addUniqueProficiency(m_Languages, Languages);
+						addUniqueProficiency(m_Languages, lists::Languages);
 				}
 
 
 				if (startWithEquipment)
 				{
-					Random::Int(0, 1) ? addEquipment({ {"light crossbow", 1}, {"bolt", 20} }) : addEquipment({ {AllSimpleWeapons[Random::Index(0, AllSimpleWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {"light crossbow", 1}, {"bolt", 20} }) : addEquipment({ {lists::AllSimpleWeapons[Random::Index(0, lists::AllSimpleWeapons.size() - 1)], 1} });
 					Random::Int(0, 1) ? addEquipment({ {"component pouch", 1} }) : addEquipment({ {"arcane focus", 1} });
 					Random::Int(0, 1) ? addEquipment({ {"dungeoneer's pack", 1} }) : addEquipment({ {"explorer's pack", 1} });
 					addEquipment({ {"dagger", 2} });
@@ -723,7 +631,7 @@ namespace dnd {
 			{
 				m_HitDice.Type = 8;
 				m_ArmorProficiencies.insert("light armor");
-				m_WeaponProficiencies.insert(AllSimpleWeapons.begin(), AllSimpleWeapons.end());
+				m_WeaponProficiencies.insert(lists::AllSimpleWeapons.begin(), lists::AllSimpleWeapons.end());
 				m_WisdomSave.Proficient = true;
 				m_CharismaSave.Proficient = true;
 				chooseSkillProficiencies(2, { m_Arcana, m_Deception, m_History, m_Intimidation, m_Investigation, m_Nature, m_Religion });
@@ -734,15 +642,15 @@ namespace dnd {
 				std::vector<std::string> otherworldlyPatrons = { "The Archfey", "The Fiend", "The Great Old One" };
 				std::string patron = otherworldlyPatrons[Random::Index(0, otherworldlyPatrons.size() - 1)];
 
-				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), OtherworldlyPatronFeats.at(patron).begin(), OtherworldlyPatronFeats.at(patron).end());
-				SpellLists.at("Warlock").insert(SpellLists.at("Warlock").end(), PatronSpells.at(patron).begin(), PatronSpells.at(patron).end());
+				m_FeatsAndTraits.insert(m_FeatsAndTraits.end(), lists::OtherworldlyPatronFeats.at(patron).begin(), lists::OtherworldlyPatronFeats.at(patron).end());
+				lists::SpellLists.at("Warlock").insert(lists::SpellLists.at("Warlock").end(), lists::PatronSpells.at(patron).begin(), lists::PatronSpells.at(patron).end());
 
 				if (startWithEquipment)
 				{
-					Random::Int(0, 1) ? addEquipment({ {"light crossbow", 1}, {"bolt", 20} }) : addEquipment({ {AllSimpleWeapons[Random::Index(0, AllSimpleWeapons.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({ {"light crossbow", 1}, {"bolt", 20} }) : addEquipment({ {lists::AllSimpleWeapons[Random::Index(0, lists::AllSimpleWeapons.size() - 1)], 1} });
 					Random::Int(0, 1) ? addEquipment({ {"component pouch", 1} }) : addEquipment({ {"arcane focus", 1} });
 					Random::Int(0, 1) ? addEquipment({ {"scholar's pack", 1} }) : addEquipment({ {"dungeoneer's pack", 1} });
-					addEquipment({ {"leather armor", 1}, {"dagger", 2}, {AllSimpleWeapons[Random::Index(0, AllSimpleWeapons.size() - 1)], 1} });
+					addEquipment({ {"leather armor", 1}, {"dagger", 2}, {lists::AllSimpleWeapons[Random::Index(0, lists::AllSimpleWeapons.size() - 1)], 1} });
 				}
 				else m_GoldPieces = 10 * Random::IntSum(1, 4, 4);
 			}
@@ -773,9 +681,9 @@ namespace dnd {
 			{
 				for (int i = 0; i < m_CantripsKnown; i++)
 				{
-					std::string cantrip = CantripLists.at(m_Class)[Random::Index(0, CantripLists.at(m_Class).size() - 1)];
+					std::string cantrip = lists::CantripLists.at(m_Class)[Random::Index(0, lists::CantripLists.at(m_Class).size() - 1)];
 					while (m_Cantrips.contains(cantrip))
-						cantrip = CantripLists.at(m_Class)[Random::Index(0, CantripLists.at(m_Class).size() - 1)];
+						cantrip = lists::CantripLists.at(m_Class)[Random::Index(0, lists::CantripLists.at(m_Class).size() - 1)];
 
 					m_Cantrips.insert(cantrip);
 				}
@@ -784,9 +692,9 @@ namespace dnd {
 			{
 				for (int i = 0; i < m_SpellsKnown; i++)
 				{
-					std::string spell = SpellLists.at(m_Class)[Random::Index(0, SpellLists.at(m_Class).size() - 1)];
+					std::string spell = lists::SpellLists.at(m_Class)[Random::Index(0, lists::SpellLists.at(m_Class).size() - 1)];
 					while (m_Spells.contains(spell))
-						spell = SpellLists.at(m_Class)[Random::Index(0, SpellLists.at(m_Class).size() - 1)];
+						spell = lists::SpellLists.at(m_Class)[Random::Index(0, lists::SpellLists.at(m_Class).size() - 1)];
 
 					m_Spells.insert(spell);
 				}
@@ -795,11 +703,11 @@ namespace dnd {
 
 		// Background
 		{
-			m_Background = Backgrounds[Random::Index(0, Backgrounds.size() - 1)];
+			m_Background = lists::Backgrounds[Random::Index(0, lists::Backgrounds.size() - 1)];
 
 			// Personality Traits
 			// Generate two unique random numbers to ensure personality traits are different
-			std::vector<std::string> personalityList = PersonalityTraits.at(m_Background);
+			std::vector<std::string> personalityList = lists::PersonalityTraits.at(m_Background);
 			size_t first = Random::Index(0, personalityList.size() - 1);
 			size_t second = Random::Index(0, personalityList.size() - 1);
 
@@ -812,7 +720,7 @@ namespace dnd {
 			// Ideals
 			std::string axis1 = m_Alignment.substr(0, m_Alignment.find(' ')); // Lawful, Neutral, or Chaotic
 			std::string axis2 = m_Alignment.substr(m_Alignment.find(' ') + 1); // Good, Neutral, or Evil;
-			auto& idealsList = Ideals.at(m_Background);
+			auto& idealsList = lists::Ideals.at(m_Background);
 
 			while (m_Ideals == "")
 			{
@@ -823,15 +731,15 @@ namespace dnd {
 			}
 
 			// Bonds
-			SetTraitFromDict(m_Bonds, Bonds, m_Background);
+			SetTraitFromDict(m_Bonds, lists::Bonds, m_Background);
 
 			// Flaws
-			SetTraitFromDict(m_Flaws, Flaws, m_Background);
+			SetTraitFromDict(m_Flaws, lists::Flaws, m_Background);
 
 			// Background feats
 			// Some backgrounds offer variant feats, but a character may only choose one feat from a background.
-			size_t index = Random::Index(0, BackgroundFeats.at(m_Background).size() - 1);
-			m_FeatsAndTraits.push_back(BackgroundFeats.at(m_Background)[index]);
+			size_t index = Random::Index(0, lists::BackgroundFeats.at(m_Background).size() - 1);
+			m_FeatsAndTraits.push_back(lists::BackgroundFeats.at(m_Background)[index]);
 
 			std::vector<std::reference_wrapper<Skill>> skills = { m_Acrobatics, m_AnimalHandling, m_Arcana, m_Athletics, m_Deception, m_History, m_Insight,
 					m_Intimidation, m_Investigation, m_Medicine, m_Nature, m_Perception, m_Performance, m_Persuasion, m_Religion, m_SleightOfHand, m_Stealth, m_Survival };
@@ -854,7 +762,7 @@ namespace dnd {
 
 				// Choose two additional languages
 				for (int i = 0; i < 2; i++)
-					addUniqueProficiency(m_Languages, Languages);
+					addUniqueProficiency(m_Languages, lists::Languages);
 
 				if (startWithEquipment)
 				{
@@ -870,8 +778,8 @@ namespace dnd {
 				addSkillProficiency(m_SleightOfHand);
 
 				// if second == false, then the element could not be inserted (was a duplicate)
-				if (m_ToolProficiencies.insert("disguise kit").second == false) addUniqueProficiency(m_ToolProficiencies, OtherTools);
-				if (m_ToolProficiencies.insert("forgery kit").second == false)  addUniqueProficiency(m_ToolProficiencies, OtherTools);
+				if (m_ToolProficiencies.insert("disguise kit").second == false) addUniqueProficiency(m_ToolProficiencies, lists::OtherTools);
+				if (m_ToolProficiencies.insert("forgery kit").second == false)  addUniqueProficiency(m_ToolProficiencies, lists::OtherTools);
 
 				if (startWithEquipment)
 				{
@@ -887,8 +795,8 @@ namespace dnd {
 				addSkillProficiency(m_Deception);
 				addSkillProficiency(m_Stealth);
 
-				addUniqueProficiency(m_ToolProficiencies, GamingSets);
-				if (m_ToolProficiencies.insert("thieves' tools").second == false) addUniqueProficiency(m_ToolProficiencies, OtherTools);
+				addUniqueProficiency(m_ToolProficiencies, lists::GamingSets);
+				if (m_ToolProficiencies.insert("thieves' tools").second == false) addUniqueProficiency(m_ToolProficiencies, lists::OtherTools);
 
 				if (startWithEquipment)
 				{
@@ -901,13 +809,13 @@ namespace dnd {
 				addSkillProficiency(m_Acrobatics);
 				addSkillProficiency(m_Performance);
 
-				addUniqueProficiency(m_ToolProficiencies, MusicalInstruments);
-				if (m_ToolProficiencies.insert("disguise kit").second == false) addUniqueProficiency(m_ToolProficiencies, OtherTools);
+				addUniqueProficiency(m_ToolProficiencies, lists::MusicalInstruments);
+				if (m_ToolProficiencies.insert("disguise kit").second == false) addUniqueProficiency(m_ToolProficiencies, lists::OtherTools);
 
 				if (startWithEquipment)
 				{
 					std::vector<std::pair<std::string, int>> flavorItems = { {"love letter from an admirer", 1}, {"lock of hair from an admirer", 1}, {"trinket from an admirer", 1} };
-					addEquipment({ {MusicalInstruments[Random::Index(0, MusicalInstruments.size() - 1)], 1}, {"costume", 1}, {"pouch", 1} });
+					addEquipment({ {lists::MusicalInstruments[Random::Index(0, lists::MusicalInstruments.size() - 1)], 1}, {"costume", 1}, {"pouch", 1} });
 					addEquipment({ flavorItems[Random::Index(0, flavorItems.size() - 1)] });
 					m_GoldPieces += 15;
 				}
@@ -918,12 +826,12 @@ namespace dnd {
 				addSkillProficiency(m_AnimalHandling);
 				addSkillProficiency(m_Survival);
 
-				addUniqueProficiency(m_ToolProficiencies, ArtisanTools);
-				if (m_ToolProficiencies.insert("vehicles (land)").second == false) addUniqueProficiency(m_ToolProficiencies, OtherTools);
+				addUniqueProficiency(m_ToolProficiencies, lists::ArtisanTools);
+				if (m_ToolProficiencies.insert("vehicles (land)").second == false) addUniqueProficiency(m_ToolProficiencies, lists::OtherTools);
 
 				if (startWithEquipment)
 				{
-					addEquipment({ {"set of " + ArtisanTools[Random::Index(0, ArtisanTools.size() - 1)], 1}, {"shovel", 1}, {"iron pot", 1}, {"set of common clothes", 1}, {"pouch", 1} });
+					addEquipment({ {"set of " + lists::ArtisanTools[Random::Index(0, lists::ArtisanTools.size() - 1)], 1}, {"shovel", 1}, {"iron pot", 1}, {"set of common clothes", 1}, {"pouch", 1} });
 					m_GoldPieces += 10;
 				}
 			}
@@ -932,12 +840,12 @@ namespace dnd {
 				addSkillProficiency(m_Insight);
 				addSkillProficiency(m_Persuasion);
 
-				addUniqueProficiency(m_Languages, Languages);
-				addUniqueProficiency(m_ToolProficiencies, ArtisanTools);
+				addUniqueProficiency(m_Languages, lists::Languages);
+				addUniqueProficiency(m_ToolProficiencies, lists::ArtisanTools);
 
 				if (startWithEquipment)
 				{
-					addEquipment({ {"set of " + ArtisanTools[Random::Index(0, ArtisanTools.size() - 1)], 1}, {"set of traveler's clothes", 1}, {"pouch", 1},
+					addEquipment({ {"set of " + lists::ArtisanTools[Random::Index(0, lists::ArtisanTools.size() - 1)], 1}, {"set of traveler's clothes", 1}, {"pouch", 1},
 						{"letter of introduction from your guild", 1} });
 					m_GoldPieces += 15;
 				}
@@ -947,8 +855,8 @@ namespace dnd {
 				addSkillProficiency(m_Medicine);
 				addSkillProficiency(m_Religion);
 
-				addUniqueProficiency(m_Languages, Languages);
-				if (m_ToolProficiencies.insert("herbalism kit").second == false) addUniqueProficiency(m_ToolProficiencies, OtherTools);
+				addUniqueProficiency(m_Languages, lists::Languages);
+				if (m_ToolProficiencies.insert("herbalism kit").second == false) addUniqueProficiency(m_ToolProficiencies, lists::OtherTools);
 
 				if (startWithEquipment)
 				{
@@ -964,8 +872,8 @@ namespace dnd {
 				addSkillProficiency(m_History);
 				addSkillProficiency(m_Persuasion);
 
-				addUniqueProficiency(m_Languages, Languages);
-				addUniqueProficiency(m_ToolProficiencies, GamingSets);
+				addUniqueProficiency(m_Languages, lists::Languages);
+				addUniqueProficiency(m_ToolProficiencies, lists::GamingSets);
 
 				if (startWithEquipment)
 				{
@@ -979,8 +887,8 @@ namespace dnd {
 				addSkillProficiency(m_Athletics);
 				addSkillProficiency(m_Survival);
 
-				addUniqueProficiency(m_Languages, Languages);
-				addUniqueProficiency(m_ToolProficiencies, MusicalInstruments);
+				addUniqueProficiency(m_Languages, lists::Languages);
+				addUniqueProficiency(m_ToolProficiencies, lists::MusicalInstruments);
 
 				if (startWithEquipment)
 				{
@@ -995,7 +903,7 @@ namespace dnd {
 
 				// Choose two additional languages
 				for (int i = 0; i < 2; i++)
-					addUniqueProficiency(m_Languages, Languages);
+					addUniqueProficiency(m_Languages, lists::Languages);
 
 				if (startWithEquipment)
 				{
@@ -1010,14 +918,14 @@ namespace dnd {
 				addSkillProficiency(m_Athletics);
 				addSkillProficiency(m_Perception);
 
-				if (m_ToolProficiencies.insert("navigator's tools").second == false) addUniqueProficiency(m_ToolProficiencies, OtherTools);
-				if (m_ToolProficiencies.insert("vehicles (water)").second == false)  addUniqueProficiency(m_ToolProficiencies, OtherTools);
+				if (m_ToolProficiencies.insert("navigator's tools").second == false) addUniqueProficiency(m_ToolProficiencies, lists::OtherTools);
+				if (m_ToolProficiencies.insert("vehicles (water)").second == false)  addUniqueProficiency(m_ToolProficiencies, lists::OtherTools);
 
 				if (startWithEquipment)
 				{
 					std::vector<std::pair<std::string, int>> flavorItems = { {"rabbit's foot", 1}, {"small stone with a hole in the center", 1} };
 					addEquipment({ {"belaying pin (club)", 1}, {"50 feet of silk rope", 1}, {"set of common clothes", 1}, {"pouch", 1} });
-					Random::Int(0, 1) ? addEquipment({flavorItems[Random::Index(0, flavorItems.size() - 1)]}) : addEquipment({ {Trinkets[Random::Index(0, Trinkets.size() - 1)], 1} });
+					Random::Int(0, 1) ? addEquipment({flavorItems[Random::Index(0, flavorItems.size() - 1)]}) : addEquipment({ {lists::Trinkets[Random::Index(0, lists::Trinkets.size() - 1)], 1} });
 					m_GoldPieces += 10;
 				}
 			}
@@ -1026,8 +934,8 @@ namespace dnd {
 				addSkillProficiency(m_Athletics);
 				addSkillProficiency(m_Intimidation);
 
-				addUniqueProficiency(m_ToolProficiencies, GamingSets);
-				if (m_ToolProficiencies.insert("vehicles (land)").second == false) addUniqueProficiency(m_ToolProficiencies, OtherTools);
+				addUniqueProficiency(m_ToolProficiencies, lists::GamingSets);
+				if (m_ToolProficiencies.insert("vehicles (land)").second == false) addUniqueProficiency(m_ToolProficiencies, lists::OtherTools);
 
 				if (startWithEquipment)
 				{
@@ -1043,8 +951,8 @@ namespace dnd {
 				addSkillProficiency(m_SleightOfHand);
 				addSkillProficiency(m_Stealth);
 
-				if (m_ToolProficiencies.insert("disguise kit").second == false)   addUniqueProficiency(m_ToolProficiencies, OtherTools);
-				if (m_ToolProficiencies.insert("thieves' tools").second == false) addUniqueProficiency(m_ToolProficiencies, OtherTools);
+				if (m_ToolProficiencies.insert("disguise kit").second == false)   addUniqueProficiency(m_ToolProficiencies, lists::OtherTools);
+				if (m_ToolProficiencies.insert("thieves' tools").second == false) addUniqueProficiency(m_ToolProficiencies, lists::OtherTools);
 
 				if (startWithEquipment)
 				{
@@ -1130,19 +1038,19 @@ namespace dnd {
 				m_PassiveWisdom += m_ProficiencyBonus;
 
 			{
-				// Every character can pick one trinket. Make sure it is unique
-				std::string trinket = Trinkets[Random::Index(0, Trinkets.size() - 1)];
-				if (!m_Equipment.contains(trinket))
-					addEquipment({ {trinket, 1} });
+			// Every character can pick one trinket. Make sure it is unique
+			std::string trinket = lists::Trinkets[Random::Index(0, lists::Trinkets.size() - 1)];
+			if (!m_Equipment.contains(trinket))
+				addEquipment({ {trinket, 1} });
 
 				// Some trinkets allow the player to pick certian aspects of them
-				for (const auto& it : TrinketChoices)
+				for (const auto& it : lists::TrinketChoices)
 				{
 					if (m_Equipment.contains(it.first))
 					{
 						std::string trinketCopy = it.first;
 						// Choose a random item from the vector of choices to customize the trinket
-						std::string choice = " " + TrinketChoices.at(trinketCopy)[Random::Index(0, TrinketChoices.at(trinketCopy).size() - 1)];
+						std::string choice = " " + lists::TrinketChoices.at(trinketCopy)[Random::Index(0, lists::TrinketChoices.at(trinketCopy).size() - 1)];
 
 						// The choice comes after "mechanical in this trinket
 						if (trinketCopy == "tiny mechanical that moves about when it's no longer being observed")
@@ -1159,7 +1067,7 @@ namespace dnd {
 			}
 
 			// Attacks
-			for (const auto& it : WeaponAttacks)
+			for (const auto& it : lists::WeaponAttacks)
 			{
 				if (m_Equipment.contains(it.first))
 				{
@@ -1167,20 +1075,20 @@ namespace dnd {
 					std::string damage = it.second;
 					int abilityModifier = 0;
 
-					if (std::find(SimpleMeleeWeapons.begin(), SimpleMeleeWeapons.end(), it.first) != SimpleMeleeWeapons.end()
-						|| std::find(MartialMeleeWeapons.begin(), MartialMeleeWeapons.end(), it.first) != MartialMeleeWeapons.end())
+					if (std::find(lists::SimpleMeleeWeapons.begin(), lists::SimpleMeleeWeapons.end(), it.first) != lists::SimpleMeleeWeapons.end()
+						|| std::find(lists::MartialMeleeWeapons.begin(), lists::MartialMeleeWeapons.end(), it.first) != lists::MartialMeleeWeapons.end())
 					{
 						// If a melee weapon has the finesse property, the character can add their dexterity modifier to the attack bonus instead of strength
 						if (it.first == "dagger" || it.first == "rapier" || it.first == "scimitar" || it.first == "shortsword" || it.first == "whip")
 						{
 							attackBonus += abilityModifier = std::max(m_Dexterity.Modifier, m_Strength.Modifier);
-							
+
 						}
 						else
 							attackBonus += abilityModifier = m_Strength.Modifier;
 					}
-					else if (std::find(SimpleRangedWeapons.begin(), SimpleRangedWeapons.end(), it.first) != SimpleRangedWeapons.end()
-						|| std::find(MartialRangedWeapons.begin(), MartialRangedWeapons.end(), it.first) != MartialRangedWeapons.end())
+					else if (std::find(lists::SimpleRangedWeapons.begin(), lists::SimpleRangedWeapons.end(), it.first) != lists::SimpleRangedWeapons.end()
+						|| std::find(lists::MartialRangedWeapons.begin(), lists::MartialRangedWeapons.end(), it.first) != lists::MartialRangedWeapons.end())
 					{
 						// If a ranged weapon has the thrown property, the character can add their strength modifier to the attack bonus instead of dexterity
 						if (it.first == "dart" || it.first == "net")
@@ -1215,7 +1123,27 @@ namespace dnd {
 				std::string type = dragonTypes[Random::Index(0, dragonTypes.size() - 1)];
 				std::string attackName = "breath weapon (" + type + ")";
 				// TODO: Breath weapon damage increases at certain levels
-				std::string damage = "2d6 " + BreathWeaponTypes.at(type);
+				std::string damage = "2d6 " + lists::BreathWeaponTypes.at(type);
+				m_Attacks.push_back(Attack(attackName, 0, damage));
+			}
+
+			// Format attacks so that the first letter of each word is capitalized
+			for(size_t i = 0; i < m_Attacks.size(); i++)
+			{
+				m_Attacks[i].Name[0] = std::toupper(m_Attacks[i].Name[0]);
+				for (size_t j = 1; j < m_Attacks[i].Name.length(); j++)
+				{
+					if (m_Attacks[i].Name[j] == ' ' || m_Attacks[i].Name[j] == '(')
+						m_Attacks[i].Name[j + 1] = std::toupper(m_Attacks[i].Name[j + 1]);
+				}
+			}
+			if (m_Race == "Dragonborn")
+			{
+				std::vector<std::string> dragonTypes = { "black", "blue", "brass", "bronze", "copper", "gold", "green", "red", "silver", "white" };
+				std::string type = dragonTypes[Random::Index(0, dragonTypes.size() - 1)];
+				std::string attackName = "breath weapon (" + type + ")";
+				// TODO: Breath weapon damage increases at certain levels
+				std::string damage = "2d6 " + lists::BreathWeaponTypes.at(type);
 				m_Attacks.push_back(Attack(attackName, 0, damage));
 			}
 		}
@@ -1225,28 +1153,28 @@ namespace dnd {
 			// If result.second remains 10 after all the for loops, then the character is unarmored
 			std::pair<std::string, int> result = { "", 10 };
 
-			for (const auto& it : LightArmorClasses)
+			for (const auto& it : lists::LightArmorClasses)
 			{
 				if (m_Equipment.contains(it.first) && it.second >= result.second)
 					result = it;
 			}
 
-			for (const auto& it : MediumArmorClasses)
+			for (const auto& it : lists::MediumArmorClasses)
 			{
 				if (m_Equipment.contains(it.first) && it.second >= result.second)
 					result = it;
 			}
 
-			for (const auto& it : HeavyArmorClasses)
+			for (const auto& it : lists::HeavyArmorClasses)
 			{
 				if (m_Equipment.contains(it.first) && it.second >= result.second)
 					result = it;
 			}
 
 			m_ArmorClass += result.second;
-			if (LightArmorClasses.contains(result.first))
+			if (lists::LightArmorClasses.contains(result.first))
 				m_ArmorClass += m_Dexterity.Modifier;
-			else if (MediumArmorClasses.contains(result.first))
+			else if (lists::MediumArmorClasses.contains(result.first))
 				m_ArmorClass += std::min(2, m_Dexterity.Modifier);
 			else if (result.second == 10)
 			{
@@ -1302,17 +1230,17 @@ namespace dnd {
 				return count == v.size();
 			};
 
-			if (setContainsVec(m_WeaponProficiencies, AllSimpleWeapons))
+			if (setContainsVec(m_WeaponProficiencies, lists::AllSimpleWeapons))
 			{
-				for (const auto& it : AllSimpleWeapons)
+				for (const auto& it : lists::AllSimpleWeapons)
 					m_WeaponProficiencies.erase(it);
 
 				m_WeaponProficiencies.insert("all simple weapons");
 			}
 
-			if (setContainsVec(m_WeaponProficiencies, AllMartialWeapons))
+			if (setContainsVec(m_WeaponProficiencies, lists::AllMartialWeapons))
 			{
-				for (const auto& it : AllMartialWeapons)
+				for (const auto& it : lists::AllMartialWeapons)
 					m_WeaponProficiencies.erase(it);
 
 				m_WeaponProficiencies.insert("all martial weapons");
@@ -1519,7 +1447,7 @@ namespace dnd {
 			std::cout << "\n\n";
 		}
 
-		if (m_SpellSlots > 0)
+		if (lists::SpellLists.contains(m_Class))
 			std::cout << "Spell Slots. You have " << m_SpellSlots << " 1st-level spell slots you can use to cast your spells.\n\n";
 
 		if (m_Class == "Bard" || m_Class == "Sorcerer" || m_Class == "Warlock")
@@ -1560,9 +1488,9 @@ namespace dnd {
 			std::set<std::string> spellbook;
 			for (int i = 0; i < 6; i++)
 			{
-				std::string spell = SpellLists.at("Wizard")[Random::Index(0, SpellLists.at("Wizard").size() - 1)];
+				std::string spell = lists::SpellLists.at("Wizard")[Random::Index(0, lists::SpellLists.at("Wizard").size() - 1)];
 				while (spellbook.contains(spell))
-					spell = SpellLists.at("Wizard")[Random::Index(0, SpellLists.at("Wizard").size() - 1)];
+					spell = lists::SpellLists.at("Wizard")[Random::Index(0, lists::SpellLists.at("Wizard").size() - 1)];
 
 				spellbook.insert(spell);
 			}
@@ -1573,7 +1501,7 @@ namespace dnd {
 				if (it != *spellbook.rbegin())
 					std::cout << it << ", ";
 				else
-					std::cout << " and " << it << ".";
+					std::cout << "and " << it << ".";
 			}
 			std::cout << "\n\n";
 		}
