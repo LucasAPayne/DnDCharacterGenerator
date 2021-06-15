@@ -6,7 +6,7 @@ project "DnDCharacterGenerator"
     targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
 
-    files {"src/**.h, src/**.cpp"}
+    files {"src/**.h", "src/**.cpp"}
 
     includedirs {"%{wks.location}/src"}
 
