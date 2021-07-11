@@ -13,41 +13,41 @@ namespace dnd::lists {
 	// Small Lists
 	// ======================================================================================
 
-	const std::vector<std::string> Classes = {
+	static const std::vector<std::string> Classes = {
 		"Barbarian", "Bard", "Cleric", "Druid", "Fighter", "Monk", "Paladin", "Ranger", "Rogue", "Sorcerer", "Warlock", "Wizard"
 	};
 
-	const std::vector<std::string> Races = {
+	static const std::vector<std::string> Races = {
 		"Hill Dwarf", "Mountain Dwarf", "High Elf", "Wood Elf", "Dark Elf (Drow)", "Lightfoot Halfling", "Stout Halfling", "Human", "Dragonborn",
 		"Forest Gnome", "Rock Gnome", "Half-Elf", "Half-Orc", "Tiefling"
 	};
 
-	const std::vector<std::string> Ethnicities = {
+	static const std::vector<std::string> Ethnicities = {
 		"Calishite", "Chondathan", "Damaran", "Illuskan", "Mulan", "Rashemi", "Shou", "Tethyrian", "Turami"
 	};
 
-	const std::vector<std::string> Genders = {
+	static const std::vector<std::string> Genders = {
 		"Male", "Female"
 	};
 
 	// Variants: Spy (Criminal), Gladiator (Entertainer), Guild Merchant (Guild Artisan), Knight (Noble), Pirate (Sailor)
-	const std::vector<std::string> Backgrounds = {
+	static const std::vector<std::string> Backgrounds = {
 		"Acolyte", "Charlatan", "Criminal", "Entertainer", "Folk Hero", "Gladiator", "Guild Artisan", "Guild Merchant", "Hermit", "Knight",
 		"Noble", "Outlander", "Pirate", "Sage", "Sailor", "Soldier", "Spy", "Urchin"
 	};
 
-	const std::vector<std::string> Alignments = {
+	static const std::vector<std::string> Alignments = {
 		"Lawful Good", "Neutral Good", "Chaotic Good", "Lawful Neutral", "Neutral", "Chaotic Neutral", "Lawful Evil", "Neutral Evil", "Chaotic Evil"
 	};
 
 	// Common is not a possible language because every character already knows it
-	const std::vector<std::string> Languages = {
+	static const std::vector<std::string> Languages = {
 		"Elvish", "Dwarvish", "Giant", "Gnomish", "Goblin", "Halfling", "Orc",                               // Common Languages
 		"Abyssal", "Celestial", "Draconic", "Deep Speech", "Infernal", "Primordial", "Sylvan", "Undercommon" // Exotic Languages
 	};
 
 	// First entry null so that expForLevel[1] is how much exp is required for level one, etc.
-	const std::vector<int> ExpForLevel = {
+	static const std::vector<int> ExpForLevel = {
 			NULL, 0, 300, 900, 2700, 6500, 14000, 23000, 34000, 48000, 64000, 85000, 100000, 120000, 140000, 165000, 195000, 225000, 265000, 305000, 355000
 	};
 
@@ -55,18 +55,18 @@ namespace dnd::lists {
 	// Equipment
 	// ======================================================================================
 
-	const std::vector<std::string> ArmorTypes = {
+	static const std::vector<std::string> ArmorTypes = {
 		"light armor", "medium armor", "heavy armor", "shield"
 	};
 
 	// Maps armor to its armor class 
-	const std::unordered_map<std::string, int> LightArmorClasses = {
+	static const std::unordered_map<std::string, int> LightArmorClasses = {
 		{"padded armor", 11},
 		{"leather armor", 11},
 		{"studded leather armor", 12},
 	};
 
-	const std::unordered_map<std::string, int> MediumArmorClasses = {
+	static const std::unordered_map<std::string, int> MediumArmorClasses = {
 		{"hide armor", 12},
 		{"chain shirt", 13},
 		{"scale mail", 14},
@@ -74,41 +74,42 @@ namespace dnd::lists {
 		{"half plate", 15},
 	};
 
-	const std::unordered_map<std::string, int> HeavyArmorClasses = {
+	static const std::unordered_map<std::string, int> HeavyArmorClasses = {
 		{"ring mail", 14},
 		{"chain mail", 16},
 		{"splint armor", 17},
 		{"plate armor", 18}
 	};
 
-	const std::vector<std::string> SimpleMeleeWeapons = {
+	static const std::vector<std::string> SimpleMeleeWeapons = {
 		"club", "dagger", "greatclub", "handaxe", "javelin", "light hammer", "mace", "quarterstaff", "sickle", "spear"
 	};
 
-	const std::vector<std::string> SimpleRangedWeapons = {
+	static const std::vector<std::string> SimpleRangedWeapons = {
 		"light crossbow", "dart", "shortbow", "sling"
 	};
-	const std::vector<std::string> MartialMeleeWeapons = {
+
+	static const std::vector<std::string> MartialMeleeWeapons = {
 		"battleaxe", "flail", "glaive", "greataxe", "greatsword", "halberd", "lance", "longsword", "maul", "morningstar", "pike",
 		"rapier", "scimitar", "shortsword", "trident", "war pick", "warhammer", "whip"
 	};
 
-	const std::vector<std::string> MartialRangedWeapons = {
+	static const std::vector<std::string> MartialRangedWeapons = {
 		"blowgun", "hand crossbow", "heavy crossbow", "longbow", "net"
 	};
 
-	const std::vector<std::string> AllSimpleWeapons = { 
+	static const std::vector<std::string> AllSimpleWeapons = {
 		"club", "dagger", "greatclub", "handaxe", "javelin", "light hammer", "mace", "quarterstaff", "sickle", "spear",
 		"light crossbow", "dart", "shortbow", "sling" 
 	};
 
-	const std::vector<std::string> AllMartialWeapons = {
+	static const std::vector<std::string> AllMartialWeapons = {
 		"battleaxe", "flail", "glaive", "greataxe", "greatsword", "halberd", "lance", "longsword", "maul", "morningstar", "pike", 
 		"rapier", "scimitar", "shortsword", "trident", "war pick", "warhammer", "whip",
 		"blowgun", "hand crossbow", "heavy crossbow", "longbow", "net"
 	};
 
-	const std::unordered_map<std::string, std::string> WeaponAttacks = {
+	static const std::unordered_map<std::string, std::string> WeaponAttacks = {
 		{"club", "1d4 bludgeoning"},
 		{"dagger", "1d4 piercing"},
 		{"greatclub", "1d8 bludgeoning"},
@@ -149,7 +150,7 @@ namespace dnd::lists {
 	};
 
 	// Map the types of draconic ancestry for dragonborn to the damage type of the breath weapon
-	const std::unordered_map<std::string, std::string> BreathWeaponTypes = {
+	static const std::unordered_map<std::string, std::string> BreathWeaponTypes = {
 		{"black", "acid"},
 		{"blue", "lightning"},
 		{"brass", "fire"},
@@ -162,24 +163,24 @@ namespace dnd::lists {
 		{"white", "cold"}
 	};
 
-	const std::vector<std::string> ArtisanTools = {
+	static const std::vector<std::string> ArtisanTools = {
 		"alchemist's supplies", "brewer's supplies", "calligrapher's supplies", "carpenter's tools", "cobbler's tools", "cook's utensils", "glassblower's tools",
 		"jeweler's tools", "leatherworker's tools", "mason's tools", "painter's supplies", "potter's tools", "smith's tools", "tinker's tools", "weaver's tools", "woodcarver's tools"
 	};
 
-	const std::vector<std::string> GamingSets = {
+	static const std::vector<std::string> GamingSets = {
 		"dice set", "Dragonchess set", "playing card set", "Three-Dragon Ante set"
 	};
 
-	const std::vector<std::string> MusicalInstruments = {
+	static const std::vector<std::string> MusicalInstruments = {
 		"bagpipes", "drum", "dulcimer", "flute", "lute", "lyre", "horn", "pan flute", "shawm", "viol"
 	};
 
-	const std::vector<std::string> OtherTools = {
+	static const std::vector<std::string> OtherTools = {
 		"disguise kit", "forgery kit", "herbalism kit", "navigator's tools", "poisoner's kit", "thieves' tools", "vehicles (land)", "vehicles (water)"
 	};
 
-	const std::vector<std::string> Trinkets = {
+	static const std::vector<std::string> Trinkets = {
 		"mummified goblin hand",
 		"piece of crystal that faintly glows in the moonlight",
 		"gold coin minted in an unknown land",
@@ -284,7 +285,7 @@ namespace dnd::lists {
 
 	// Map trinkets that allow customization to the different options for them
 	// The first entry in each vector should be the first choice in the trinket string
-	const std::unordered_map<std::string, std::vector<std::string>> TrinketChoices =
+	static const std::unordered_map<std::string, std::vector<std::string>> TrinketChoices =
 	{
 		{"metal can that has no opening but sounds as if it is filled with", {
 			"liquid", "sand", "spiders", "broken glass"
@@ -303,7 +304,7 @@ namespace dnd::lists {
 	// Non-human Names
 	// ======================================================================================
 
-	const std::unordered_map<std::string, std::vector<std::string>> NonHumanSurnames = {
+	static const std::unordered_map<std::string, std::vector<std::string>> NonHumanSurnames = {
 		{"Dwarf", {
 			"Balderk", "Battlehammer", "Brawnanvil", "Dankil", "Fireforge", "Frostbeard", "Forunn", "Holderhek", "Ironfist", "Loderr",
 			"Lutgehr", "Rumnaheim", "Strakein", "Torunn", "Ungart"
@@ -328,7 +329,7 @@ namespace dnd::lists {
 		}},
 	};
 
-	const std::unordered_map<std::string, std::vector<std::string>> NonHumanMaleNames = {
+	static const std::unordered_map<std::string, std::vector<std::string>> NonHumanMaleNames = {
 		{"Dwarf", {
 			"Adrik", "Alberich", "Baern", "Barendd", "Brotto", "Bruenor", "Dain", "Darrak", "Delg", "Eberk",
 			"Einkill", "Fargrim", "Flint", "Gardain", "Harbek", "Kildrak", "Morgran", "Orsik", "Oskar", "Rangrim",
@@ -365,7 +366,7 @@ namespace dnd::lists {
 		}}
 	};
 
-	const std::unordered_map<std::string, std::vector<std::string>> NonHumanFemaleNames = {
+	static const std::unordered_map<std::string, std::vector<std::string>> NonHumanFemaleNames = {
 		{"Dwarf", {
 			"Amber", "Artin", "Audhild", "Bardryn", "Dagnal", "Diesa", "Eldeth", "Falkrunn", "Finellen", "Gunnolda",
 			"Gurdis", "Helja", "Hlin", "Kathra", "Kristryd", "Ilde", "Liftrasa", "Mandred", "Riswynn", "Sannl",
@@ -402,7 +403,7 @@ namespace dnd::lists {
 		}}
 	};
 
-	const std::vector<std::string> VirtueNames = {
+	static const std::vector<std::string> VirtueNames = {
 			"Art", "Carrion", "Chant", "Creed", "Despair", "Excellence", "Fear", "Glory", "Hope", "Ideal", "Music", "Nowhere", "Open", "Poetry", 
 			"Quest", "Random", "Reverence", "Sorrow", "Temerity", "Torment", "Weary"
 	};
@@ -411,7 +412,7 @@ namespace dnd::lists {
 	// Human Names
 	// ======================================================================================
 
-	const std::unordered_map<std::string, std::vector<std::string>> HumanSurnames = {
+	static const std::unordered_map<std::string, std::vector<std::string>> HumanSurnames = {
 		{"Calishite",  {"Basha", "Dumein", "Hassan", "Khalid", "Mostana", "Pashar", "Rein"}},
 		{"Chondathan", {"Amblecrown", "Buckman", "Dundragon", "Evenwood", "Greycastle", "Tallstag"}},
 		{"Tethyrian",  {"Amblecrown", "Buckman", "Dundragon", "Evenwood", "Greycastle", "Tallstag"}},
@@ -423,7 +424,7 @@ namespace dnd::lists {
 		{"Turami",     {"Agosto", "Astorio", "Calabra", "Domine", "Falone", "Marivaldi", "Pisacar", "Ramondo"}}
 	};
 
-	const std::unordered_map<std::string, std::vector<std::string>> HumanMaleNames = {
+	static const std::unordered_map<std::string, std::vector<std::string>> HumanMaleNames = {
 		{"Calishite",  {"Aseir", "Bardeid", "Haseid", "Khemed", "Mehmen", "Sudeiman", "Zasheir"}},
 		{"Chondathan", {"Darvin", "Dorn", "Evendur", "Gorstag", "Grim", "Helm", "Malark", "Morn", "Randal", "Stedd"}},
 		{"Tethyrian",  {"Darvin", "Dorn", "Evendur", "Gorstag", "Grim", "Helm", "Malark", "Morn", "Randal", "Stedd"}},
@@ -435,7 +436,7 @@ namespace dnd::lists {
 		{"Turami",     {"Anton", "Diero", "Marcon", "Pieron", "Rimardo", "Romero", "Salazar", "Umbero"}}
 	};
 
-	const std::unordered_map<std::string, std::vector<std::string>> HumanFemaleNames = {
+	static const std::unordered_map<std::string, std::vector<std::string>> HumanFemaleNames = {
 		{"Calishite",  {"Atala", "Ceidil", "Hama", "Jasmal", "Meilil", "Seipora", "Yasheria", "Zasheida"}},
 		{"Chondathan", {"Arveene", "Esvele", "Jhessail", "Kerri", "Lureene", "Mirir", "Rowan", "Shandri", "Tessele"}},
 		{"Tethyrian",  {"Arveene", "Esvele", "Jhessail", "Kerri", "Lureene", "Mirir", "Rowan", "Shandri", "Tessele"}},
@@ -451,7 +452,7 @@ namespace dnd::lists {
 	// Personality Traits
 	// ======================================================================================
 
-	const std::unordered_map<std::string, std::vector<std::string>> PersonalityTraits = {
+	static const std::unordered_map<std::string, std::vector<std::string>> PersonalityTraits = {
 		{"Acolyte", {
 			"I idolize a particular hero of my faith, and constantly refer to that person's deeds and example.",
 			"I can find common ground between the fiercest enemies, empathizing with themand always working toward peace.",
@@ -665,7 +666,7 @@ namespace dnd::lists {
 	// Ideals
 	// ======================================================================================
 
-	const std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> Ideals = {
+	static const std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> Ideals = {
 		{"Acolyte", {
 			{"Lawful",  "Tradition. The ancient traditions of worship and sacrifice must be preserved and upheld."},
 			{"Good",    "Charity. I always try to help those in need, no matter what the personal cost."},
@@ -833,7 +834,7 @@ namespace dnd::lists {
 	// Bonds
 	// ======================================================================================
 
-	const std::unordered_map<std::string, std::vector<std::string>> Bonds = {
+	static const std::unordered_map<std::string, std::vector<std::string>> Bonds = {
 		{"Acolyte", {
 			"I would die to recover an ancient relic of my faith that was lost long ago.",
 			"I will someday get revenge on the corrupt temple hierarchy who branded me a heretic.",
@@ -1001,7 +1002,7 @@ namespace dnd::lists {
 	// Flaws
 	// ======================================================================================
 
-	const std::unordered_map<std::string, std::vector<std::string>> Flaws = {
+	static const std::unordered_map<std::string, std::vector<std::string>> Flaws = {
 		{"Acolyte", {
 			"I judge others harshly, and myself even more severely.",
 			"I put too much trust in those who wield power within my temple's hierarchy.",
@@ -1171,7 +1172,7 @@ namespace dnd::lists {
 
 	// Note: Starting a newline in the Trait constructor signifies a new paragraph.
 
-	const std::unordered_map<std::string, std::vector<Trait>> RacialFeats = {
+	static const std::unordered_map<std::string, std::vector<Trait>> RacialFeats = {
 		{"Dwarf", {
 			Trait("Darkvision", "Accustomed to life underground, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can't discern color in darkness, only shades of gray."),
 			Trait("Dwarven Resilience", "You have advantage on saving throws against poison, and you have resistance against poison damage."),
@@ -1260,7 +1261,7 @@ namespace dnd::lists {
 		}}
 	};
 
-	const std::unordered_map<std::string, std::vector<Trait>> BackgroundFeats = {
+	static const std::unordered_map<std::string, std::vector<Trait>> BackgroundFeats = {
 		{"Acolyte", {
 			Trait("Shelter of the Faithful", "As an acolyte, you command the respect of those who share your faith, and you can perform the religious ceremonies of your deity. You and your adventuring companions can expect to receive free healing and care at a temple, shrine, or other established presence of your faith, though you must provide any material components needed for spells. Those who share your religion will support you (but only you) at a modest lifestyle.\n"
 												"You might also have ties to a specific temple dedicated to your chosen deity or pantheon, and you have a residence there. This could be the temple where you used to serve, if you remain on good terms with it, or a temple where you have found a new home. While near your temple, you can call upon the priests for assistance, provided the assistance you ask for is not hazardous and you remain in good standing with your temple.")
@@ -1343,7 +1344,7 @@ namespace dnd::lists {
 	};
 
 	// TODO: Add the feats that are gained after the first level, and separate the feats gained at each level
-	const std::unordered_map<std::string, std::vector<Trait>> ClassFeats = {
+	static const std::unordered_map<std::string, std::vector<Trait>> ClassFeats = {
 		{"Barbarian", {
 			Trait("Rage", "In battle, you fight with primal ferocity. On your turn, you can enter a rage as a bonus action.\n"
 							"While raging, you gain the following benefits if you aren't wearing heavy armor:\n"
@@ -1440,7 +1441,7 @@ namespace dnd::lists {
 	};
 
 	// Figthing styles for the fighter class to choose between. Fighting styles do not provide branching sets of traits for fighters like domains do for clerics
-	const std::vector<Trait> FightingStyles = {
+	static const std::vector<Trait> FightingStyles = {
 		Trait("Archery", "You gain a +2 bonus to attack rolls you make with ranged weapons."),
 		Trait("Defense", "While you are wearing armor, you gain a +1 bonus to AC"),
 		Trait("Dueling", "When you are wielding a melee weapon in one hand and no other weapons, you gain a +2 bonus to damage rolls with that weapon."),
@@ -1449,7 +1450,7 @@ namespace dnd::lists {
 		Trait("Two-Weapon Fighting", "When you engage in two-weapon fighting, you can add your ability modifier to the damage of the second attack.")
 	};
 
-	const std::unordered_map<std::string, std::vector<Trait>> ClericDomainFeats = {
+	static const std::unordered_map<std::string, std::vector<Trait>> ClericDomainFeats = {
 		{"Knowledge Domain", {
 			Trait("Blessings of Knowledge", "You learn two languages of your choice. You also become proficient in your choice of the following skills: Arcana, History, Nature, or Religion.\n"
 											"Your proficiency bonus is doubled for any ability check you make that uses either of those skills.")
@@ -1483,7 +1484,7 @@ namespace dnd::lists {
 		}}
 	};
 
-	const std::unordered_map<std::string, std::vector<Trait>> SorcerousOriginFeats = {
+	static const std::unordered_map<std::string, std::vector<Trait>> SorcerousOriginFeats = {
 		{"Draconic Bloodline", {
 			Trait("Draconic Resilience", "As magic flows through your body, it causes physical traits of your dragon ancestors to emerge. At 1st level, your hit point maximum increases by 1 and increases by 1 again whenever you gain a level in this class.\n"
 											"Additionally, parts of your skin are covered by a thin sheen of dragon-like scales. When you aren't wearing armor, your AC equals 13 + your dexterity modifier.")
@@ -1496,7 +1497,7 @@ namespace dnd::lists {
 		}}
 	};
 
-	const std::unordered_map<std::string, std::vector<Trait>> OtherworldlyPatronFeats = {
+	static const std::unordered_map<std::string, std::vector<Trait>> OtherworldlyPatronFeats = {
 		{"The Archfey", {
 			Trait("Expanded Spell List", "The Archfey lets you choose from an expanded list of spells when you learn a warlock spell. The additional spells are found in the rulebook."),
 			Trait("Fey Presence", "Your patron bestows upon you the ability to project the beguiling and fearsome presence of the fey. As an action, you can cause each creature in a 10-foot cube originating from you to make a Wisdom saving throw against your warlock spell save DC. The creatures that fail their saving throws are all charmed or frightened by you (your choice) until the end of your next turn.\n"
@@ -1520,7 +1521,7 @@ namespace dnd::lists {
 	// ======================================================================================
 
 	// Note: not every class has cantrips
-	const std::unordered_map<std::string, std::vector<std::string>> CantripLists = {
+	static const std::unordered_map<std::string, std::vector<std::string>> CantripLists = {
 		{"Bard",     {"blade ward", "dancing lights", "friends", "light", "mage hand", "mending", "message", "minor illusion", "prestidigitation", "true strike", "vicious mockery"}},
 		{"Cleric",   {"guidance", "light", "mending", "resistance", "sacred flame", "spare the dying", "thaumaturgy"}},
 		{"Druid",    {"druidcraft", "guidance", "mending", "poison spray", "produce flame", "resistance", "shillelagh", "thorn whip"}},
@@ -1532,7 +1533,7 @@ namespace dnd::lists {
 	// Note: Only some classes have spellcasting ability
 	// Note: Paladins and rangers do not learn spells until they reach level 2
 	// TODO: Add spells spells higher than 1st-level and separate the spells for each class by level
-	std::unordered_map<std::string, std::vector<std::string>> SpellLists = {
+	static std::unordered_map<std::string, std::vector<std::string>> SpellLists = {
 		{"Bard",     {"animal friendship", "bane", "charm person", "comprehend languages", "cure wounds", "detect magic", "disguise self", "dissonant whispers", "faerie fire", "feather fall", "healing word", "heroism", "identify", "illusory script", "longstrider", "silent image", "sleep", "speak with animals", "Tahsa's hideous laughter", "thunderwave", "unseen servant"}},
 		{"Cleric",   {"bane", "bless", "command", "create or destroy water", "cure wounds", "detect evil and good", "detect magic", "detect poison and disease", "guiding bolt", "healing word", "inflict wounds", "protection from evil and good", "purify food and drink", "sanctuary", "shield of faith"}},
 		{"Druid",    {"animal friendship", "charm person", "create or destroy water", "cure wounds", "detect magic", "detect poison or disease", "entangle", "faeirie fire", "fog cloud", "goodberry", "healing word", "jump", "longstrider", "purify food and drink", "speak with animals", "thunderwave"}},
@@ -1544,7 +1545,7 @@ namespace dnd::lists {
 	};
 
 	// Each cleric domain gets additional spells based on their domain
-	const std::unordered_map<std::string, std::vector<std::string>> DomainSpells = {
+	static const std::unordered_map<std::string, std::vector<std::string>> DomainSpells = {
 		{"Knowledge Domain", {"command", "identify"}},
 		{"Life Domain",      {"bless", "cure wounds"}},
 		{"Light Domain",     {"burning hands", "faerie fire"}},
@@ -1555,7 +1556,7 @@ namespace dnd::lists {
 	};
 
 	// Each otherworldly patron for warlocks provides additional choices for spells (which are added to the normal warlock spell list)
-	const std::unordered_map<std::string, std::vector<std::string>> PatronSpells = {
+	static const std::unordered_map<std::string, std::vector<std::string>> PatronSpells = {
 		{"The Archfey", {"faerie fire", "sleep"}},
 		{"The Fiend",   {"burning hands", "command"}},
 		{"The Great Old One", {"disonant whisphers", "Tasha's hideous laughter"}}

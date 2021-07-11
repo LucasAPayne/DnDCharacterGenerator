@@ -1,8 +1,9 @@
 /* NOTE: This is a temporary file used for testing purposes
 that will eventually be replaced by a wxWidgets application */
 
-#include "dndCharacter.h"
-#include "Random.h"
+#include "DnDCharacter.h"
+#include "FillPDF.h"
+#include "Utils/Random.h"
 
 #include <iostream>
 
@@ -14,6 +15,8 @@ int main()
 	{
 		dnd::Character character;
 		character.DisplayCharacterSheet();
+
+		fillCharacterSheet_1Page(character);
 
 		std::cout << "\n\n";
 		system("pause");
