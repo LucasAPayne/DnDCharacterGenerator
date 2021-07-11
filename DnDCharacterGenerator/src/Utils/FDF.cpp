@@ -1,9 +1,12 @@
 #include "FDF.h"
 
+#include <filesystem>
 #include <string>
 
 FDF::FDF(const std::string& filepath, const std::string& target)
 {
+	std::filesystem::path folder = filepath.substr(0, filepath.find_last_of("/"));
+	std::filesystem::create_directory(folder);
 	m_File.open(filepath, std::fstream::out);
 
 	if (m_File.is_open())
