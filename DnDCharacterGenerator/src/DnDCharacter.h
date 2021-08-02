@@ -17,7 +17,7 @@ namespace dnd
 		// Temporary
 		void DisplayCharacterSheet();
 
-	private:
+	public:
 		// Descriptors
 		std::string m_PlayerName;
 		std::string m_FirstName;
@@ -93,9 +93,9 @@ namespace dnd
 		int m_PlatinumPieces = 0;
 
 		// Combat
-		int m_CurrentHitPoints = 0;
-		int m_MaxHitPoints = 0;
-		int m_TempHitPoints = 0;
+		int m_HitPointsMax = 0;
+		int m_HitPointsCurrent = 0;
+		int m_HitPointsTemp = 0;
 		int m_ArmorClass = 0;
 		int m_Initiative = 0;
 		int m_Speed = 0;

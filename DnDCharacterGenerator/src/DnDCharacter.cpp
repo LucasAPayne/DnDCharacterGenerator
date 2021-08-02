@@ -1,7 +1,7 @@
 #include "DnDCharacter.h"
 #include "Lists.h"
-#include "Random.h"
 #include "Types.h"
+#include "Utils/Random.h"
 
 #include <algorithm>
 #include <set>
@@ -25,16 +25,6 @@ namespace dnd {
 		auto list = dict.at(criteria);
 		trait = list[Random::Index(0, list.size() - 1)];
 	}
-
-	auto foundException = [](const std::string& str, const std::vector<std::string>& exceptionList) -> bool
-	{
-		for (size_t i = 0; i < exceptionList.size(); i++)
-		{
-			if (str.find(exceptionList[i]) != std::string::npos)
-				return true;
-		}
-		return false;
-	};
 
 	Character::Character()
 	{
@@ -245,7 +235,7 @@ namespace dnd {
 				if (m_Race == "Hill Dwarf")
 				{
 					m_Wisdom.Score++;
-					m_MaxHitPoints += m_Level; // From the Dwarven Toughness feat
+					m_HitPointsMax += m_Level; // From the Dwarven Toughness feat
 				}
 
 				else if (m_Race == "Mountain Dwarf")
@@ -312,6 +302,68 @@ namespace dnd {
 
 				m_Languages.insert(lists::Languages[Random::Index(0, lists::Languages.size() - 1)]);
 				// TODO: Add optional variant human trait
+			}
+			else if (m_MajorRace == "Dragonborn")
+			{
+				m_Speed = 30;
+				m_Strength.Score += 2;
+				m_Charisma.Score++;
+				m_Languages.insert("Draconic");
+			}
+			else if (m_MajorRace == "Gnome")
+			{
+				m_Speed = 25;
+				m_Intelligence.Score += 2;
+				m_Languages.insert("Gnomish");
+
+				if (m_Race == "Forest Gnome")
+				{
+					m_Dexterity.Score++;
+					m_Cantrips.insert("minor illusion");
+				}
+				else if (m_Race == "Rock Gnome")
+				{
+					m_Constitution.Score++;
+					m_ToolProficiencies.insert({ "tinker's tools" });
+				}
+			}
+			else if (m_MajorRace == "Half-Elf")
+			{
+				m_Speed = 30;
+				m_Charisma.Score += 2;
+
+				// Half-elves can choose any other two ability score besides charisma to increase by 1
+				// The same ability cannot receive both +1's
+				std::vector<std::reference_wrapper<Ability>> abilities = { m_Strength, m_Dexterity, m_Constitution, m_Intelligence, m_Wisdom };
+				size_t index = Random::Index(0, abilities.size() - 1);
+				abilities[index].get().Score++;
+				// Remove the ability whose score was just increased and choose anohter
+				abilities.erase(abilities.begin() + index);
+				abilities[Random::Index(0, abilities.size() - 1)].get().Score++;
+
+				m_Languages.insert("Elvish");
+				// Choose one additional language
+				m_Languages.insert(lists::Languages[Random::Index(1, lists::Languages.size() - 1)]); // 1 is the minimum number to avoid picking Elvish twice
+
+				// Half-elves can choose any two skills to be proficient in, from their Skill Versatility trait
+				chooseSkillProficiencies(2, { m_Acrobatics, m_AnimalHandling, m_Arcana, m_Athletics, m_Deception, m_History, m_Insight, m_Intimidation,
+					m_Investigation, m_Medicine, m_Nature, m_Perception, m_Performance, m_Persuasion, m_Religion, m_SleightOfHand, m_Stealth, m_Survival });
+			}
+			else if (m_MajorRace == "Half-Orc")
+			{
+				m_Speed = 30;
+				m_Strength.Score += 2;
+				m_Constitution.Score++;
+				m_Intimidation.Proficient = true;
+				m_Languages.insert("Orc");
+			}
+			else if (m_MajorRace == "Tiefling")
+			{
+				m_Speed = 30;
+				m_Intelligence.Score++;
+				m_Charisma.Score += 2;
+				m_Languages.insert("Infernal");
+				m_Cantrips.insert("thaumaturgy");
 			}
 		}
 
@@ -987,7 +1039,7 @@ namespace dnd {
 			m_Initiative = m_Dexterity.Modifier;
 			// Hit dice/points
 			m_HitDice.Number = m_Level;
-			m_MaxHitPoints = m_HitDice.Type + m_Constitution.Modifier;
+			m_HitPointsMax = m_HitPointsCurrent = m_HitPointsTemp = m_HitDice.Type + m_Constitution.Modifier;
 
 			// Skill modifiers are based on the abilities that govern them
 			m_Athletics.Parent = m_Strength;
@@ -1245,41 +1297,13 @@ namespace dnd {
 
 				m_WeaponProficiencies.insert("all martial weapons");
 			}
-
-			// All proficiencies should be plural
-			// Some words like armor, tools, supplies, and vehicles are already plural
-			{
-				auto it = m_WeaponProficiencies.begin();
-				while (it != m_WeaponProficiencies.end())
-				{
-					std::string item = *it;
-					if (item.find("weapons") == std::string::npos)
-					{
-						it = m_WeaponProficiencies.erase(it);
-						m_WeaponProficiencies.insert(item + "s");
-					}
-					else it++;
-				}
-			}
-
-			auto it = m_ToolProficiencies.begin();
-			std::vector<std::string> exceptions = { "bagpipes", "supplies", "tools", "vehicles" };
-			while (it != m_ToolProficiencies.end())
-			{
-				std::string item = *it;
-				if (foundException(item, exceptions))
-				{
-					it = m_ToolProficiencies.erase(it);
-					m_ToolProficiencies.insert(item + "s");
-				}
-				else it++;
-			}
 		}
 	}	
 
 	// Temporary
 	void Character::DisplayCharacterSheet()
 	{
+		m_PlayerName = "Player";
 		std::cout << std::boolalpha;
 
 		if (m_Race == "Dragonborn")
@@ -1297,7 +1321,7 @@ namespace dnd {
 		std::cout << "Level: "              << m_Level             << "\n";
 		std::cout << "Experience Points: "  << m_Experience        << "\n";
 		std::cout << "Proficiency Bonus: "  << m_ProficiencyBonus  << "\n";
-		std::cout << "Hit Points: "         << m_MaxHitPoints      << "\n";
+		std::cout << "Hit Points: "         << m_HitPointsMax      << "\n";
 		std::cout << "Armor Class: "        << m_ArmorClass        << "\n";
 		std::cout << "Speed: "              << m_Speed             << " feet\n";
 		std::cout << "Initiative: "         << m_Initiative        << "\n";
@@ -1397,15 +1421,36 @@ namespace dnd {
 		std::cout << "Proficiencies and Languages\n";
 		std::cout << "===========================\n";
 		std::cout << "Proficiencies: ";
+		auto foundException = [](const std::string& str, const std::vector<std::string>& exceptionList) -> bool
+		{
+			for (size_t i = 0; i < exceptionList.size(); i++)
+			{
+				if (str.find(exceptionList[i]) != std::string::npos)
+					return true;
+			}
+			return false;
+		};
+
+		std::vector<std::string> pluralExceptions = { "bagpipes", "supplies", "tools", "vehicles" };
+
 		for (const auto& it : m_ArmorProficiencies)
 			std::cout << it << ", ";
 
 		for (const auto& it : m_WeaponProficiencies)
-			std::cout << it << ", ";
+		{
+			if (it.find("weapons") == std::string::npos)
+				std::cout << it + "s, ";
+			else
+				std::cout << it + ", ";
+		}
 
 		for (const auto& it : m_ToolProficiencies)
 		{ 
-			std::cout << it;
+			if (!foundException(it, pluralExceptions))
+				std::cout << it + "s";
+			else
+				std::cout << it;
+
 			if (it != *m_ToolProficiencies.rbegin())
 				std::cout << ", ";
 		}
@@ -1461,11 +1506,10 @@ namespace dnd {
 			}
 			std::cout << "\n\n";
 		}
-
-		if (m_Class == "Cleric")
+		else if (m_Class == "Cleric")
 		{
-			std::cout << "Prepared Spells. You prepare " << m_SpellsPrepared << " 1st-level spells to make them available to you to cast, choosing from the "
-				      << m_Class << " spell list in the rulebook. In addition, you always have " << m_Spells.size() << " domain spells prepared: ";
+			std::cout << "Prepared Spells. You prepare " << m_SpellsPrepared << " 1st-level spells to make them available to you to cast, choosing from the Cleric"
+				      << "spell list in the rulebook. In addition, you always have " << m_Spells.size() << " domain spells prepared: ";
 			for (const auto& it : m_Spells)
 			{
 				std::cout << it;
@@ -1478,19 +1522,22 @@ namespace dnd {
 		}
 		else if (m_Class == "Druid")
 		{
-			std::cout << "Prepared Spells. You prepare " << m_SpellsPrepared << " 1st-level spells to make them available to you to cast, choosing from the "
-				      << m_Class << " spell list in the rulebook.\n\n";
+			std::cout << "Prepared Spells. You prepare " << m_SpellsPrepared << " 1st-level spells to make them available to you to cast, choosing from the Druid"
+				      << " spell list in the rulebook.\n\n";
 		}
 		else if (m_Class == "Wizard")
 		{
-			std::cout << "Prepared Spells. You prepare " << m_SpellsPrepared
-				<< " 1st-level spells to make them available to you to cast, choosing from the spells in your spellbook.\n\n";
+			std::cout << "Prepared Spells. You prepare " << m_SpellsPrepared << " 1st-level spells to make them available to you to cast, choosing from the spells in your spellbook.\n\n";
+
+			// At 1st level, wizards have a spellbook containing 6 spells from the wizard spell list
 			std::set<std::string> spellbook;
 			for (int i = 0; i < 6; i++)
 			{
-				std::string spell = lists::SpellLists.at("Wizard")[Random::Index(0, lists::SpellLists.at("Wizard").size() - 1)];
+				std::string spell = dnd::lists::SpellLists.at("Wizard")[Random::Index(0, dnd::lists::SpellLists.at("Wizard").size() - 1)];
+
+				// Make sure the spell is unique
 				while (spellbook.contains(spell))
-					spell = lists::SpellLists.at("Wizard")[Random::Index(0, lists::SpellLists.at("Wizard").size() - 1)];
+					spell = dnd::lists::SpellLists.at("Wizard")[Random::Index(0, dnd::lists::SpellLists.at("Wizard").size() - 1)];
 
 				spellbook.insert(spell);
 			}
@@ -1518,9 +1565,9 @@ namespace dnd {
 		// Format equipment list
 		{
 			// Incredibly naive solution for resolving articles for now. Will improve as needed
-			auto isVowel = [](std::string c) -> bool
+			auto isVowel = [](char c) -> bool
 			{
-				return (c == "a" || c == "e" || c == "i" || c == "o" || c == "u");
+				return (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u');
 			};
 
 			// Some items, especially trinkets, are singular but should not have "a" or "an" added before them
@@ -1530,10 +1577,10 @@ namespace dnd {
 				// If the character has only one of a particular item
 				if (it.second == 1)
 				{
-					// "the is also an exception, but only if it starts the string
+					// "the" is also an exception, but only if it starts the string
 					if (foundException(it.first, singularExceptions) || it.first.substr(0, 3) == "the")
 						std::cout << it.first;
-					else if (isVowel(it.first.substr(0, 1)) || it.first == "herbalism kit")
+					else if (isVowel(it.first[0]) || it.first == "herbalism kit")
 						std::cout << "an " << it.first;
 					else
 						std::cout << "a " << it.first;
