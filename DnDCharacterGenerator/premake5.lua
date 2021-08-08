@@ -1,5 +1,5 @@
 project "DnDCharacterGenerator"
-    kind "ConsoleApp"
+    kind "WindowedApp"
     language "C++"
     cppdialect "C++20"
 
@@ -8,7 +8,7 @@ project "DnDCharacterGenerator"
 
     files {"src/**.h", "src/**.cpp"}
 
-    includedirs {"%{wks.location}/src"}
+    includedirs {"src"}
 
     filter "system:windows"
         systemversion "latest"

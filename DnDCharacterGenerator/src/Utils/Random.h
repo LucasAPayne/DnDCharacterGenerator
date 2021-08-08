@@ -14,7 +14,7 @@ public:
 	// Return a random (unsigned) integer between min and max
 	static int Int(int min, int max)
 	{
-		return (int)s_Distribution(s_RandomEngine, std::uniform_int_distribution<uint64_t>::param_type(min, max));
+		return (int)s_Distribution(s_RandomEngine, std::uniform_int_distribution<size_t>::param_type(min, max));
 	}
 
 	// Return the sum of n random integers between min and max
@@ -40,5 +40,5 @@ public:
 
 private:
 	inline static std::mt19937 s_RandomEngine;
-	inline static std::uniform_int_distribution<uint64_t> s_Distribution;
+	inline static std::uniform_int_distribution<size_t> s_Distribution;
 };

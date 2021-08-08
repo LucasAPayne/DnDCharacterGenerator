@@ -14,9 +14,6 @@ namespace dnd
 	public:
 		Character();
 
-		// Temporary
-		void DisplayCharacterSheet();
-
 	public:
 		// Descriptors
 		std::string m_PlayerName;

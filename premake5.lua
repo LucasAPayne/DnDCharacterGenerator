@@ -1,5 +1,5 @@
 workspace "DnDCharacterGenerator"
-    architecture "x86_64"
+    architecture "x86"
     startproject "DnDCharacterGenerator"
     configurations {"Debug", "Release"}
 

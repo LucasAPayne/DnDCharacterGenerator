@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DnDCharacter.h"
+#include "Character/Character.h"
 
 #include <vector>
 #include <string>
