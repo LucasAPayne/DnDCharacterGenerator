@@ -1,6 +1,28 @@
 # DnDCharacterGenerator
 Randomly generates the information necessary for the first page of a Dungeons & Dragons 5th edition character sheet for a first level character.
 
+## Prerequisites
+vcpkg is the package manager used for this project, and wxWidgets is the main library. The following steps will only need to be followed once per device for initial setup. Instructions are also available at [vcpkg.io](https://vcpkg.io/en/getting-started.html) and [wxwidgets.org](https://www.wxwidgets.org/blog/2019/01/wxwidgets-and-vcpkg/). To set up vcpkg, it is recommended to create a folder such as `C:\dev\vcpkg` or `C:\src\vcpkg`. Then, inside that folder, run the following commands:
+
+**Clone the GitHub repo:**
+
+    git clone https://github.com/Microsoft/vcpkg.git
+
+**Run the botstrap:**
+    
+    cd vcpkg
+    bootstrap-vcpkg.bat
+
+**Make vcpkg libraries available in Visual Studio:**
+
+    vcpkg integrate install
+
+**Install wxWidgets (32-bit DLL version):**
+
+    vcpkg install wxwidgets
+
+Now, wxWidgets should be usable in Visual Studio.
+
 ## Getting Started
 This repository uses [Premake](https://github.com/premake/premake-core) as its build system, but no install is necessary, as Premake is included in this repository. Also, note that this project uses some C++20 features.
 
