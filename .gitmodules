@@ -1,0 +1,3 @@
+[submodule "DnDCharacterGenerator/vendor/wxpdfdoc"]
+	path = DnDCharacterGenerator/vendor/wxpdfdoc
+	url = https://github.com/LucasAPayne/wxpdfdoc.git

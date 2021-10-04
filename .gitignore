@@ -10,5 +10,6 @@ bin-int/
 **.vcxproj.filters
 **.vcxproj.user
 
-# Assets
-**.fdf
+# Generated Assets (not templates)
+**.pdf
+!DnDCharacterGenerator/assets/templates/**.pdf

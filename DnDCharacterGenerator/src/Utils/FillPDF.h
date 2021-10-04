@@ -1,12 +1,9 @@
 #pragma once
 
-#include "Character/Character.h"
+// Forward declaration of class Character
+namespace dnd
+{
+	class Character;
+}
 
-#include <vector>
-#include <string>
-
-// Helper functions
-bool foundException(const std::string& str, const std::vector<std::string>& exceptionList);
-bool isVowel(char c);
-
-void fillCharacterSheet_1Page(dnd::Character character);
+bool fillCharacterSheetPage1(dnd::Character character);

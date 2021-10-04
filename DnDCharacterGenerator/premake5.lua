@@ -6,9 +6,21 @@ project "DnDCharacterGenerator"
     targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
 
-    files {"src/**.h", "src/**.cpp"}
+    files 
+    {
+        "src/**.h",
+        "src/**.cpp",
+        "vendor/wxpdfdoc/include/**.h",
+        "vendor/wxpdfdoc/include/**.cpp"
+    }
 
-    includedirs {"src"}
+    includedirs 
+    {
+        "src",
+        "vendor/wxpdfdoc/include"
+    }
+
+    links {"wxpdfdoc"}
 
     filter "system:windows"
         systemversion "latest"

@@ -7,6 +7,7 @@ workspace "DnDCharacterGenerator"
 
     group "Dependencies"
         include "vendor/premake"
+        include "DnDCharacterGenerator/vendor/wxpdfdoc"
     group ""
 
     include "DnDCharacterGenerator"

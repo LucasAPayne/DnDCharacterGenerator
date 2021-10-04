@@ -2,6 +2,9 @@
 
 #include "Character/Character.h"
 #include "Utils/FillPDF.h"
+#include "Utils/Random.h"
+
+#include <wx/pdfdoc.h>
 
 wxBEGIN_EVENT_TABLE(Window, wxFrame)
 	EVT_BUTTON(ID_START_BUTTON, OnGenerateButtonClicked)
@@ -17,5 +20,5 @@ Window::Window(const wxString& title, const wxPoint& pos, const wxSize& size)
 void Window::OnGenerateButtonClicked(wxCommandEvent& evt)
 {
 	dnd::Character character;
-	fillCharacterSheet_1Page(character);
+	fillCharacterSheetPage1(character);
 }

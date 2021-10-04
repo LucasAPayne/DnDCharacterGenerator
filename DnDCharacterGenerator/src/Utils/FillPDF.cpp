@@ -1,9 +1,11 @@
 #include "FillPDF.h"
+#include "Character/Character.h"
 #include "Character/Lists.h"
-#include "Utils/FDF.h"
 #include "Utils/Random.h"
 
-bool foundException(const std::string& str, const std::vector<std::string>& exceptionList)
+#include <wx/pdfdoc.h>
+
+static bool foundException(const std::string& str, const std::vector<std::string>& exceptionList)
 {
 	for (size_t i = 0; i < exceptionList.size(); i++)
 	{
@@ -14,136 +16,187 @@ bool foundException(const std::string& str, const std::vector<std::string>& exce
 }
 
 // Naive solution for resolving articles for now. Will improve as needed
-bool isVowel(char c)
+static bool isVowel(char c)
 {
 	return (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u');
 }
 
-void fillCharacterSheet_1Page(dnd::Character character)
+// Add leading spaces to a string to center the text. The number of spaces is determined by how many spaces fit in the text field
+static std::string center(const std::string& input, int width)
 {
-	FDF fdf("assets/scripts/CharacterSheet_1Page.fdf", "../templates/CharacterSheet_1Page.pdf");
+	return std::string((width - input.length() - 1) / 2, ' ') + input;
+}
+
+bool fillCharacterSheetPage1(dnd::Character character)
+{
+	wxPdfDocument characterSheet(1, "mm", wxPAPER_LETTER);
+	characterSheet.SetDisplayMode(wxPDF_ZOOM_REAL);
+	characterSheet.SetFont("Helvetica", wxPDF_FONTSTYLE_REGULAR, 8);
+
+	// Initialize character sheet from template
+	characterSheet.SetSourceFile("assets/templates/CharacterSheet_1Page.pdf");
+	int tpl = characterSheet.ImportPage(1);
+	characterSheet.AddPage();
+	characterSheet.UseTemplate(tpl);
 
 	// Top
+	wxString name;
 	if (character.m_Race == "Dragonborn")
-		fdf.WriteTextField("CharacterName", character.m_Surname + " " + character.m_FirstName);
+		name = character.m_Surname + " " + character.m_FirstName;
 	else
-		fdf.WriteTextField("CharacterName", character.m_FirstName + " " + character.m_Surname);
+		name = character.m_FirstName + " " + character.m_Surname;
 
-	fdf.WriteTextField("ClassLevel", character.m_Class + " " + std::to_string(character.m_Level));
-	fdf.WriteTextField("Background", character.m_Background);
-	fdf.WriteTextField("PlayerName", character.m_PlayerName);
-	fdf.WriteTextField("Race", character.m_Race);
-	fdf.WriteTextField("Alignment", character.m_Alignment);
-	fdf.WriteTextField("XP", std::to_string(character.m_Experience));
+	characterSheet.TextField("CharacterName", 16.8, 21.6, 61.0, 7.4, name);
+	characterSheet.TextField("ClassLevel", 95.3, 17.0, 37.3, 5.5, character.m_Class + " " + wxString::Format(wxT("%i"), character.m_Level));
+	characterSheet.TextField("Background", 135.5, 17.0, 30.4, 5.5, character.m_Background);
+	characterSheet.TextField("PlayerName", 169.4, 17.0, 31.8, 5.5, character.m_PlayerName);
+	characterSheet.TextField("Race", 95.3, 26.2, 37.3, 5.5, character.m_Race);
+	characterSheet.TextField("Alignment", 135.5, 26.2, 30.4, 5.5, character.m_Alignment);
+	characterSheet.TextField("XP", 169.4, 26.2, 31.8, 5.5, wxString::Format(wxT("%i"), character.m_Experience));
 
 	// Abilities
-	fdf.WriteTextField("Strength", std::to_string(character.m_Strength.Score));
-	fdf.WriteTextField("Dexterity", std::to_string(character.m_Dexterity.Score));
-	fdf.WriteTextField("Constitution", std::to_string(character.m_Constitution.Score));
-	fdf.WriteTextField("Intelligence", std::to_string(character.m_Intelligence.Score));
-	fdf.WriteTextField("Wisdom", std::to_string(character.m_Wisdom.Score));
-	fdf.WriteTextField("Charisma", std::to_string(character.m_Charisma.Score));
+	characterSheet.SetFontSize(6);
+	characterSheet.TextField("StrengthModifier", 16.4, 65.9, 7.49, 4.5, center(std::to_string(character.m_Strength.Score), 10));
+	characterSheet.TextField("DexterityModifier", 16.4, 91.3, 7.49, 4.5, center(std::to_string(character.m_Dexterity.Score), 10));
+	characterSheet.TextField("ConstitutionModifier", 16.4, 116.4, 7.49, 4.5, center(std::to_string(character.m_Constitution.Score), 10));
+	characterSheet.TextField("IntelligenceModifier", 16.4, 141.8, 7.49, 4.5, center(std::to_string(character.m_Intelligence.Score), 10));
+	characterSheet.TextField("WisdomModifier", 16.4, 167.0, 7.5, 4.49, center(std::to_string(character.m_Wisdom.Score), 10));
+	characterSheet.TextField("CharismaModifier", 16.4, 192.1, 7.49, 4.5, center(std::to_string(character.m_Charisma.Score), 10));
 
 	// Ability Modifiers
-	fdf.WriteTextField("StrengthModifier", std::to_string(character.m_Strength.Modifier));
-	fdf.WriteTextField("DexterityModifier", std::to_string(character.m_Dexterity.Modifier));
-	fdf.WriteTextField("ConstitutionModifier", std::to_string(character.m_Constitution.Modifier));
-	fdf.WriteTextField("IntelligenceModifier", std::to_string(character.m_Intelligence.Modifier));
-	fdf.WriteTextField("WisdomModifier", std::to_string(character.m_Wisdom.Modifier));
-	fdf.WriteTextField("CharismaModifier", std::to_string(character.m_Charisma.Modifier));
+	characterSheet.SetFontSize(8);
+	characterSheet.TextField("Strength", 13.0, 54.4, 14.5, 9.0,
+		center((character.m_Strength.Modifier >= 0 ? "+" : "") + std::to_string(character.m_Strength.Modifier), 16));
+	characterSheet.TextField("Dexterity", 13.0, 79.9, 14.5, 9.0,
+		center((character.m_Dexterity.Modifier >= 0 ? "+" : "") + std::to_string(character.m_Dexterity.Modifier), 16));
+	characterSheet.TextField("Constitution", 13.0, 104.9, 14.5, 9.0,
+		center((character.m_Constitution.Modifier >= 0 ? "+" : "") + std::to_string(character.m_Constitution.Modifier), 16));
+	characterSheet.TextField("Intelligence", 13.0, 130.3, 14.5, 9.0,
+		center((character.m_Intelligence.Modifier >= 0 ? "+" : "") + std::to_string(character.m_Intelligence.Modifier), 16));
+	characterSheet.TextField("Wisdom", 13.0, 155.5, 14.5, 9.0,
+		center((character.m_Wisdom.Modifier >= 0 ? "+" : "") + std::to_string(character.m_Wisdom.Modifier), 16));
+	characterSheet.TextField("Charisma", 13.0, 180.6, 14.5, 9.0,
+		center((character.m_Charisma.Modifier >= 0 ? "+" : "") + std::to_string(character.m_Charisma.Modifier), 16));
 
 	// Saving Throws
-	fdf.WriteTextField("StrengthSave", std::to_string(character.m_StrengthSave.Modifier));
-	fdf.WriteTextField("DexteritySave", std::to_string(character.m_DexteritySave.Modifier));
-	fdf.WriteTextField("ConstitutionSave", std::to_string(character.m_ConstitutionSave.Modifier));
-	fdf.WriteTextField("IntelligenceSave", std::to_string(character.m_IntelligenceSave.Modifier));
-	fdf.WriteTextField("WisdomSave", std::to_string(character.m_WisdomSave.Modifier));
-	fdf.WriteTextField("CharismaSave", std::to_string(character.m_CharismaSave.Modifier));
+	characterSheet.TextField("StrengthSave", 39.8, 72.9, 5.1, 3.0,
+		center((character.m_StrengthSave.Modifier >= 0 ? "+" : "") + std::to_string(character.m_StrengthSave.Modifier), 6));
+	characterSheet.TextField("DexteritySave", 39.8, 77.6, 5.1, 3.0,
+		center((character.m_DexteritySave.Modifier >= 0 ? "+" : "") + std::to_string(character.m_DexteritySave.Modifier), 6));
+	characterSheet.TextField("ConstitutionSave", 39.8, 82.4, 5.1, 3.0,
+		center((character.m_ConstitutionSave.Modifier >= 0 ? "+" : "") + std::to_string(character.m_ConstitutionSave.Modifier), 6));
+	characterSheet.TextField("IntelligenceSave", 39.8, 87.2, 5.1, 3.0,
+		center((character.m_DexteritySave.Modifier >= 0 ? "+" : "") + std::to_string(character.m_DexteritySave.Modifier), 6));
+	characterSheet.TextField("WisdomSave", 39.8, 91.9, 5.1, 3.0,
+		center((character.m_WisdomSave.Modifier >= 0 ? "+" : "") + std::to_string(character.m_WisdomSave.Modifier), 6));
+	characterSheet.TextField("CharismaSave", 39.8, 96.7, 5.1, 3.0,
+		center((character.m_CharismaSave.Modifier >= 0 ? "+" : "") + std::to_string(character.m_CharismaSave.Modifier), 6));
 
 	// Saving Throw Checkboxes
-	fdf.WriteCheckbox("StrengthSaveCheck", character.m_StrengthSave.Proficient);
-	fdf.WriteCheckbox("DexteritySaveCheck", character.m_DexteritySave.Proficient);
-	fdf.WriteCheckbox("ConstitutionSaveCheck", character.m_ConstitutionSave.Proficient);
-	fdf.WriteCheckbox("IntelligenceSaveCheck", character.m_IntelligenceSave.Proficient);
-	fdf.WriteCheckbox("WisdomSaveCheck", character.m_WisdomSave.Proficient);
-	fdf.WriteCheckbox("CharismaSaveCheck", character.m_CharismaSave.Proficient);
+	characterSheet.CheckBox("StrengthSaveCheck", 35.7, 73.4, 2.2, character.m_StrengthSave.Proficient);
+	characterSheet.CheckBox("DexteritySaveCheck", 35.7, 78.1, 2.2, character.m_DexteritySave.Proficient);
+	characterSheet.CheckBox("ConstitutionSaveCheck", 35.7, 82.9, 2.2, character.m_ConstitutionSave.Proficient);
+	characterSheet.CheckBox("IntelligenceSaveCheck", 35.7, 87.6, 2.2, character.m_IntelligenceSave.Proficient);
+	characterSheet.CheckBox("WisdomSaveCheck", 35.7, 92.4, 2.2, character.m_WisdomSave.Proficient);
+	characterSheet.CheckBox("CharismaSaveCheck", 35.7, 97.2, 2.2, character.m_CharismaSave.Proficient);
 
 	// Skills
-	fdf.WriteTextField("Acrobatics", std::to_string(character.m_Acrobatics.Modifier));
-	fdf.WriteTextField("AnimalHandling", std::to_string(character.m_AnimalHandling.Modifier));
-	fdf.WriteTextField("Arcana", std::to_string(character.m_Arcana.Modifier));
-	fdf.WriteTextField("Athletics", std::to_string(character.m_Athletics.Modifier));
-	fdf.WriteTextField("Deception", std::to_string(character.m_Deception.Modifier));
-	fdf.WriteTextField("History", std::to_string(character.m_History.Modifier));
-	fdf.WriteTextField("Insight", std::to_string(character.m_Insight.Modifier));
-	fdf.WriteTextField("Intimidation", std::to_string(character.m_Intimidation.Modifier));
-	fdf.WriteTextField("Investigation", std::to_string(character.m_Investigation.Modifier));
-	fdf.WriteTextField("Medicine", std::to_string(character.m_Medicine.Modifier));
-	fdf.WriteTextField("Nature", std::to_string(character.m_Nature.Modifier));
-	fdf.WriteTextField("Perception", std::to_string(character.m_Perception.Modifier));
-	fdf.WriteTextField("Performance", std::to_string(character.m_Performance.Modifier));
-	fdf.WriteTextField("Persuasion", std::to_string(character.m_Persuasion.Modifier));
-	fdf.WriteTextField("Religion", std::to_string(character.m_Religion.Modifier));
-	fdf.WriteTextField("SleightOfHand", std::to_string(character.m_SleightOfHand.Modifier));
-	fdf.WriteTextField("Stealth", std::to_string(character.m_Stealth.Modifier));
-	fdf.WriteTextField("Survival", std::to_string(character.m_Survival.Modifier));
+	characterSheet.TextField("Acrobatics", 39.5, 113.5, 5.1, 3.0,
+		center((character.m_Acrobatics.Modifier >= 0 ? "+" : "") + std::to_string(character.m_Acrobatics.Modifier), 6));
+	characterSheet.TextField("AnimalHandling", 39.5, 118.3, 5.1, 3.0,
+		center((character.m_AnimalHandling.Modifier >= 0 ? "+" : "") + std::to_string(character.m_AnimalHandling.Modifier), 6));
+	characterSheet.TextField("Arcana", 39.5, 123.0, 5.1, 3.0,
+		center((character.m_Arcana.Modifier >= 0 ? "+" : "") + std::to_string(character.m_Arcana.Modifier), 6));
+	characterSheet.TextField("Athletics", 39.5, 127.8, 5.1, 3.0,
+		center((character.m_Athletics.Modifier >= 0 ? "+" : "") + std::to_string(character.m_Athletics.Modifier), 6));
+	characterSheet.TextField("Deception", 39.5, 132.6, 5.1, 3.0,
+		center((character.m_Deception.Modifier >= 0 ? "+" : "") + std::to_string(character.m_Deception.Modifier), 6));
+	characterSheet.TextField("History", 39.5, 137.3, 5.1, 3.0,
+		center((character.m_History.Modifier >= 0 ? "+" : "") + std::to_string(character.m_History.Modifier), 6));
+	characterSheet.TextField("Insight", 39.5, 142.1, 5.1, 3.0,
+		center((character.m_Insight.Modifier >= 0 ? "+" : "") + std::to_string(character.m_Insight.Modifier), 6));
+	characterSheet.TextField("Intimidation", 39.5, 146.8, 5.1, 3.0,
+		center((character.m_Intimidation.Modifier >= 0 ? "+" : "") + std::to_string(character.m_Intimidation.Modifier), 6));
+	characterSheet.TextField("Investigation", 39.5, 151.6, 5.1, 3.0,
+		center((character.m_Investigation.Modifier >= 0 ? "+" : "") + std::to_string(character.m_Investigation.Modifier), 6));
+	characterSheet.TextField("Medicine", 39.5, 156.4, 5.1, 3.0,
+		center((character.m_Medicine.Modifier >= 0 ? "+" : "") + std::to_string(character.m_Medicine.Modifier), 6));
+	characterSheet.TextField("Nature", 39.5, 161.2, 5.1, 3.0,
+		center((character.m_Nature.Modifier >= 0 ? "+" : "") + std::to_string(character.m_Nature.Modifier), 6));
+	characterSheet.TextField("Percepction", 39.5, 165.9, 5.1, 3.0,
+		center((character.m_Perception.Modifier >= 0 ? "+" : "") + std::to_string(character.m_Perception.Modifier), 6));
+	characterSheet.TextField("Performance", 39.5, 170.7, 5.1, 3.0,
+		center((character.m_Performance.Modifier >= 0 ? "+" : "") + std::to_string(character.m_Performance.Modifier), 6));
+	characterSheet.TextField("Persuasion", 39.5, 175.5, 5.1, 3.0,
+		center((character.m_Persuasion.Modifier >= 0 ? "+" : "") + std::to_string(character.m_Persuasion.Modifier), 6));
+	characterSheet.TextField("Religion", 39.5, 180.2, 5.1, 3.0,
+		center((character.m_Religion.Modifier >= 0 ? "+" : "") + std::to_string(character.m_Religion.Modifier), 6));
+	characterSheet.TextField("SleightOfHand", 39.5, 184.9, 5.1, 3.0,
+		center((character.m_SleightOfHand.Modifier >= 0 ? "+" : "") + std::to_string(character.m_SleightOfHand.Modifier), 6));
+	characterSheet.TextField("Stealth", 39.5, 189.7, 5.1, 3.0,
+		center((character.m_Stealth.Modifier >= 0 ? "+" : "") + std::to_string(character.m_Stealth.Modifier), 6));
+	characterSheet.TextField("Survival", 39.5, 194.5, 5.1, 3.0,
+		center((character.m_Survival.Modifier >= 0 ? "+" : "") + std::to_string(character.m_Survival.Modifier), 6));
 
 	// Skill Checkboxes
-	fdf.WriteCheckbox("AcrobaticsCheck", character.m_Acrobatics.Proficient);
-	fdf.WriteCheckbox("AnimalHandlingCheck", character.m_AnimalHandling.Proficient);
-	fdf.WriteCheckbox("ArcanaCheck", character.m_Arcana.Proficient);
-	fdf.WriteCheckbox("AthleticsCheck", character.m_Athletics.Proficient);
-	fdf.WriteCheckbox("DeceptionCheck", character.m_Deception.Proficient);
-	fdf.WriteCheckbox("HistoryCheck", character.m_History.Proficient);
-	fdf.WriteCheckbox("InsightCheck", character.m_Insight.Proficient);
-	fdf.WriteCheckbox("IntimidationCheck", character.m_Intimidation.Proficient);
-	fdf.WriteCheckbox("InvestigationCheck", character.m_Investigation.Proficient);
-	fdf.WriteCheckbox("MedicineCheck", character.m_Medicine.Proficient);
-	fdf.WriteCheckbox("NatureCheck", character.m_Nature.Proficient);
-	fdf.WriteCheckbox("PerceptionCheck", character.m_Perception.Proficient);
-	fdf.WriteCheckbox("PerformanceCheck", character.m_Performance.Proficient);
-	fdf.WriteCheckbox("PersuasionCheck", character.m_Persuasion.Proficient);
-	fdf.WriteCheckbox("ReligionCheck", character.m_Religion.Proficient);
-	fdf.WriteCheckbox("SleightOfHandCheck", character.m_SleightOfHand.Proficient);
-	fdf.WriteCheckbox("StealthCheck", character.m_Stealth.Proficient);
-	fdf.WriteCheckbox("SurvivalCheck", character.m_Survival.Proficient);
+	characterSheet.CheckBox("AcrobaticsCheck", 35.7, 114.1, 2.2, character.m_Acrobatics.Proficient);
+	characterSheet.CheckBox("AnimalHandlingCheck", 35.7, 118.9, 2.2, character.m_AnimalHandling.Proficient);
+	characterSheet.CheckBox("ArcanaCheck", 35.7, 123.6, 2.2, character.m_Arcana.Proficient);
+	characterSheet.CheckBox("AthleticsCheck", 35.7, 128.4, 2.2, character.m_Athletics.Proficient);
+	characterSheet.CheckBox("DeceptionCheck", 35.7, 133.2, 2.2, character.m_Deception.Proficient);
+	characterSheet.CheckBox("HistoryCheck", 35.7, 137.9, 2.2, character.m_History.Proficient);
+	characterSheet.CheckBox("InsightCheck", 35.7, 142.7, 2.2, character.m_Insight.Proficient);
+	characterSheet.CheckBox("IntimidationCheck", 35.7, 147.4, 2.2, character.m_Intimidation.Proficient);
+	characterSheet.CheckBox("InvestigationCheck", 35.7, 152.2, 2.2, character.m_Investigation.Proficient);
+	characterSheet.CheckBox("MedicineCheck", 35.7, 157.0, 2.2, character.m_Medicine.Proficient);
+	characterSheet.CheckBox("NatureCheck", 35.7, 161.8, 2.2, character.m_Nature.Proficient);
+	characterSheet.CheckBox("PerceptionCheck", 35.7, 166.5, 2.2, character.m_Perception.Proficient);
+	characterSheet.CheckBox("PerformanceCheck", 35.7, 171.1, 2.2, character.m_Performance.Proficient);
+	characterSheet.CheckBox("PersuasionCheck", 35.7, 176.1, 2.2, character.m_Persuasion.Proficient);
+	characterSheet.CheckBox("ReligionCheck", 35.7, 180.8, 2.2, character.m_Religion.Proficient);
+	characterSheet.CheckBox("SleightOfHandCheck", 35.7, 185.4, 2.2, character.m_SleightOfHand.Proficient);
+	characterSheet.CheckBox("StealthCheck", 35.7, 190.2, 2.2, character.m_Stealth.Proficient);
+	characterSheet.CheckBox("SurvivalCheck", 35.7, 195.1, 2.2, character.m_Survival.Proficient);
 
 	// Combat
-	fdf.WriteTextField("ArmorClass", std::to_string(character.m_ArmorClass));
-	fdf.WriteTextField("Initiative", std::to_string(character.m_Initiative));
-	fdf.WriteTextField("Speed", std::to_string(character.m_Speed));
-	fdf.WriteTextField("HitPointsMax", std::to_string(character.m_HitPointsMax));
-	fdf.WriteTextField("HitPointsCurrent", std::to_string(character.m_HitPointsCurrent));
-	fdf.WriteTextField("HitPointsTemp", std::to_string(character.m_HitPointsTemp));
-	fdf.WriteTextField("HitDiceTotal", std::to_string(character.m_HitDice.Number));
-	fdf.WriteTextField("HitDice", "d" + std::to_string(character.m_HitDice.Type));
+	characterSheet.TextField("ArmorClass", 82.6, 49.6, 9.7, 9.1, center(std::to_string(character.m_ArmorClass), 10));
+	characterSheet.TextField("Initiative", 100.9, 49.6, 12.7, 11.7, center("+" + std::to_string(character.m_Initiative), 14));
+	characterSheet.TextField("Speed", 121.4, 49.6, 12.7, 11.7, center(std::to_string(character.m_Speed) + " feet", 14));
+	characterSheet.TextField("HitPointsMax", 102.6, 69.4, 31.5, 3.8, std::to_string(character.m_HitPointsMax));
+	characterSheet.TextField("HitPointsCurrent", 81.6, 75.0, 52.6, 10.7, center(std::to_string(character.m_HitPointsCurrent), 64));
+	characterSheet.TextField("HitPointsTemp", 81.6, 93.3, 52.6, 10.7, center(std::to_string(character.m_HitPointsTemp), 64));
+	characterSheet.TextField("HitDiceTotal", 87.1, 112.3, 17.0, 3.2, std::to_string(character.m_HitDice.Number));
+	characterSheet.TextField("HitDice", 81.8, 116.9, 22.4, 7.4, center("d" + std::to_string(character.m_HitDice.Type), 28));
 
-	fdf.WriteCheckbox("Successes1", false);
-	fdf.WriteCheckbox("Successes2", false);
-	fdf.WriteCheckbox("Successes3", false);
-	fdf.WriteCheckbox("Failures1", false);
-	fdf.WriteCheckbox("Failures2", false);
-	fdf.WriteCheckbox("Failures3", false);
+	characterSheet.CheckBox("Successes1", 122.0, 113.6, 3.3, true);
+	characterSheet.CheckBox("Successes2", 126.6, 113.6, 3.3, true);
+	characterSheet.CheckBox("Successes3", 131.1, 113.6, 3.3, true);
+	characterSheet.CheckBox("Failures1", 122.0, 118.9, 3.3, true);
+	characterSheet.CheckBox("Failures2", 126.6, 118.9, 3.3, true);
+	characterSheet.CheckBox("Failures3", 131.1, 118.9, 3.3, true);
 
-	if (character.m_Attacks.size() > 0)
-	{
-		fdf.WriteTextField("Weapon1Name", character.m_Attacks[0].Name);
-		fdf.WriteTextField("Weapon1AtkBonus", "+" + std::to_string(character.m_Attacks[0].AttackBonus));
-		fdf.WriteTextField("Weapon1Damage", character.m_Attacks[0].Damage);
-	}
-	if (character.m_Attacks.size() > 1)
-	{
-		fdf.WriteTextField("Weapon2Name", character.m_Attacks[1].Name);
-		fdf.WriteTextField("Weapon2AtkBonus", "+" + std::to_string(character.m_Attacks[1].AttackBonus));
-		fdf.WriteTextField("Weapon2Damage", character.m_Attacks[1].Damage);
-	}
-	if (character.m_Attacks.size() > 2)
-	{
-		fdf.WriteTextField("Weapon3Name", character.m_Attacks[2].Name);
-		fdf.WriteTextField("Weapon3AtkBonus", "+" + std::to_string(character.m_Attacks[2].AttackBonus));
-		fdf.WriteTextField("Weapon3Damage", character.m_Attacks[2].Damage);
-	}
+	characterSheet.TextField("Weapon1Name", 79.0, 138.7, 21.7, 5.0,
+		character.m_Attacks.size() > 0 ? character.m_Attacks[0].Name : "");
+	characterSheet.TextField("Weapon1AtkBonus", 103.0, 138.7, 10.5, 5.0,
+		character.m_Attacks.size() > 0 ? "+" + std::to_string(character.m_Attacks[0].AttackBonus) : "");
+	characterSheet.TextField("Weapon1Damage", 115.7, 138.7, 21.5, 5.0,
+		character.m_Attacks.size() > 0 ? character.m_Attacks[0].Damage : "");
 
+	characterSheet.TextField("Weapon2Name", 79.0, 145.8, 21.7, 5.0,
+		character.m_Attacks.size() > 1 ? character.m_Attacks[1].Name : "");
+	characterSheet.TextField("Weapon2AtkBonus", 103.0, 145.8, 10.5, 5.0,
+		character.m_Attacks.size() > 1 ? "+" + std::to_string(character.m_Attacks[1].AttackBonus) : "");
+	characterSheet.TextField("Weapon2Damage", 115.7, 145.8, 21.5, 5.0,
+		character.m_Attacks.size() > 1 ? character.m_Attacks[1].Damage : "");
+
+	characterSheet.TextField("Weapon3Name", 79.0, 153.2, 21.7, 5.0,
+		character.m_Attacks.size() > 2 ? character.m_Attacks[2].Name : "");
+	characterSheet.TextField("Weapon3AtkBonus", 103.0, 153.2, 10.5, 5.0,
+		character.m_Attacks.size() > 2 ? "+" + std::to_string(character.m_Attacks[2].AttackBonus) : "");
+	characterSheet.TextField("Weapon3Damage", 115.7, 153.2, 21.5, 5.0,
+		character.m_Attacks.size() > 2 ? character.m_Attacks[2].Damage : "");
+
+	// Attacks & Spellcasting
 	std::string attacksSpellcasting;
 
 	if (!character.m_Cantrips.empty())
@@ -262,13 +315,13 @@ void fillCharacterSheet_1Page(dnd::Character character)
 		}
 	}
 
-	fdf.WriteTextField("AttacksSpellcasting", attacksSpellcasting);
+	characterSheet.TextField("AttacksSpellcasting", 78.8, 160.1, 58.4, 40.1, attacksSpellcasting, true);
 
 	// Personality
-	fdf.WriteTextField("PersonalityTraits", character.m_PersonalityTraits);
-	fdf.WriteTextField("Ideals", character.m_Ideals);
-	fdf.WriteTextField("Bonds", character.m_Bonds);
-	fdf.WriteTextField("Flaws", character.m_Flaws);
+	characterSheet.TextField("PersonalityTraits", 147.7, 49.6, 53.9, 17.1, character.m_PersonalityTraits, true);
+	characterSheet.TextField("Ideals", 147.7, 74.0, 53.9, 12.2, character.m_Ideals, true);
+	characterSheet.TextField("Bonds", 147.7, 93.5, 53.9, 12.2, character.m_Bonds, true);
+	characterSheet.TextField("Flaws", 147.7, 112.8, 53.9, 12.2, character.m_Flaws, true);
 
 	// Features and Traits
 	std::string featsAndTraits;
@@ -280,7 +333,7 @@ void fillCharacterSheet_1Page(dnd::Character character)
 			featsAndTraits += "\n\n";
 	}
 
-	fdf.WriteTextField("FeaturesTraits", featsAndTraits);
+	characterSheet.TextField("FeaturesTraits", 145.6, 136.4, 58.2, 130.4, featsAndTraits, true);
 
 	// Proficiencies
 	std::string proficiencies = "Proficiencies. ";
@@ -307,6 +360,7 @@ void fillCharacterSheet_1Page(dnd::Character character)
 		if (it != *character.m_ToolProficiencies.rbegin())
 			proficiencies += ", ";
 	}
+	// Capitalize the first character of the first proficiency (after the word "Proficiencies. ")
 	proficiencies[15] = std::toupper(proficiencies[15]);
 
 	std::string languages = "Languages. ";
@@ -317,7 +371,7 @@ void fillCharacterSheet_1Page(dnd::Character character)
 			languages += ", ";
 	}
 
-	fdf.WriteTextField("ProficienciesLanguages", proficiencies + "\n\n" + languages);
+	characterSheet.TextField("ProficienciesLanguages", 12.1, 221.3, 58.4, 45.5, proficiencies + "\n\n" + languages, true);
 
 	// Equipment
 	// Some items, especially trinkets, are singular but should not have "a" or "an" added before them
@@ -353,15 +407,17 @@ void fillCharacterSheet_1Page(dnd::Character character)
 	}
 	equipment[0] = std::toupper(equipment[0]);
 
-	fdf.WriteTextField("Equipment", equipment);
-	fdf.WriteTextField("CP", std::to_string(character.m_CopperPieces));
-	fdf.WriteTextField("SP", std::to_string(character.m_SilverPieces));
-	fdf.WriteTextField("EP", std::to_string(character.m_ElectrumPieces));
-	fdf.WriteTextField("GP", std::to_string(character.m_GoldPieces));
-	fdf.WriteTextField("PP", std::to_string(character.m_PlatinumPieces));
+	characterSheet.TextField("Equipment", 94.9, 209.4, 42.3, 57.4, equipment, true);
+	characterSheet.TextField("CP", 81.0, 211.3, 10.3, 6.2, center(std::to_string(character.m_CopperPieces), 12));
+	characterSheet.TextField("SP", 81.0, 220.5, 10.3, 6.2, center(std::to_string(character.m_SilverPieces), 12));
+	characterSheet.TextField("EP", 81.0, 229.6, 10.3, 6.2, center(std::to_string(character.m_ElectrumPieces), 12));
+	characterSheet.TextField("GP", 81.0, 238.8, 10.3, 6.2, center(std::to_string(character.m_GoldPieces), 12));
+	characterSheet.TextField("PP", 81.0, 247.9, 10.3, 6.2, center(std::to_string(character.m_PlatinumPieces), 12));
 
 	// Other
-	fdf.WriteTextField("Inspiration", std::to_string(character.m_Inspiration));
-	fdf.WriteTextField("ProficiencyBonus", std::to_string(character.m_ProficiencyBonus));
-	fdf.WriteTextField("PassiveWisdom", std::to_string(character.m_PassiveWisdom));
+	characterSheet.TextField("Inspiration", 34.2, 46.4, 7.5, 5.8, center(std::to_string(character.m_Inspiration), 8));
+	characterSheet.TextField("ProficiencyBonus", 34.2, 59.7, 7.5, 5.8, center(std::to_string(character.m_ProficiencyBonus), 8));
+	characterSheet.TextField("PassiveWisdom", 11.6, 208.5, 7.5, 5.8, center(std::to_string(character.m_PassiveWisdom), 8));
+
+	return characterSheet.SaveAsFile("CharacterSheet.pdf");
 }
